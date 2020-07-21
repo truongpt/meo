@@ -10,10 +10,13 @@
 - [ ] Running basic math operator +,-,*,/ on X86_64 GNU/Linux
 - [ ] Update later ...
 
-## Design & Implementation
+## Design
 - Using design as four-pass compiler, which is refered from [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf)
 - Each module lexical analyzer, parser, code generation are designed as independent module, it can be easy to replace without any effect other part.
-- At first step, supporting X86-64 and optimization is not considered.
-- Using back end of GCC to generate executed code.
-- Using TDD with [catch2](https://github.com/catchorg/Catch2)
 - ![Structure of four-pass compiler](system_struct.png)
+
+## Implementation
+- Only supporting X86-64 and optimization is not considered at first step.
+- Using back end of GCC to generate executed code.
+- Using TDD with [catch2](https://github.com/catchorg/Catch2).
+- Using [Google coding convention](https://google.github.io/styleguide/cppguide.html).
