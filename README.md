@@ -11,9 +11,8 @@
 - [ ] Update later ...
 
 ## Design
-- Using design as four-pass compiler, which is refered from [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf)
+- Using design as [four-pass compiler](system_struct.png), which is refered from [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf)
 - Each module lexical analyzer, parser, code generation are designed as independent module, it can be easy to replace without any effect other part.
-- ![Structure of four-pass compiler|700x850,20%](system_struct.png)
 
 ## Implementation
 - Firs step: only supporting X86-64 + pass 2 (lexical analyzer, parser, code generation).
