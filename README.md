@@ -1,9 +1,9 @@
-# Meo sub-C compiler
+# Meo subset c compiler
 
 ## Let's start
-- **meo** is :cat: in Vietnamese, but now  it is sub-c compliler
+- **meo** is :cat: in Vietnamese, but now  it is subset c compliler
 - The project is mainly used to study compliler.
-- I used #100DaysOfCode strategy, that will make small step everyday by [rule](https://github.com/kallaway/100-days-of-code/blob/master/rules.md)
+- I use #100DaysOfCode strategy, that will make small step everyday by [rule](https://github.com/kallaway/100-days-of-code/blob/master/rules.md)
 - I start by following to [A Compiler Writing Journey](https://github.com/DoctorWkt/acwj)
 
 ## Milestone
