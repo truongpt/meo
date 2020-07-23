@@ -80,7 +80,8 @@ TEST_CASE("lex test operator token")
         {TokenMul   ,-1},
         {TokenDiv   ,-1},
         {TokenLP    ,-1},
-        {TokenRP    ,-1}
+        {TokenRP    ,-1},
+        {TokenEof   ,-1}
     };
 
     void* prm = NULL;
@@ -112,7 +113,8 @@ TEST_CASE("lex test numeric token")
         {TokenNumber ,1},
         {TokenNumber ,2},
         {TokenNumber ,3},
-        {TokenNumber ,4}
+        {TokenNumber ,4},
+        {TokenEof   ,-1}
     };
 
     void* prm = NULL;
@@ -124,7 +126,10 @@ TEST_CASE("lex test numeric token")
     while(Success == LexProc(prm, &T)) {
         Token t = expect[i];
         REQUIRE(T.tok == t.tok);
-        REQUIRE(T.value == t.value);
+        if (TokenNumber == t.tok) {
+            REQUIRE(T.value == t.value);
+        }
+
         i++;
         if (TokenEof == T.tok) {
             break;
@@ -148,7 +153,8 @@ TEST_CASE("lex test arithmetic expression")
         {TokenMul   ,-1},
         {TokenNumber ,3},
         {TokenMul   ,-1},
-        {TokenNumber ,4}
+        {TokenNumber ,4},
+        {TokenEof   ,-1}
     };
 
     void* prm = NULL;
