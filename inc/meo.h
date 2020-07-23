@@ -14,4 +14,19 @@ typedef struct Token {
     int32_t value;
 } Token;
 
+enum TokenType{
+    TokenEof,
+
+    // operator
+    TokenPlus,
+    TokenMinus,
+    TokenMul,
+    TokenDiv,
+
+    TokenNumber,
+    TokenLP,
+    TokenRP,
+    TokenSemi,
+};
+
 #endif // _MEO_H_
