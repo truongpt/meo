@@ -180,3 +180,52 @@ TEST_CASE("lex test arithmetic expression")
     REQUIRE(Success == LexDestroy());
 }
 
+TEST_CASE("lex test arithmetic expression with special character")
+{
+    std::ofstream outfile ("data/test5");
+    outfile << "1   " << std::endl;
+    outfile << "   +" << std::endl;
+    outfile << "2 " << std::endl;
+    outfile << "* " << std::endl;
+    outfile << "3 " << std::endl;
+    outfile << " *" << std::endl;
+    outfile << " 4" << std::endl;
+    outfile << " /" << std::endl;
+    outfile << " 5" << std::endl;
+    outfile.close();
+    vector<Token> expect = vector<Token>{
+        {TokenNumber ,1},
+        {TokenPlus  ,-1},
+        {TokenNumber ,2},
+        {TokenMul   ,-1},
+        {TokenNumber ,3},
+        {TokenMul   ,-1},
+        {TokenNumber ,4},
+        {TokenDiv   ,-1},
+        {TokenNumber ,5},        
+        {TokenEof   ,-1}
+    };
+
+    void* prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&prm, (char*)"data/test5"));
+
+    Token T;
+    int i = 0;
+    while(Success == LexProc(prm, &T)) {
+        Token t = expect[i];
+        REQUIRE(T.tok == t.tok);
+        if (TokenNumber == t.tok) {
+            REQUIRE(T.value == t.value);
+        }
+        i++;
+        if (TokenEof == T.tok) {
+            break;
+        }
+    }
+
+    REQUIRE(i == expect.size());
+    REQUIRE(Success == LexClose(prm));
+    REQUIRE(Success == LexDestroy());
+}
+
