@@ -15,3 +15,7 @@
 - Add test case to confirm basic arithmetic token of Lexial Analyzer.
 - Lexial Analyzer support basic arithmetic token -> current test case PASS ^^
 - TODO: study BNF form ...
+
+### Day 4
+- Add some test case for lexial analyzer
+- Read "1.2 Representing Computer Languages" of  of Compiler design in C
