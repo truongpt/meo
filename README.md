@@ -7,8 +7,14 @@
 - I start by following to [A Compiler Writing Journey](https://github.com/DoctorWkt/acwj)
 
 ## Milestone
-- [ ] Running basic math operator +,-,*,/ on X86_64 GNU/Linux
-- [ ] Update later ...
+- [ ] Run basic math operator +,-,*,/ on X86_64 GNU/Linux
+- [ ] Support variable
+- [ ] Support IF condition
+- [ ] Support WHILE condition
+- [ ] Support FOR condition
+- [ ] Support function call condition
+- [ ] Todo and todo ... LOL
+- [ ] Self compile
 
 ## Design
 - Using design as [four-pass compiler](system_struct.png), which is refered from [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf)
