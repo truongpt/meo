@@ -18,4 +18,9 @@
 
 ### Day 4
 - Add some test case for lexial analyzer
-- Read "1.2 Representing Computer Languages" of  of Compiler design in C
+- Read "1.2 Representing Computer Languages" of Compiler design in C
+
+### Day 5,6
+- Read "1.2 Representing Computer Languages" of Compiler design in C
+- Study parser by "1.3.2 The Basic Parser" & "1.3.3 Improving the Parser" of Compiler design in C
+- Prototype parser
