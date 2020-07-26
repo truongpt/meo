@@ -1,6 +1,6 @@
 TOPTARGETS := all clean
 
-SUBDIRS := lex
+SUBDIRS := lex parse
 
 $(TOPTARGETS): $(SUBDIRS)
 $(SUBDIRS):
@@ -11,4 +11,5 @@ $(SUBDIRS):
 .PHONY: run
 run:
 	./lex/lex_test
+	./parse/parse_test
 

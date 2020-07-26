@@ -26,7 +26,10 @@ enum TokenType{
     TokenNumber,
     TokenLP,
     TokenRP,
+    TokenEoi,
     TokenSemi,
+
+    TokenId,
 };
 
 #endif // _MEO_H_

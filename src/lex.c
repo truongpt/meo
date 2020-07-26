@@ -15,7 +15,7 @@
 typedef struct LexParameter{
     bool avail;
     int32_t line;
-    char look_ahead;
+    char push_back;
     FILE *in_file;
 } LexParameter;
 
@@ -58,7 +58,7 @@ int32_t LexOpen(void** lex_prm, const char* file_name)
     }
 
     g_lex_prm[i].in_file = fopen(file_name, "r");
-    g_lex_prm[i].look_ahead = -1; // -1 is OK? LOL
+    g_lex_prm[i].push_back = -1; // -1 is OK? LOL
     g_lex_prm[i].line = 0;
     *lex_prm = &g_lex_prm[i];
     return Success;
@@ -129,7 +129,7 @@ int32_t LexProc(void* prm, Token *t)
                 c != '\t' &&
                 c != '\n' &&
                 c != '\v') {
-                lex_prm->look_ahead = c;
+                lex_prm->push_back = c;
             }
             break;
         }
@@ -149,9 +149,9 @@ int32_t LexGetLine(void* prm)
 static char get_char(LexParameter *prm)
 {
     char c;
-    if (-1 != prm->look_ahead) {
-        c = prm->look_ahead;
-        prm->look_ahead = -1;
+    if (-1 != prm->push_back) {
+        c = prm->push_back;
+        prm->push_back = -1;
         return c;
     }
 
