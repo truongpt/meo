@@ -28,3 +28,10 @@
 ### Day 7
 - Study parser by "1.3.2 The Basic Parser" & "1.3.3 Improving the Parser" of Compiler design in C
 - Prototype bare-bone of parser
+
+## Day 8
+- Study more about parser, a lot of theory :-(
+  - https://medium.com/basecs/leveling-up-ones-parsing-game-with-asts-d7a6fc2400ff
+  - https://github.com/DoctorWkt/acwj/tree/master/02_Parser
+  - "1.3.2 The Basic Parser" & "1.3.3 Improving the Parser" of Compiler design in C
+  
