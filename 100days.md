@@ -35,3 +35,6 @@
   - https://github.com/DoctorWkt/acwj/tree/master/02_Parser
   - "1.3.2 The Basic Parser" & "1.3.3 Improving the Parser" of Compiler design in C
   
+## Day 9
+- Continue study parse by "Compiler design in C" book.
+- Add new test case for basic arithmetic expression with tentative parse API. These all of them are FAIL -> But it is OK because of TDD, add test first, API processing will be implemented later ^^

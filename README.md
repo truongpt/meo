@@ -4,7 +4,7 @@
 - **meo** is :cat: in Vietnamese, but now  it is subset c compliler
 - The project is mainly used to study compliler.
 - I use #100DaysOfCode strategy, that will make [small step](100days.md) everyday by [rule](https://github.com/kallaway/100-days-of-code/blob/master/rules.md)
-- I start by following to [A Compiler Writing Journey](https://github.com/DoctorWkt/acwj)
+- I start by following to [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf) and refer [A Compiler Writing Journey](https://github.com/DoctorWkt/acwj)
 
 ## Milestone
 - [ ] Run basic math operator +,-,*,/ on X86_64 GNU/Linux
