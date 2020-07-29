@@ -6,6 +6,7 @@
 #include "lex.h"
 #include "error_code.h"
 #include <vector>
+#include <stdlib.h>
 
 using namespace std;
 vector<Token> g_tok_array;
@@ -38,10 +39,12 @@ int32_t LexDestroy(void)
 
 int32_t LexOpen(void** prm, const char* file)
 {
+    *prm = malloc(1);
     return Success;
 }
 int32_t LexClose(void* prm)
 {
+    free(prm);
     return Success;
 }
 

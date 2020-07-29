@@ -15,6 +15,8 @@
 #include "catch.hh"
 
 using namespace std;
+int32_t MockLexCreate(vector<Token> tok_array);
+int32_t MockLexDestroy();
 
 TEST_CASE("parse test get single resource")
 {
@@ -66,3 +68,60 @@ TEST_CASE("parse test get multi resource")
     REQUIRE(Success == ParseDestroy());
 }
 
+TEST_CASE("parse test plus token: (1+2);")
+{
+
+    int32_t mock_lex_prm;
+
+    MockLexCreate(vector<Token> {
+            {TokenLP,    -1},
+            {TokenNumber, 1},
+            {TokenPlus,  -1},
+            {TokenNumber, 2},
+            {TokenRP,    -1},
+            {TokenSemi,  -1},
+            {TokenEof,   -1}
+        });
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm));
+    
+    int32_t res = -1;
+    REQUIRE(Success == ParseProc(parse_prm, &res));
+    REQUIRE(res == (1+2));
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    MockLexDestroy();
+}
+
+TEST_CASE("parse test plus token: (2*3);")
+{
+
+    int32_t mock_lex_prm;
+
+    MockLexCreate(vector<Token> {
+            {TokenLP,    -1},
+            {TokenNumber, 2},
+            {TokenMul,   -1},
+            {TokenNumber, 3},
+            {TokenRP,    -1},
+            {TokenSemi,  -1},
+            {TokenEof,   -1}
+        });
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm));
+    
+    int32_t res = -1;
+    REQUIRE(Success == ParseProc(parse_prm, &res));
+    REQUIRE(res == (2*3));
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    MockLexDestroy();
+}

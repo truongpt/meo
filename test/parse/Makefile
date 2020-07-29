@@ -15,9 +15,9 @@ INC := -I$(TOP_SRC)/inc
 INC += -I$(TOP_TEST)/inc
 
 SRC_CPP := parse_test.cpp
+SRC_CPP += mock_lex.cpp
 SRC_CPP += main.cpp
-SRC := $(TOP_SRC)/src/lex.c
-SRC += $(TOP_SRC)/src/parse.c
+SRC := $(TOP_SRC)/src/parse.c
 
 CFLAGS += $(INC)
 

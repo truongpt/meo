@@ -73,9 +73,9 @@ int32_t ParseClose(void* prm)
     return Success;
 }
 
-int32_t ParseProc(void* prm)
+int32_t ParseProc(void* prm, int* res)
 {
-    if (NULL == prm) {
+    if (NULL == prm || NULL == res) {
         return InParameterInvalid;
     }
     ParseParameter* parse_prm = (ParseParameter*)prm;
