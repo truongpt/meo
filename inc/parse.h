@@ -17,7 +17,7 @@ int32_t ParseCreate(void);
 int32_t ParseDestroy(void);
 int32_t ParseOpen(void** prm, void* scan_prm);
 int32_t ParseClose(void* prm);
-int32_t ParseProc(void* prm, int* res);
+int32_t ParseProc(void* prm);
 
 #ifdef __cplusplus
 }

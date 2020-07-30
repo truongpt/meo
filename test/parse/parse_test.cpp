@@ -87,9 +87,8 @@ TEST_CASE("parse test plus token: (1+2);")
     REQUIRE(Success == ParseCreate());
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm));
     
-    int32_t res = -1;
-    REQUIRE(Success == ParseProc(parse_prm, &res));
-    REQUIRE(res == (1+2));
+    REQUIRE(Success == ParseProc(parse_prm));
+    // consider method to confirm
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -115,11 +114,73 @@ TEST_CASE("parse test plus token: (2*3);")
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm));
-    
-    int32_t res = -1;
-    REQUIRE(Success == ParseProc(parse_prm, &res));
-    REQUIRE(res == (2*3));
 
+    REQUIRE(Success == ParseProc(parse_prm));
+    // consider method to confirm
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    MockLexDestroy();
+}
+
+TEST_CASE("parse test plus token: (1+2*3+4);")
+{
+
+    int32_t mock_lex_prm;
+
+    MockLexCreate(vector<Token> {
+            {TokenLP,    -1},
+            {TokenNumber, 1},
+            {TokenPlus,  -1},
+            {TokenNumber, 2},
+            {TokenMul,   -1},
+            {TokenNumber, 3},
+            {TokenPlus,  -1},
+            {TokenNumber, 4},
+            {TokenRP,    -1},
+            {TokenSemi,  -1},
+            {TokenEoi,   -1}
+        });
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+    // consider method to confirm
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    MockLexDestroy();
+}
+
+TEST_CASE("parse test plus token: (1+2)*(3+4);")
+{
+
+    int32_t mock_lex_prm;
+
+    MockLexCreate(vector<Token> {
+            {TokenLP,    -1},
+            {TokenNumber, 1},
+            {TokenPlus,  -1},
+            {TokenNumber, 2},
+            {TokenRP,    -1},
+            {TokenMul,   -1},
+            {TokenLP,    -1},
+            {TokenNumber, 3},
+            {TokenPlus,  -1},
+            {TokenNumber, 4},
+            {TokenRP,    -1},
+            {TokenSemi,  -1},
+            {TokenEoi,   -1}
+        });
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+    // consider method to confirm
     ParseClose(parse_prm);
     ParseDestroy();
 
