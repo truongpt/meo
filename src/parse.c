@@ -58,6 +58,7 @@ int32_t ParseOpen(void** parse_prm, void* lex_prm)
     }
 
     g_parse_prm[i].lex_prm = lex_prm;
+    g_parse_prm[i].cur_token.tok = -1;
     *parse_prm = &g_parse_prm[i];
 
     return Success;
@@ -124,7 +125,6 @@ void term (ParseParameter* parse_prm)
 void factor (ParseParameter* parse_prm)
 {
     //TODO: confirm start valid token
-
     if (match(parse_prm, TokenNumber)) { // TODO: or TokenId
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token)); 
     } else if (match(parse_prm, TokenLP)) {
@@ -143,6 +143,8 @@ void factor (ParseParameter* parse_prm)
 
 bool match(ParseParameter* parse_prm, int32_t tok_type)
 {
-    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
+    if (-1 == parse_prm->cur_token.tok) {
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    }
     return (parse_prm->cur_token.tok == tok_type);
 }
