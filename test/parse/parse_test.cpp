@@ -80,7 +80,7 @@ TEST_CASE("parse test plus token: (1+2);")
             {TokenNumber, 2},
             {TokenRP,    -1},
             {TokenSemi,  -1},
-            {TokenEof,   -1}
+            {TokenEoi,   -1}
         });
 
     void* parse_prm = NULL;
@@ -109,7 +109,7 @@ TEST_CASE("parse test plus token: (2*3);")
             {TokenNumber, 3},
             {TokenRP,    -1},
             {TokenSemi,  -1},
-            {TokenEof,   -1}
+            {TokenEoi,   -1}
         });
 
     void* parse_prm = NULL;
