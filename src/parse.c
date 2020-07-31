@@ -12,6 +12,7 @@
 typedef struct ParseParameter{
     bool avail;
     void *lex_prm;
+    void *gen_prm;
     Token cur_token;
 } ParseParameter;
 

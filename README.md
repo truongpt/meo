@@ -2,8 +2,8 @@
 
 ## Let's start
 - **meo** is :cat: in Vietnamese, but now  it is subset c compliler
-- The project is mainly used to study compliler.
-- I use #100DaysOfCode strategy, that will make [small step](100days.md) everyday by [rule](https://github.com/kallaway/100-days-of-code/blob/master/rules.md)
+- The project is mainly used to study compiler.
+- I use [100DaysOfCode](https://github.com/kallaway/100-days-of-code) strategy, that will make [small step](100days.md) everyday by [rule](https://github.com/kallaway/100-days-of-code/blob/master/rules.md)
 - I start by following to [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf) and refer [A Compiler Writing Journey](https://github.com/DoctorWkt/acwj)
 
 ## Milestone
@@ -13,7 +13,7 @@
 - [ ] Support WHILE condition
 - [ ] Support FOR condition
 - [ ] Support function call condition
-- [ ] Todo and todo ... LOL
+- [ ] Todo and todo as :ocean: ... LOL
 - [ ] Self compile
 
 ## Design
