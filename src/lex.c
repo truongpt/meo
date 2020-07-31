@@ -89,7 +89,7 @@ int32_t LexProc(void* prm, Token *t)
     char c = get_char(lex_prm);
     switch (c) {
     case EOF:
-        t->tok = TokenEof;
+        t->tok = TokenEoi;
         break;
     case '+':
         t->tok = TokenPlus;
