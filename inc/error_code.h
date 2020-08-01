@@ -9,6 +9,7 @@
 enum ErrorCode {
     Success,
     InParameterInvalid,
+    OpenFileError,
     SyntaxError,
     TokenError,
     LexLimitResource,

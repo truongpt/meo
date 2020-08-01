@@ -4,6 +4,7 @@
  */
 
 #include <stdbool.h>
+#include <stdarg.h> 
 #include "gen.h"
 #include "error_code.h"
 
@@ -48,7 +49,10 @@ int32_t GenOpen(void** gen_prm, int32_t arch, char* out_file_name)
     }
 
     g_gen_prm[i].out_asm_file = fopen(out_file_name, "w");
-
+    if (NULL == g_gen_prm[i].out_asm_file) {
+        return OpenFileError;
+    }
+    *gen_prm = &g_gen_prm[i];
     return Success;
 }
 
@@ -57,19 +61,29 @@ int32_t GenClose(void* gen_prm)
     if (NULL == gen_prm) {
         return InParameterInvalid;
     }
-    // gen postamble
+
     GenParameter* l_gen_prm = (GenParameter*)gen_prm;
     fclose(l_gen_prm->out_asm_file);
 
     return Success;
 }
 
-int32_t GenProc(void* gen_prm)
+int32_t GenProc(int arg_count, ...)
 {
+    va_list ap;
+    va_start(ap, arg_count);
+    GenParameter *gen_prm =  va_arg(ap, GenParameter*);
     if (NULL == gen_prm) {
         printf("error cmnr\n");
         return InParameterInvalid;
     }
 
+    int32_t tok_type =  va_arg(ap, int32_t);
+    printf("tok_type %d\n",tok_type);
+
+    int32_t tok_type1 =  va_arg(ap, int32_t);
+    printf("tok_type1 %d\n",tok_type1);
+
+    va_end(ap);
     return Success;
 }

@@ -23,7 +23,7 @@ int32_t GenCreate(void);
 int32_t GenDestroy(void);
 int32_t GenOpen(void** gen_prm, int32_t arch, char* out_file);
 int32_t GenClose(void* gen_prm);
-int GenProc(void* gen_prm);
+int32_t GenProc(int arg_count, ...);
 
 #ifdef __cplusplus
 }
