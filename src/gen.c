@@ -56,6 +56,13 @@ int32_t GenOpen(void** gen_prm, int32_t arch, char* out_file_name)
     if (NULL == g_gen_prm[i].out_asm_file) {
         return OpenFileError;
     }
+    switch (arch) {
+    case GenX86_64:
+        GenLoadX86_64(&(g_gen_prm[i].func));
+        break;
+    default:
+        printf("Unsupported\n");
+    }
     *gen_prm = &g_gen_prm[i];
     return Success;
 }
@@ -72,23 +79,23 @@ int32_t GenClose(void* gen_prm)
     return Success;
 }
 
-char* GenProc(int tok_type, ...)
+char* GenProc(int arg_num, ...)
 {
     va_list ap;
-    int arg_count = (TokenNumber == tok_type) ? 2 : 3;
-    va_start(ap, arg_count);
+
+    va_start(ap, arg_num);
 
     GenParameter *gen_prm =  va_arg(ap, GenParameter*);
     if (NULL == gen_prm) {
         return NULL;
     }
 
-    char* r  = NULL;
-    switch(tok_type) {
+    Token token = va_arg(ap, Token);
+    char* r = NULL;
+    switch(token.tok) {
     case TokenNumber:
     {
-        int32_t val = va_arg(ap, int32_t);
-        r = gen_prm->func.f_load(val, gen_prm->out_asm_file);
+        r = gen_prm->func.f_load(token.value, gen_prm->out_asm_file);
         break;
     }
     case TokenPlus:

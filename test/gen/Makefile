@@ -2,7 +2,7 @@ CPP = g++ -std=c++11
 CC = gcc
 LD = g++ -std=c++11
 LDFLAGS  += 
-CPPFLAGS := -g -O0 -fpermissive -Wnarrowing
+CPPFLAGS := -g -O0 -fpermissive -Wnarrowing -Wno-write-strings
 
 #-fpermissive -Wnarrowing
 
@@ -13,8 +13,10 @@ TOP_TEST = ../../test
 
 INC := -I$(TOP_SRC)/inc
 INC += -I$(TOP_TEST)/inc
+INC += -I$(TOP_SRC)/src
 
 SRC_CPP := gen_test.cpp
+SRC_CPP += mock_arch.cpp
 SRC_CPP += main.cpp
 SRC := $(TOP_SRC)/src/gen.c
 
