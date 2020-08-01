@@ -69,7 +69,11 @@
 
 ## Day 11, 12
 - Fix :bug: "Segmentation fault (core dumped)"
+- Add and excute code gen function.
 - Improve test parse by adding gen code mock
-- Add intergration test.
-- Now, *meo* has full of pass 2 module: lexial analyzer + parser + gen code. :laughing:
-- Stil ton of unknowlege about compiler :worried: but it is OK if keeping SMALL step over and over by #100DaysOfCode.
+- Now, **meo** has full of pass 2 module: lexial analyzer + parser + gen code :laughing:
+- Still ton of unknowledge & unclear about compiler :worried: -> just keeping SMALL step over and over by #100DaysOfCode.
+- Next todo list.
+  - Fix lexical unit test fail :collision: wtf
+  - Add intergration test
+  - Add code to gen current result to x86-64 asm.
