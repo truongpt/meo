@@ -71,7 +71,7 @@
 - Fix :bug: "Segmentation fault (core dumped)"
 - Add and excute code gen function.
 - Improve test parse by adding gen code mock
-- Now, **meo** has full of pass 2 module: lexial analyzer + parser + gen code :laughing:
+- Now, **meo** has full of modules of pass-2 : lexial analyzer + parser + gen code :laughing:
 - Still ton of unknowledge & unclear about compiler :worried: -> just keeping SMALL step over and over by #100DaysOfCode.
 - Next todo list.
   - Fix lexical unit test fail :collision: wtf
