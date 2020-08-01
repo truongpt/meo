@@ -11,6 +11,7 @@ SRC := $(TOP_SRC)/meo.c
 SRC += $(TOP_SRC)/lex.c
 SRC += $(TOP_SRC)/parse.c
 SRC += $(TOP_SRC)/gen.c
+SRC += $(TOP_SRC)/x86_64_asm.c
 
 CFLAGS += $(INC)
 
