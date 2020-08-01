@@ -1,6 +1,6 @@
 TOPTARGETS := all clean
 
-SUBDIRS := lex parse
+SUBDIRS := lex parse gen
 
 $(TOPTARGETS): $(SUBDIRS)
 $(SUBDIRS):
@@ -12,4 +12,5 @@ $(SUBDIRS):
 run:
 	./lex/lex_test
 	./parse/parse_test
+	./gen/gen_test
 

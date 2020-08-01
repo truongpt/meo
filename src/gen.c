@@ -98,6 +98,12 @@ char* GenProc(int arg_num, ...)
         r = gen_prm->func.f_load(token.value, gen_prm->out_asm_file);
         break;
     }
+    case TokenEoi:
+    {
+        char* r = va_arg(ap, char*);
+        r = gen_prm->func.f_out(r, gen_prm->out_asm_file);
+        break;
+    }
     case TokenPlus:
     {
         char* r1 = va_arg(ap, char*);
@@ -127,7 +133,7 @@ char* GenProc(int arg_num, ...)
         break;
     }
     default:
-        printf("Unsupported now¥n");
+        printf("Unsupported now\n");
         break;
     }
 

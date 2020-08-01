@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include "lex.h"
+#include "gen.h"
 #include "parse.h"
 #include "error_code.h"
 
@@ -17,6 +18,7 @@
 using namespace std;
 int32_t MockLexCreate(vector<Token> tok_array);
 int32_t MockLexDestroy();
+int32_t MockGetLatest();
 
 TEST_CASE("parse test get single resource")
 {
@@ -27,14 +29,24 @@ TEST_CASE("parse test get single resource")
 
     void* lex_prm = NULL;
     REQUIRE(Success == LexCreate());
-    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/testp0"));
+    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/in0"));
+
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out0"));
 
     void* prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&prm, lex_prm));
+    REQUIRE(Success == ParseOpen(&prm, lex_prm, gen_prm));
 
     REQUIRE(Success == ParseClose(prm));
     REQUIRE(Success == ParseDestroy());
+
+    REQUIRE(Success == LexClose(lex_prm));
+    REQUIRE(Success == LexDestroy());
+
+    REQUIRE(Success == GenClose(gen_prm));
+    REQUIRE(Success == GenDestroy());
 }
 
 TEST_CASE("parse test get multi resource")
@@ -45,20 +57,24 @@ TEST_CASE("parse test get multi resource")
 
     void* lex_prm = NULL;
     REQUIRE(Success == LexCreate());
-    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/testp1"));
+    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/in1"));
+
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out1"));
 
     int max_rsc = 10;
     vector<void*> prm = vector<void*>(10,NULL);
     REQUIRE(Success == ParseCreate());
     for (auto& p : prm) {
-        REQUIRE(Success == ParseOpen(&p, lex_prm));
+        REQUIRE(Success == ParseOpen(&p, lex_prm, gen_prm));
         REQUIRE(NULL != p);
     }
 
-    REQUIRE(InParameterInvalid == ParseOpen(&prm[0], lex_prm));
+    REQUIRE(InParameterInvalid == ParseOpen(&prm[0], lex_prm, gen_prm));
 
     void* a_prm = NULL;
-    REQUIRE(ParseLimitResource == ParseOpen(&a_prm, lex_prm));
+    REQUIRE(ParseLimitResource == ParseOpen(&a_prm, lex_prm, gen_prm));
     REQUIRE(NULL == a_prm);
 
     for (auto& p : prm) {
@@ -66,7 +82,14 @@ TEST_CASE("parse test get multi resource")
     }
 
     REQUIRE(Success == ParseDestroy());
+
+    REQUIRE(Success == LexClose(lex_prm));
+    REQUIRE(Success == LexDestroy());
+
+    REQUIRE(Success == GenClose(gen_prm));
+    REQUIRE(Success == GenDestroy());
 }
+
 
 TEST_CASE("parse test plus token: (1+2);")
 {
@@ -83,12 +106,16 @@ TEST_CASE("parse test plus token: (1+2);")
             {TokenEoi,   -1}
         });
 
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out2"));
+
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm));
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
     
     REQUIRE(Success == ParseProc(parse_prm));
-    // consider method to confirm
+    REQUIRE(MockGetLatest() == (1+2));
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -111,12 +138,18 @@ TEST_CASE("parse test plus token: (2*3);")
             {TokenEoi,   -1}
         });
 
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out2"));
+
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm));
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
 
     REQUIRE(Success == ParseProc(parse_prm));
-    // consider method to confirm
+
+    REQUIRE(MockGetLatest() == (2*3));
+
     ParseClose(parse_prm);
     ParseDestroy();
 
@@ -142,12 +175,18 @@ TEST_CASE("parse test plus token: (1+2*3+4);")
             {TokenEoi,   -1}
         });
 
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out3"));
+
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm));
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
 
     REQUIRE(Success == ParseProc(parse_prm));
-    // consider method to confirm
+
+    REQUIRE(MockGetLatest() == (1+2*3+4));
+
     ParseClose(parse_prm);
     ParseDestroy();
 
@@ -175,14 +214,20 @@ TEST_CASE("parse test plus token: (1+2)*(3+4);")
             {TokenEoi,   -1}
         });
 
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out4"));
+
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm));
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
 
     REQUIRE(Success == ParseProc(parse_prm));
-    // consider method to confirm
+    REQUIRE(MockGetLatest() == ((1+2)*(3+4)));
+
     ParseClose(parse_prm);
     ParseDestroy();
 
     MockLexDestroy();
 }
+

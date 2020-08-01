@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "parse.h"
 #include "lex.h"
+#include "gen.h"
 #include "error_code.h"
 
 typedef struct ParseParameter{
@@ -20,28 +21,11 @@ typedef struct ParseParameter{
 
 ParseParameter g_parse_prm[MAX_PARSE_RSC];
 
-static int32_t factor(ParseParameter* parse_prm);
-static int32_t term(ParseParameter* parse_prm);
-static int32_t expression(ParseParameter* parse_prm);
+static char* factor(ParseParameter* parse_prm);
+static char* term(ParseParameter* parse_prm);
+static char* expression(ParseParameter* parse_prm);
 static void statements(ParseParameter* parse_prm);
 static bool match(ParseParameter* parse_prm, int32_t tok_type);
-
-int32_t register_r[5] = {0,0,0,0,0};
-int32_t idx = 0;
-
-int reg_alloc()
-{
-    if (idx >= sizeof(register_r)/sizeof(register_r[0])) {
-        printf("Error CMNR\n");
-        exit(1);
-    }
-
-    return idx++;
-}
-
-int reg_free(int i) {
-    register_r[--idx] = i;
-}
 
 int32_t ParseCreate(void)
 {
@@ -59,9 +43,11 @@ int32_t ParseDestroy(void)
     return Success;
 }
 
-int32_t ParseOpen(void** parse_prm, void* lex_prm)
+int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm)
 {
-    if (NULL != *parse_prm || NULL == lex_prm) {
+    if (NULL != *parse_prm ||
+        NULL == lex_prm ||
+        NULL == gen_prm) {
         return InParameterInvalid;
     }
     int i = 0;
@@ -76,7 +62,9 @@ int32_t ParseOpen(void** parse_prm, void* lex_prm)
     }
 
     g_parse_prm[i].lex_prm = lex_prm;
+    g_parse_prm[i].gen_prm = gen_prm;
     g_parse_prm[i].cur_token.tok = -1;
+
     *parse_prm = &g_parse_prm[i];
 
     return Success;
@@ -108,7 +96,7 @@ int32_t ParseProc(void* prm)
 void statements(ParseParameter* parse_prm)
 {
     /* statements -> expression SEMI 1 expression SEMI statements */
-    int reg;
+    char* reg;
     while ( !match(parse_prm, TokenEoi)) {
         reg = expression(parse_prm);
         if (match (parse_prm, TokenSemi)) {
@@ -117,53 +105,48 @@ void statements(ParseParameter* parse_prm)
             printf("Missing semicolon\n");
         }
 
-        printf("value = %d\n", register_r[reg]);
-        reg_free(reg);
+        // TODO: consider better meaning
+        GenProc(2, parse_prm->gen_prm, (Token){TokenEoi, -1}, reg);
     }
 }
 
-int32_t expression(ParseParameter* parse_prm)
+char* expression(ParseParameter* parse_prm)
 {
     /*
      * expression -> term expression'
      * expression' -> PLUS term expression'
      */
     //TODO: confirm start valid token?
-    int32_t reg = term(parse_prm);
+    char* reg = term(parse_prm);
     while (match(parse_prm, TokenPlus)) {
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
-        int32_t reg1 = term(parse_prm);
-        register_r[reg] += register_r[reg1];
-        printf("r%d += r%d\n",reg, reg1);
-        reg_free(reg1);
+        Token op_tok = parse_prm->cur_token;
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        char* reg1 = term(parse_prm);
+        reg = GenProc(4, parse_prm->gen_prm, op_tok, reg, reg1);
     }
     return reg;
 }
 
-int32_t term(ParseParameter* parse_prm)
+char* term(ParseParameter* parse_prm)
 {
     //TODO: confirm start valid token
-    int32_t reg, reg1;
+    char *reg, *reg1;
     reg = factor(parse_prm);
     while (match(parse_prm, TokenMul)) {
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
+        Token op_tok = parse_prm->cur_token;
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         reg1 = factor(parse_prm);
-        register_r[reg] *= register_r[reg1];
-        printf("r%d *= r%d\n",reg,reg1);
-        reg_free(reg1);
+        reg = GenProc(4, parse_prm->gen_prm, op_tok, reg, reg1);
     }
     return reg;
 }
 
-int32_t factor (ParseParameter* parse_prm)
+char* factor(ParseParameter* parse_prm)
 {
     //TODO: confirm start valid token
-    int32_t reg;
+    char* reg;
     if (match(parse_prm, TokenNumber)) { // TODO: or TokenId
-
-        reg = reg_alloc();
-        register_r[reg] = parse_prm->cur_token.value;
-        printf("r%d = %d\n", reg, parse_prm->cur_token.value);
+        reg = GenProc(2, parse_prm->gen_prm, parse_prm->cur_token);
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     } else if (match(parse_prm, TokenLP)) {
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -176,8 +159,8 @@ int32_t factor (ParseParameter* parse_prm)
     } else {
         fprintf(stderr, "Number or identifier expected\n");
     }
-    return reg;
 
+    return reg;
 }
 
 bool match(ParseParameter* parse_prm, int32_t tok_type)
