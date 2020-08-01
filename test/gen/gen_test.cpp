@@ -54,7 +54,7 @@ TEST_CASE("gen test basic parttern")
     void* prm = NULL;
     REQUIRE(Success == GenCreate());
     REQUIRE(Success == GenOpen(&prm, GenX86_64, (char*)"data/test3"));
-
+    REQUIRE(Success == GenProc(3, prm, 1, 7));
     REQUIRE(Success == GenClose(prm));
     REQUIRE(Success == GenDestroy());
 }
