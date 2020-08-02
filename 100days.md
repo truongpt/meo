@@ -77,3 +77,9 @@
   - Fix lexical unit test fail :collision: wtf
   - Add intergration test
   - Add code to gen current result to x86-64 asm.
+
+## Day 13
+- Fix lexical unit test fail.
+- Study X86-64 instruction
+  - https://www.systems.ethz.ch/sites/default/files/file/COURSES/2014%20FALL%20COURSES/2014_Fall_SPCA/lectures/x86_64_asm_cheat_sheet.pdf
+  - https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf
