@@ -81,7 +81,7 @@ TEST_CASE("lex test operator token")
         {TokenDiv   ,-1},
         {TokenLP    ,-1},
         {TokenRP    ,-1},
-        {TokenEof   ,-1}
+        {TokenEoi   ,-1}
     };
 
     void* prm = NULL;
@@ -94,7 +94,7 @@ TEST_CASE("lex test operator token")
         Token t = expect[i];
         REQUIRE(T.tok == t.tok);
         i++;
-        if (TokenEof == T.tok) {
+        if (TokenEoi == T.tok) {
             break;
         }
     }
@@ -114,7 +114,7 @@ TEST_CASE("lex test numeric token")
         {TokenNumber ,2},
         {TokenNumber ,3},
         {TokenNumber ,4},
-        {TokenEof   ,-1}
+        {TokenEoi   ,-1}
     };
 
     void* prm = NULL;
@@ -131,7 +131,7 @@ TEST_CASE("lex test numeric token")
         }
 
         i++;
-        if (TokenEof == T.tok) {
+        if (TokenEoi == T.tok) {
             break;
         }
     }
@@ -154,7 +154,7 @@ TEST_CASE("lex test arithmetic expression")
         {TokenNumber ,3},
         {TokenMul   ,-1},
         {TokenNumber ,4},
-        {TokenEof   ,-1}
+        {TokenEoi   ,-1}
     };
 
     void* prm = NULL;
@@ -170,7 +170,7 @@ TEST_CASE("lex test arithmetic expression")
             REQUIRE(T.value == t.value);
         }
         i++;
-        if (TokenEof == T.tok) {
+        if (TokenEoi == T.tok) {
             break;
         }
     }
@@ -203,7 +203,7 @@ TEST_CASE("lex test arithmetic expression with special character")
         {TokenNumber ,4},
         {TokenDiv   ,-1},
         {TokenNumber ,5},        
-        {TokenEof   ,-1}
+        {TokenEoi   ,-1}
     };
 
     void* prm = NULL;
@@ -219,7 +219,7 @@ TEST_CASE("lex test arithmetic expression with special character")
             REQUIRE(T.value == t.value);
         }
         i++;
-        if (TokenEof == T.tok) {
+        if (TokenEoi == T.tok) {
             break;
         }
     }
