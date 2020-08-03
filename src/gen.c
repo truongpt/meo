@@ -58,6 +58,10 @@ int32_t GenOpen(void** gen_prm, int32_t arch, char* out_file_name)
     }
     switch (arch) {
     case GenX86_64:
+        // todo: hardcode
+        fprintf(g_gen_prm[i].out_asm_file,"\t%s\t%s\n",".globl","main");
+        fprintf(g_gen_prm[i].out_asm_file,"\t%s\t%s\n",".type","main, @function");
+        fprintf(g_gen_prm[i].out_asm_file,"%s\n","main:");
         GenLoadX86_64(&(g_gen_prm[i].func));
         break;
     default:

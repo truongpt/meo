@@ -14,6 +14,9 @@ char* x86_64_sub(char* r1, char* r2, FILE* out_file);
 char* x86_64_mul(char* r1, char* r2, FILE* out_file);
 char* x86_64_div(char* r1, char* r2, FILE* out_file);
 
+static char* reg[] = {"%r8","%r9","%r10","%r11","%r12","%r13","%r14","%r15"};
+static int cur_reg = 0;
+
 int32_t GenLoadX86_64(GenFuncTable *func)
 {
     func->f_load = &x86_64_load;
@@ -22,36 +25,68 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_sub  = &x86_64_sub;
     func->f_mul  = &x86_64_mul;
     func->f_div  = &x86_64_div;
+    cur_reg = 0;
     return Success;
+}
+
+char* reg_alloc()
+{
+    if (cur_reg >= sizeof(reg)/sizeof(*reg)) {
+        printf("Not available register\n");
+        return NULL;
+    }
+    return reg[cur_reg++];
+}
+
+void reg_free(char* r)
+{
+    if (0 == cur_reg) {
+        printf("Free register invalid\n");
+        exit(1);
+    }
+    reg[--cur_reg] = r;
 }
 
 char* x86_64_load(int32_t value, FILE* out_file)
 {
-    //todo:
-    return "x";
+    char* r = reg_alloc();
+    fprintf(out_file,"\tmovq $%d, %s\n",value,r);
+    return r;
 }
-char* x86_64_out(char* value, FILE* out_file)
+
+char* x86_64_out(char* r, FILE* out_file)
 {
-    //todo:
-    return "x";
+    fprintf(out_file,"\tmovq %s, %s\n",r,"%rax");
+    fprintf(out_file,"\tret\n");
+    return r;
 }
+
 char* x86_64_add(char* r1, char* r2, FILE* out_file)
 {
-    //todo:
-    return "x";
+    fprintf(out_file,"\taddq %s, %s\n",r1,r2);
+    reg_free(r1);
+    return r2;
 }
+
 char* x86_64_sub(char* r1, char* r2, FILE* out_file)
 {
-    //todo:
-    return "x";
+    fprintf(out_file,"\tsubq %s, %s\n",r1,r2);
+    reg_free(r1);
+    return r2;
 }
+
 char* x86_64_mul(char* r1, char* r2, FILE* out_file)
 {
-    //todo:
-    return "x";
+    fprintf(out_file,"\timulq %s, %s\n",r1,r2);
+    reg_free(r1);
+    return r2;
 }
+
 char* x86_64_div(char* r1, char* r2, FILE* out_file)
 {
-    //todo:
-    return "x";
+    fprintf(out_file,"\tmovq %s, %s\n",r1,"%rax");
+    fprintf(out_file,"\tidivq %s\n",r2);
+    fprintf(out_file,"\tmovq %s, %s\n","%rax",r2);
+    reg_free(r1);
+    return r2;
 }

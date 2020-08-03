@@ -22,7 +22,7 @@ int main(int argc, char*argv[])
         return -1;
     }
 
-    char* out_file = (argc == 2) ? argv[3] : "out.s";
+    char* out_file = "out.s";
     MeoHandle meo_handle = {NULL, NULL};
 
     LexCreate();
@@ -43,6 +43,9 @@ int main(int argc, char*argv[])
     LexDestroy();
     GenDestroy();
     ParseDestroy();
+
+    // using backend of gcc
+    system("cc -o a.out out.s");
 
     return 0;
 }
