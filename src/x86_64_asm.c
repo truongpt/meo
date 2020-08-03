@@ -70,9 +70,9 @@ char* x86_64_add(char* r1, char* r2, FILE* out_file)
 
 char* x86_64_sub(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file,"\tsubq %s, %s\n",r1,r2);
-    reg_free(r1);
-    return r2;
+    fprintf(out_file,"\tsubq %s, %s\n",r2,r1);
+    reg_free(r2);
+    return r1;
 }
 
 char* x86_64_mul(char* r1, char* r2, FILE* out_file)
@@ -85,6 +85,7 @@ char* x86_64_mul(char* r1, char* r2, FILE* out_file)
 char* x86_64_div(char* r1, char* r2, FILE* out_file)
 {
     fprintf(out_file,"\tmovq %s, %s\n",r1,"%rax");
+    fprintf(out_file, "\tcqo\n");
     fprintf(out_file,"\tidivq %s\n",r2);
     fprintf(out_file,"\tmovq %s, %s\n","%rax",r2);
     reg_free(r1);

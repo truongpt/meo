@@ -118,7 +118,7 @@ char* expression(ParseParameter* parse_prm)
      */
     //TODO: confirm start valid token?
     char* reg = term(parse_prm);
-    while (match(parse_prm, TokenPlus)) {
+    while (match(parse_prm, TokenPlus) || match(parse_prm, TokenMinus)) {
         Token op_tok = parse_prm->cur_token;
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         char* reg1 = term(parse_prm);
@@ -132,7 +132,7 @@ char* term(ParseParameter* parse_prm)
     //TODO: confirm start valid token
     char *reg, *reg1;
     reg = factor(parse_prm);
-    while (match(parse_prm, TokenMul)) {
+    while (match(parse_prm, TokenMul) || match(parse_prm, TokenDiv)) {
         Token op_tok = parse_prm->cur_token;
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         reg1 = factor(parse_prm);
