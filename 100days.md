@@ -83,3 +83,25 @@
 - Study X86-64 instruction
   - https://www.systems.ethz.ch/sites/default/files/file/COURSES/2014%20FALL%20COURSES/2014_Fall_SPCA/lectures/x86_64_asm_cheat_sheet.pdf
   - https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf
+
+## Day 14
+- Support subtract, div operator.
+- Add gen asm on x86-64 of current result.
+- Using backend of gcc to generate asm to machine instruction.
+- Achieve the first milestone :satisfied:
+```
+    $ cat sample/s4.c
+    (2+3)/2*(7-5)+9/3;
+    $ ./meo sample/s4.c
+    $ ./a.out
+    $ echo $?
+    7
+
+    $
+    $ cat sample/s5.c
+    (2+1)/2-(7-5)+9/3;
+    $ ./meo sample/s5.c
+    $ ./a.out
+    $ echo $?
+    2
+```
