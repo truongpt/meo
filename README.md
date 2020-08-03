@@ -7,7 +7,7 @@
 - I start by following to [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf) and refer [A Compiler Writing Journey](https://github.com/DoctorWkt/acwj)
 
 ## Milestone
-- [ ] Run basic math operator +,-,*,/ on X86_64 GNU/Linux
+- [x] Run basic math operator +,-,*,/ on X86_64 GNU/Linux -> [v0.1](https://github.com/truongpt/meo/releases/tag/v0.1)
 - [ ] Support variable
 - [ ] Support IF condition
 - [ ] Support WHILE condition
