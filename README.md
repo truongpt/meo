@@ -8,7 +8,7 @@
 
 ## Milestone
 - [x] Run basic math operator +,-,*,/ on X86_64 GNU/Linux -> [v0.1](https://github.com/truongpt/meo/releases/tag/v0.1)
-- [ ] Support variable
+- [ ] Compile [s.c](sample/s.c)
 - [ ] Support IF condition
 - [ ] Support WHILE condition
 - [ ] Support FOR condition
