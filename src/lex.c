@@ -109,6 +109,12 @@ int32_t LexProc(void* prm, Token *t)
     case ')':
         t->tok = TokenRP;
         break;
+    case '{':
+        t->tok = TokenLBracket;
+        break;
+    case '}':
+        t->tok = TokenRBracket;
+        break;
     case ';':
         t->tok = TokenSemi;
         break;
@@ -143,7 +149,8 @@ int32_t LexGetLine(void* prm)
     if (NULL == prm) {
         return -1;
     }
-    return 0;
+    LexParameter* lex_prm = (LexParameter*)prm;
+    return lex_prm->line;
 }
 
 static char get_char(LexParameter *prm)

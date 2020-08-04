@@ -105,3 +105,8 @@
     $ echo $?
     2
 ```
+
+## Day 15
+- Consider next step, it can be compile sample [s.c](sample/s.c)
+- Continue study chapper 2 "Input and Lexical Analysis" of "Compiler design in C" book.
+- Add new test case for lexical analyzer

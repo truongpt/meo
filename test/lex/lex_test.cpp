@@ -229,3 +229,41 @@ TEST_CASE("lex test arithmetic expression with special character")
     REQUIRE(Success == LexDestroy());
 }
 
+
+TEST_CASE("lex test token: int type, L&R bracket, return")
+{
+    std::ofstream outfile ("data/test6");
+    outfile << "int" << std::endl;
+    outfile << "void" << std::endl;
+    outfile << "{}" << std::endl;
+    outfile << "return" << std::endl;
+    outfile.close();
+    vector<Token> expect = vector<Token>{
+        {TokenIntType  ,-1},
+        {TokenVoidType ,-1},
+        {TokenLBracket ,-1},
+        {TokenRBracket ,-1},
+        {TokenReturn   ,-1},
+        {TokenEoi      ,-1}
+    };
+
+    void* prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&prm, (char*)"data/test6"));
+
+    Token T;
+    int i = 0;
+    while(Success == LexProc(prm, &T)) {
+        Token t = expect[i];
+        REQUIRE(T.tok == t.tok);
+        i++;
+        if (TokenEoi == T.tok) {
+            break;
+        }
+    }
+
+    REQUIRE(i == expect.size());
+    REQUIRE(Success == LexClose(prm));
+    REQUIRE(Success == LexDestroy());
+}
+

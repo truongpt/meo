@@ -22,10 +22,18 @@ enum TokenType{
     TokenMinus,
     TokenMul,
     TokenDiv,
+    // data type
+    TokenIntType,
+    TokenVoidType,
+    TokenLongType,
 
     TokenNumber,
     TokenLP,
     TokenRP,
+    TokenLBracket,
+    TokenRBracket,
+
+    TokenReturn,
     TokenEoi,
     TokenSemi,
 
