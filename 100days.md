@@ -112,7 +112,7 @@
 - Add new test case for lexical analyzer
 
 ## Day 16
-- Refine and add parser some identifier at lexical analyzer but ...
+- Refine and add parser some identifier at lexical analyzer but ... -> :sleeping:
 ```
 -------------------------------------------------------------------------------
 lex test token: int type, L&R bracket, return
