@@ -110,3 +110,22 @@
 - Consider next step, it can be compile sample [s.c](sample/s.c)
 - Continue study chapper 2 "Input and Lexical Analysis" of "Compiler design in C" book.
 - Add new test case for lexical analyzer
+
+## Day 16
+- Refine and add parser some identifier at lexical analyzer but ...
+```
+-------------------------------------------------------------------------------
+lex test token: int type, L&R bracket, return
+-------------------------------------------------------------------------------
+lex_test.cpp:233
+...............................................................................
+
+lex_test.cpp:258: FAILED:
+  REQUIRE( T.tok == t.tok )
+with expansion:
+  33759920 (0x20322b0) == 5
+
+===============================================================================
+test cases:   7 |   6 passed | 1 failed
+assertions: 107 | 106 passed | 1 failed
+```
