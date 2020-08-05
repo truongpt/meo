@@ -23,6 +23,8 @@ typedef struct LexParameter{
 LexParameter g_lex_prm[MAX_LEX_RSC];
 
 static char get_char(LexParameter *prm);
+static void read_number(LexParameter* lex_prm, char c, Token* t);
+static void read_identifier(LexParameter* lex_prm, char c, Token* t);
 
 int32_t LexCreate(void)
 {
@@ -118,27 +120,13 @@ int32_t LexProc(void* prm, Token *t)
     case ';':
         t->tok = TokenSemi;
         break;
+    case '0' ... '9':
+        read_number(lex_prm, c, t);
+        break;
+    case 'a' ... 'z': //tentative
+        read_identifier(lex_prm, c, t);
+        break;
     default:
-        // confirm it is numeric
-        if ('0' <= c && c <= '9') {
-            t->value = c - '0';
-            t->tok = TokenNumber;
-
-            // TODO: ugly code -> need refine
-            c = fgetc(lex_prm->in_file);
-            while ('0' <= c && c <= '9') {
-                c = fgetc(lex_prm->in_file);
-                t->value = t->value*10 + c-'0';
-            }
-
-            if (c != ' '  &&
-                c != '\t' &&
-                c != '\n' &&
-                c != '\v') {
-                lex_prm->push_back = c;
-            }
-            break;
-        }
         return SyntaxError;
     }
     return Success;
@@ -151,6 +139,57 @@ int32_t LexGetLine(void* prm)
     }
     LexParameter* lex_prm = (LexParameter*)prm;
     return lex_prm->line;
+}
+
+static void read_identifier(LexParameter* lex_prm, char c, Token* t)
+{
+    //todo: refine stupid code
+    char id[100] = "";
+    int i = 0;
+    id[i++] = c;
+
+    c = fgetc(lex_prm->in_file);
+    while ('a' <= c && c <= 'z') {
+        id[i++] = c;
+        c = fgetc(lex_prm->in_file);
+    }
+
+    if (!strncmp(id, "int", sizeof("int"))) {
+        t->tok = TokenIntType;
+    } else if (!strncmp(id, "void", sizeof("void"))) {
+        t->tok = TokenVoidType;
+    } else if (!strncmp(id, "return", sizeof("return"))) {
+        t->tok = TokenReturn;
+    }
+
+    if (c != ' '  &&
+        c != '\t' &&
+        c != '\n' &&
+        c != '\v') {
+        lex_prm->push_back = c;
+    }
+    
+}
+void read_number(LexParameter* lex_prm, char c, Token* t)
+{
+    //todo: refine stupid code
+    if ('0' <= c && c <= '9') {
+        t->value = c - '0';
+        t->tok = TokenNumber;
+
+        c = fgetc(lex_prm->in_file);
+        while ('0' <= c && c <= '9') {
+            c = fgetc(lex_prm->in_file);
+            t->value = t->value*10 + c-'0';
+        }
+
+        if (c != ' '  &&
+            c != '\t' &&
+            c != '\n' &&
+            c != '\v') {
+            lex_prm->push_back = c;
+        }
+    }
 }
 
 static char get_char(LexParameter *prm)
