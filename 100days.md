@@ -129,3 +129,7 @@ with expansion:
 test cases:   7 |   6 passed | 1 failed
 assertions: 107 | 106 passed | 1 failed
 ```
+
+## Day 17
+- Fix error of lexical analyzer to support more token to cover next step.
+- Study symbol table, parser ... more compicated
