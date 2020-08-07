@@ -133,3 +133,10 @@ assertions: 107 | 106 passed | 1 failed
 ## Day 17
 - Fix error of lexical analyzer to support more token to cover next step.
 - Study symbol table, parser ... It become more complicated.
+
+## Day 18
+- Reading about parser.
+  - Compiler design in C
+  - Compilers: Principles, Techniques, and Tools. [a.k.a Dragon book]
+- Consider design Astract Syntax Tree
+  - https://medium.com/basecs/leveling-up-ones-parsing-game-with-asts-d7a6fc2400ff
