@@ -140,3 +140,7 @@ assertions: 107 | 106 passed | 1 failed
   - Compilers: Principles, Techniques, and Tools. [a.k.a Dragon book]
 - Consider design Astract Syntax Tree
   - https://medium.com/basecs/leveling-up-ones-parsing-game-with-asts-d7a6fc2400ff
+
+## Day 19
+- Reset from zero, refine knowlege.
+  -  Reading chapter 2 of Dragon book.
