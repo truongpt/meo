@@ -144,3 +144,8 @@ assertions: 107 | 106 passed | 1 failed
 ## Day 19
 - Reset from zero, refine knowlege.
   -  Reading chapter 2 of Dragon book.
+
+## Day 20
+- Reading "2.3. Syntax-Directed Translation" of Dragon book.
+- Consider design AST, add template code.
+
