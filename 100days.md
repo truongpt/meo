@@ -149,3 +149,5 @@ assertions: 107 | 106 passed | 1 failed
 - Reading "2.3. Syntax-Directed Translation" of Dragon book.
 - Consider design AST, add template code.
 
+## Day 21
+- Implement AST bit by bit.
