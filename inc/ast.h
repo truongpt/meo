@@ -28,8 +28,10 @@ enum AstType {
     AstNumber
 };
 
-AstNode* ast_create_node(int32_t tok_type, int32_t value, AstNode* left, AstNode* right);
-AstNode* ast_create_leaf(int32_t tok_type, int32_t value);
+AstNode* ast_create_node(Token token, AstNode* left, AstNode* right);
+AstNode* ast_create_leaf(Token token);
+AstNode* ast_create_unary(Token token, AstNode* left);
+int32_t ast_interpreter(AstNode* node);
 
 #ifdef __cplusplus
 }
