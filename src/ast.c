@@ -59,9 +59,9 @@ AstNode* ast_create_unary(Token token, AstNode* left)
     return ast_create_node(token, left, NULL);
 }
 
+// for interpreter
 int32_t ast_interpreter(AstNode* node)
 {
-    // todo:
     int32_t left = -1, right = -1;
     if (NULL != node->left) {
         left = ast_interpreter(node->left);
@@ -78,8 +78,19 @@ int32_t ast_interpreter(AstNode* node)
         return (left+right);
     case AstMinus:
         return (left-right);
+    case AstMul:
+        return (left*right);
+    case AstDiv:
+        return (left/right);
     default:
         printf("Not yet to support ast type %d\n",node->type);
     }
     return -1;
+}
+
+// for compiler
+char* ast_gen(void* gen_prm, AstNode* node)
+{
+    // todo: implement later
+    return 0;
 }

@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "parse.h"
 #include "lex.h"
+#include "ast.h"
 #include "gen.h"
 #include "error_code.h"
 
@@ -21,9 +22,9 @@ typedef struct ParseParameter{
 
 ParseParameter g_parse_prm[MAX_PARSE_RSC];
 
-static char* factor(ParseParameter* parse_prm);
-static char* term(ParseParameter* parse_prm);
-static char* expression(ParseParameter* parse_prm);
+static AstNode* factor(ParseParameter* parse_prm);
+static AstNode* term(ParseParameter* parse_prm);
+static AstNode* expression(ParseParameter* parse_prm);
 static void statements(ParseParameter* parse_prm);
 static bool match(ParseParameter* parse_prm, int32_t tok_type);
 
@@ -96,9 +97,9 @@ int32_t ParseProc(void* prm)
 void statements(ParseParameter* parse_prm)
 {
     /* statements -> expression SEMI 1 expression SEMI statements */
-    char* reg;
+    AstNode* node;
     while ( !match(parse_prm, TokenEoi)) {
-        reg = expression(parse_prm);
+        node = expression(parse_prm);
         if (match (parse_prm, TokenSemi)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
         } else {
@@ -106,51 +107,52 @@ void statements(ParseParameter* parse_prm)
         }
 
         // TODO: consider better meaning
-        GenProc(2, parse_prm->gen_prm, (Token){TokenEoi, -1}, reg);
+        int32_t res = ast_interpreter(node);
+        printf("%d\n",res);
     }
 }
 
-char* expression(ParseParameter* parse_prm)
+AstNode* expression(ParseParameter* parse_prm)
 {
     /*
      * expression -> term expression'
      * expression' -> PLUS term expression'
      */
     //TODO: confirm start valid token?
-    char* reg = term(parse_prm);
+    AstNode* node = term(parse_prm);
     while (match(parse_prm, TokenPlus) || match(parse_prm, TokenMinus)) {
         Token op_tok = parse_prm->cur_token;
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        char* reg1 = term(parse_prm);
-        reg = GenProc(4, parse_prm->gen_prm, op_tok, reg, reg1);
+        AstNode* node1 = term(parse_prm);
+        node = ast_create_node(op_tok, node, node1);
     }
-    return reg;
+    return node;
 }
 
-char* term(ParseParameter* parse_prm)
+AstNode* term(ParseParameter* parse_prm)
 {
     //TODO: confirm start valid token
-    char *reg, *reg1;
-    reg = factor(parse_prm);
+    AstNode *node, *node1;
+    node = factor(parse_prm);
     while (match(parse_prm, TokenMul) || match(parse_prm, TokenDiv)) {
         Token op_tok = parse_prm->cur_token;
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        reg1 = factor(parse_prm);
-        reg = GenProc(4, parse_prm->gen_prm, op_tok, reg, reg1);
+        node1 = factor(parse_prm);
+        node = ast_create_node(op_tok, node, node1);
     }
-    return reg;
+    return node;
 }
 
-char* factor(ParseParameter* parse_prm)
+AstNode* factor(ParseParameter* parse_prm)
 {
     //TODO: confirm start valid token
-    char* reg;
+    AstNode* node;
     if (match(parse_prm, TokenNumber)) { // TODO: or TokenId
-        reg = GenProc(2, parse_prm->gen_prm, parse_prm->cur_token);
+        node = ast_create_leaf(parse_prm->cur_token);
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     } else if (match(parse_prm, TokenLP)) {
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        reg = expression(parse_prm);
+        node = expression(parse_prm);
         if (match(parse_prm, TokenRP)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else {
@@ -160,7 +162,7 @@ char* factor(ParseParameter* parse_prm)
         fprintf(stderr, "Number or identifier expected\n");
     }
 
-    return reg;
+    return node;
 }
 
 bool match(ParseParameter* parse_prm, int32_t tok_type)
