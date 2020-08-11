@@ -151,3 +151,9 @@ assertions: 107 | 106 passed | 1 failed
 
 ## Day 21
 - Implement AST bit by bit.
+
+## Day 22
+- Continue study theory about parse.
+- Refactoring to integrate AST -> code gen.
+- Refactoring test to maping with new API of code gen.
+- Consider how to support variable
