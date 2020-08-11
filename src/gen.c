@@ -83,64 +83,38 @@ int32_t GenClose(void* gen_prm)
     return Success;
 }
 
-char* GenProc(int arg_num, ...)
+char* GenLoad(void* gen_prm, int32_t value)
 {
-    va_list ap;
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_load(value, prm->out_asm_file);
+}
 
-    va_start(ap, arg_num);
+char* GenPlus(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_add(r1, r2, prm->out_asm_file);
+}
 
-    GenParameter *gen_prm =  va_arg(ap, GenParameter*);
-    if (NULL == gen_prm) {
-        return NULL;
-    }
+char* GenMinus(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_sub(r1, r2, prm->out_asm_file);
+}
 
-    Token token = va_arg(ap, Token);
-    char* r = NULL;
-    switch(token.tok) {
-    case TokenNumber:
-    {
-        r = gen_prm->func.f_load(token.value, gen_prm->out_asm_file);
-        break;
-    }
-    case TokenEoi:
-    {
-        char* r = va_arg(ap, char*);
-        r = gen_prm->func.f_out(r, gen_prm->out_asm_file);
-        break;
-    }
-    case TokenPlus:
-    {
-        char* r1 = va_arg(ap, char*);
-        char* r2 = va_arg(ap, char*);
-        r = gen_prm->func.f_add(r1, r2, gen_prm->out_asm_file);
-        break;
-    }
-    case TokenMinus:
-    {
-        char* r1 = va_arg(ap, char*);
-        char* r2 = va_arg(ap, char*);
-        r = gen_prm->func.f_sub(r1, r2, gen_prm->out_asm_file);
-        break;
-    }
-    case TokenMul:
-    {
-        char* r1 = va_arg(ap, char*);
-        char* r2 = va_arg(ap, char*);
-        r = gen_prm->func.f_mul(r1, r2, gen_prm->out_asm_file);
-        break;
-    }
-    case TokenDiv:
-    {
-        char* r1 = va_arg(ap, char*);
-        char* r2 = va_arg(ap, char*);
-        r = gen_prm->func.f_div(r1, r2, gen_prm->out_asm_file);
-        break;
-    }
-    default:
-        printf("Unsupported now\n");
-        break;
-    }
+char* GenMul(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_mul(r1, r2, prm->out_asm_file);
+}
 
-    va_end(ap);
-    return r;
+char* GenDiv(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_div(r1, r2, prm->out_asm_file);
+}
+
+void GenOut(void* gen_prm, char* r)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    prm->func.f_out(r, prm->out_asm_file);
 }

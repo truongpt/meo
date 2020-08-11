@@ -5,6 +5,7 @@
 
 #include "ast.h"
 #include "lex.h"
+#include "gen.h"
 
 static int32_t tok_2_ast (int32_t tok_type);
 
@@ -88,9 +89,29 @@ int32_t ast_interpreter(AstNode* node)
     return -1;
 }
 
-// for compiler
 char* ast_gen(void* gen_prm, AstNode* node)
 {
-    // todo: implement later
-    return 0;
+    char *left = NULL, *right = NULL;
+    if (NULL != node->left) {
+        left = ast_gen(gen_prm, node->left);
+    }
+    if (NULL != node->right) {
+        right = ast_gen(gen_prm, node->right);
+    }
+
+    switch (node->type) {
+    case AstNumber:
+        return GenLoad(gen_prm,node->value);
+    case AstPlus:
+        return GenPlus(gen_prm, left, right);
+    case AstMinus:
+        return GenMinus(gen_prm, left, right);
+    case AstMul:
+        return GenMul(gen_prm, left, right);
+    case AstDiv:
+        return GenDiv(gen_prm, left, right);
+    default:
+        printf("Not yet to support ast type %d\n",node->type);
+    }
+    return NULL;
 }

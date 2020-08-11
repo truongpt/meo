@@ -56,21 +56,19 @@ TEST_CASE("gen test basic parttern + ")
     REQUIRE(Success == GenCreate());
     REQUIRE(Success == GenOpen(&prm, GenX86_64, (char*)"data/test3"));
 
-    Token t1 = {TokenNumber, 1};
-    Token t2 = {TokenNumber, 2};
-    char* r1 = GenProc(2, prm, t1) ;
+    char* r1 = GenLoad(prm, 1);
     REQUIRE(NULL != r1);
 
-    char* r2 = GenProc(2, prm, t2) ;
+    char* r2 = GenLoad(prm, 2);
     REQUIRE(NULL != r2);
 
-    char* r3 = GenProc(4, prm, (Token){TokenPlus,-1}, r1, r2);
-
+    char* r3 = GenPlus(prm, r1,r2);
     int32_t total = MockGetValue(r3);
     REQUIRE(total == (1+2));
     REQUIRE(Success == GenClose(prm));
     REQUIRE(Success == GenDestroy());
 }
+
 
 TEST_CASE("gen test basic parttern -")
 {
@@ -78,15 +76,13 @@ TEST_CASE("gen test basic parttern -")
     REQUIRE(Success == GenCreate());
     REQUIRE(Success == GenOpen(&prm, GenX86_64, (char*)"data/test3"));
 
-    Token t1 = {TokenNumber, 1};
-    Token t2 = {TokenNumber, 2};
-    char* r1 = GenProc(2, prm, t1) ;
+    char* r1 = GenLoad(prm, 1);
     REQUIRE(NULL != r1);
 
-    char* r2 = GenProc(2, prm, t2) ;
+    char* r2 = GenLoad(prm, 2);
     REQUIRE(NULL != r2);
 
-    char* r3 = GenProc(4, prm, (Token){TokenMinus,-1}, r1, r2);
+    char* r3 = GenMinus(prm, r1,r2);
 
     int32_t total = MockGetValue(r3);
     REQUIRE(total == (1-2));
@@ -94,21 +90,20 @@ TEST_CASE("gen test basic parttern -")
     REQUIRE(Success == GenDestroy());
 }
 
+
 TEST_CASE("gen test basic parttern * ")
 {
     void* prm = NULL;
     REQUIRE(Success == GenCreate());
     REQUIRE(Success == GenOpen(&prm, GenX86_64, (char*)"data/test3"));
 
-    Token t1 = {TokenNumber, 3};
-    Token t2 = {TokenNumber, 2};
-    char* r1 = GenProc(2, prm, t1) ;
+    char* r1 = GenLoad(prm, 3);
     REQUIRE(NULL != r1);
 
-    char* r2 = GenProc(2, prm, t2) ;
+    char* r2 = GenLoad(prm, 2);
     REQUIRE(NULL != r2);
 
-    char* r3 = GenProc(4, prm, (Token){TokenMul,-1}, r1, r2);
+    char* r3 = GenMul(prm, r1,r2);
 
     int32_t total = MockGetValue(r3);
     REQUIRE(total == (3*2));
@@ -116,21 +111,20 @@ TEST_CASE("gen test basic parttern * ")
     REQUIRE(Success == GenDestroy());
 }
 
+
 TEST_CASE("gen test basic parttern / ")
 {
     void* prm = NULL;
     REQUIRE(Success == GenCreate());
     REQUIRE(Success == GenOpen(&prm, GenX86_64, (char*)"data/test3"));
 
-    Token t1 = {TokenNumber, 10};
-    Token t2 = {TokenNumber, 2};
-    char* r1 = GenProc(2, prm, t1) ;
+    char* r1 = GenLoad(prm, 10);
     REQUIRE(NULL != r1);
 
-    char* r2 = GenProc(2, prm, t2) ;
+    char* r2 = GenLoad(prm, 2);
     REQUIRE(NULL != r2);
 
-    char* r3 = GenProc(4, prm, (Token){TokenDiv,-1}, r1, r2);
+    char* r3 = GenDiv(prm, r1,r2);
 
     int32_t total = MockGetValue(r3);
     REQUIRE(total == (10/2));
@@ -144,35 +138,35 @@ TEST_CASE("gen test basic parttern combine arithmetic 10*2+4/2-5")
     REQUIRE(Success == GenCreate());
     REQUIRE(Success == GenOpen(&prm, GenX86_64, (char*)"data/test3"));
 
+
     Token t1 = {TokenNumber, 10};
     Token t2 = {TokenNumber, 2};
     Token t3 = {TokenNumber, 4};
     Token t4 = {TokenNumber, 2};
     Token t5 = {TokenNumber, 5};
 
-    char* r1 = GenProc(2, prm, t1) ;
+    char* r1 = GenLoad(prm, 10);
     REQUIRE(NULL != r1);
-
-    char* r2 = GenProc(2, prm, t2) ;
+    char* r2 = GenLoad(prm, 2);
     REQUIRE(NULL != r2);
 
-    char* r3 = GenProc(4, prm, (Token){TokenMul,-1}, r1, r2); // 10*2
+    char* r3 = GenMul(prm, r1,r2);
     REQUIRE(NULL != r3);
 
-    char* r4 = GenProc(2, prm, t3) ;
+    char* r4 = GenLoad(prm, 4);
     REQUIRE(NULL != r4);
 
-    char* r5 = GenProc(2, prm, t4) ;
-    REQUIRE(NULL != r4);
+    char* r5 = GenLoad(prm, 2);
+    REQUIRE(NULL != r5);
 
-    char* r6 = GenProc(4, prm, (Token){TokenDiv,-1}, r4, r5); // 4/2
+    char* r6 = GenDiv(prm, r4, r5);
 
-    char* r7 = GenProc(4, prm, (Token){TokenPlus,-1}, r3, r6); // 10*2+4/2
+    char* r7 = GenPlus(prm, r3, r6); // 10*2+4/2
 
-    char* r8 = GenProc(2, prm, t5) ;
+    char* r8 = GenLoad(prm, 5);
     REQUIRE(NULL != r8);
 
-    char* r9 = GenProc(4, prm, (Token){TokenMinus,-1}, r7, r8); // 10*2+4/2-5
+    char* r9 = GenMinus(prm, r7, r8); // 10*2+4/2-5
 
     int32_t total = MockGetValue(r9);
     REQUIRE(total == (10*2+4/2-5));

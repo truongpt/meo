@@ -108,7 +108,9 @@ void statements(ParseParameter* parse_prm)
 
         // TODO: consider better meaning
         int32_t res = ast_interpreter(node);
-        printf("%d\n",res);
+        printf("interpreter: %d\n",res);
+        char* r = ast_gen(parse_prm->gen_prm, node);
+        GenOut(parse_prm->gen_prm, r);
     }
 }
 
