@@ -33,6 +33,7 @@ enum TokenType{
     TokenLBracket,
     TokenRBracket,
 
+    TokenPrint,
     TokenReturn,
     TokenEoi,
     TokenSemi,

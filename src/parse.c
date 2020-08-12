@@ -96,10 +96,22 @@ int32_t ParseProc(void* prm)
 
 void statements(ParseParameter* parse_prm)
 {
-    /* statements -> expression SEMI 1 expression SEMI statements */
+    /* statements -> expression SEMI 1
+     *            -> expression SEMI statements
+     *            -> print expression SEMI statements
+     */
+
     AstNode* node;
     while ( !match(parse_prm, TokenEoi)) {
-        node = expression(parse_prm);
+        if (match (parse_prm, TokenPrint)) {
+            Token op_tok = parse_prm->cur_token;
+            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+            AstNode* node1 = expression(parse_prm);
+            node = ast_create_unary(op_tok, node1);
+        } else {
+            node = expression(parse_prm);
+        }
+
         if (match (parse_prm, TokenSemi)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
         } else {
@@ -108,7 +120,6 @@ void statements(ParseParameter* parse_prm)
 
         // TODO: consider better meaning
         int32_t res = ast_interpreter(node);
-        printf("interpreter: %d\n",res);
         char* r = ast_gen(parse_prm->gen_prm, node);
         GenOut(parse_prm->gen_prm, r);
     }

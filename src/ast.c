@@ -28,6 +28,9 @@ int32_t tok_2_ast (int32_t tok_type)
     case TokenNumber:
         ast = AstNumber;
         break;
+    case TokenPrint:
+        ast = AstPrint;
+        break;
     default:
         printf("Can not create AstNode with tok %d\n", tok_type);
     }
@@ -72,10 +75,12 @@ int32_t ast_interpreter(AstNode* node)
     }
 
     switch (node->type) {
+    case AstPrint:
+        printf("%d\n",left);
+        return 0;
     case AstNumber:
         return node->value;
-        break;
-    case AstPlus:
+     case AstPlus:
         return (left+right);
     case AstMinus:
         return (left-right);
@@ -102,6 +107,9 @@ char* ast_gen(void* gen_prm, AstNode* node)
     switch (node->type) {
     case AstNumber:
         return GenLoad(gen_prm,node->value);
+    case AstPrint:
+        //todo
+        return 0;
     case AstPlus:
         return GenPlus(gen_prm, left, right);
     case AstMinus:

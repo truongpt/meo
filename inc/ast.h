@@ -25,7 +25,8 @@ enum AstType {
     AstMinus,
     AstMul,
     AstDiv,
-    AstNumber
+    AstNumber,
+    AstPrint
 };
 
 AstNode* ast_create_node(Token token, AstNode* left, AstNode* right);
