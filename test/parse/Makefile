@@ -7,7 +7,7 @@ CPPFLAGS := -g -O0 -fpermissive -Wnarrowing -Wno-write-strings
 #-fpermissive -Wnarrowing
 
 TARGET = parse_test
-TOP_SRC = ../../
+TOP_SRC = ../..
 TOP_TEST = ../../test
 
 
@@ -16,12 +16,14 @@ INC += -I$(TOP_SRC)/src
 INC += -I$(TOP_TEST)/inc
 
 SRC_CPP := parse_test.cpp
+SRC_CPP += symtable_test.cpp
 SRC_CPP += mock_lex.cpp
 SRC_CPP += mock_arch.cpp
 SRC_CPP += main.cpp
 SRC := $(TOP_SRC)/src/parse.c
 SRC += $(TOP_SRC)/src/gen.c
 SRC += $(TOP_SRC)/src/ast.c
+SRC += $(TOP_SRC)/src/symtable.c
 
 CFLAGS += $(INC)
 

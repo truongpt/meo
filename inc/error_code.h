@@ -12,6 +12,8 @@ enum ErrorCode {
     OpenFileError,
     SyntaxError,
     TokenError,
+    SymbolNotFound,
+    SymbolTableOver,
     LexLimitResource,
     ParseLimitResource,
     GenLimitResource

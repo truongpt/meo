@@ -9,12 +9,14 @@
 #include "lex.h"
 #include "ast.h"
 #include "gen.h"
+#include "symtable.h"
 #include "error_code.h"
 
 typedef struct ParseParameter{
     bool avail;
     void *lex_prm;
     void *gen_prm;
+    SymbolTable symbol_table;
     Token cur_token;
 } ParseParameter;
 
