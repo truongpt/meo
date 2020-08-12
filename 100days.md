@@ -157,3 +157,7 @@ assertions: 107 | 106 passed | 1 failed
 - Refactoring to integrate AST -> code gen.
 - Refactoring test to maping with new API of code gen.
 - Consider how to support variable
+
+## Day 23
+- Add print to statement + interpreter support one.
+- Implementing symbol table to support variable.
