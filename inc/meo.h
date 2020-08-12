@@ -11,7 +11,10 @@
 
 typedef struct Token {
     int32_t tok;
-    int32_t value;
+    union {
+        int32_t value;
+        char* id_str;
+    };
 } Token;
 
 enum TokenType{
@@ -32,13 +35,14 @@ enum TokenType{
     TokenRP,
     TokenLBracket,
     TokenRBracket,
+    TokenEqual,
 
     TokenPrint,
     TokenReturn,
     TokenEoi,
     TokenSemi,
 
-    TokenId,
+    TokenIdentifier,
 };
 
 #endif // _MEO_H_

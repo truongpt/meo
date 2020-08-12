@@ -4,6 +4,9 @@
  */
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -258,6 +261,46 @@ TEST_CASE("lex test token: int type, L&R bracket, return")
         REQUIRE(T.tok == t.tok);
         i++;
         if (TokenEoi == T.tok) {
+            break;
+        }
+    }
+
+    REQUIRE(i == expect.size());
+    REQUIRE(Success == LexClose(prm));
+    REQUIRE(Success == LexDestroy());
+}
+
+TEST_CASE("lex test token: int type, equal, identifier")
+{
+    std::ofstream outfile ("data/test7");
+    outfile << "int cnt = 10;" << std::endl;
+
+    outfile.close();
+    vector<Token> expect = vector<Token>{
+        {TokenIntType    ,-1},
+        {TokenIdentifier ,-1},
+        {TokenEqual      ,-1},
+        {TokenNumber     ,10},
+        {TokenSemi       ,-1},
+        {TokenEoi        ,-1}
+    };
+
+    expect[1].id_str = strdup("cnt");
+    void* prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&prm, (char*)"data/test7"));
+
+    Token T;
+    int i = 0;
+    while(Success == LexProc(prm, &T)) {
+        Token t = expect[i];
+        REQUIRE(T.tok == t.tok);
+        i++;
+        if (TokenNumber == T.tok) {
+            REQUIRE(T.value == t.value);
+        } else if (TokenIdentifier == T.tok) {
+            REQUIRE(0 == strncmp(T.id_str, t.id_str, strlen(t.id_str)));
+        } else if (TokenEoi == T.tok) {
             break;
         }
     }

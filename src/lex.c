@@ -120,10 +120,15 @@ int32_t LexProc(void* prm, Token *t)
     case ';':
         t->tok = TokenSemi;
         break;
+    case '=':
+        t->tok = TokenEqual;
+        //todo: separate with ==, =<
+        break;
     case '0' ... '9':
         read_number(lex_prm, c, t);
         break;
-    case 'a' ... 'z': //tentative
+    case 'a' ... 'z':
+    case 'A' ... 'Z':
         read_identifier(lex_prm, c, t);
         break;
     default:
@@ -162,6 +167,11 @@ static void read_identifier(LexParameter* lex_prm, char c, Token* t)
         t->tok = TokenReturn;
     } else if (!strncmp(id, "print", sizeof("print"))) {
         t->tok = TokenPrint;
+    } else {
+        t->tok = TokenIdentifier;
+        t->id_str = (char*)malloc(i+1);
+        memcpy(t->id_str, id, i);
+        t->id_str[i] = '\0';
     }
 
     if (c != ' '  &&
@@ -180,9 +190,10 @@ void read_number(LexParameter* lex_prm, char c, Token* t)
         t->tok = TokenNumber;
 
         c = fgetc(lex_prm->in_file);
+
         while ('0' <= c && c <= '9') {
-            c = fgetc(lex_prm->in_file);
             t->value = t->value*10 + c-'0';
+            c = fgetc(lex_prm->in_file);
         }
 
         if (c != ' '  &&
