@@ -161,3 +161,9 @@ assertions: 107 | 106 passed | 1 failed
 ## Day 23
 - Add print to statement + interpreter support one.
 - Implementing symbol table to support variable.
+
+## Day 24
+- Add simple version of symbol table (poor performance)
+- Support scan & parse Equal, Identifier token
+- Todo:
+  - Gen code for Equal, Identifier to support simple version of variable.
