@@ -3,6 +3,7 @@
  * This file is released under the GPLv3
  */
 
+#include <string.h>
 #include "ast.h"
 #include "lex.h"
 #include "gen.h"
@@ -31,6 +32,15 @@ int32_t tok_2_ast (int32_t tok_type)
     case TokenPrint:
         ast = AstPrint;
         break;
+    case TokenIntType:
+        ast = AstIntType;
+        break;
+    case TokenIdentifier:
+        ast = AstIdentifier;
+        break;
+    case TokenEqual:
+        ast = AstEqual;
+        break;
     default:
         printf("Can not create AstNode with tok %d\n", tok_type);
     }
@@ -46,10 +56,22 @@ AstNode* ast_create_node(
 {
     AstNode* node = (AstNode*) malloc(sizeof(AstNode));
     int32_t ast_type = tok_2_ast(token.tok);
+    switch (ast_type)
+    {
+    case AstNumber:
+        node->value = token.value;
+        break;
+    case AstIdentifier:
+        node->id_str = (char*)malloc(strlen(token.id_str));
+        memcpy(node->id_str, token.id_str, strlen(token.id_str));
+        break;
+    /* default: */
+    }
+
     node->type = ast_type;
-    node->value = token.value;
     node->left = left;
     node->right = right;
+
     return node;
 }
 

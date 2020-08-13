@@ -15,7 +15,10 @@ extern "C" {
 
 typedef struct AstNode {
     int32_t type;
-    int32_t value; // todo: extend
+    union {
+        int32_t value;
+        char* id_str;
+    };
     struct AstNode* left;
     struct AstNode* right;
 } AstNode;
@@ -26,7 +29,10 @@ enum AstType {
     AstMul,
     AstDiv,
     AstNumber,
-    AstPrint
+    AstPrint,
+    AstIntType,
+    AstIdentifier,
+    AstEqual
 };
 
 AstNode* ast_create_node(Token token, AstNode* left, AstNode* right);

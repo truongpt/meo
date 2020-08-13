@@ -4,6 +4,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -224,6 +225,67 @@ TEST_CASE("parse test plus token: (1+2)*(3+4);")
 
     REQUIRE(Success == ParseProc(parse_prm));
     REQUIRE(MockGetLatest() == ((1+2)*(3+4)));
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    MockLexDestroy();
+}
+
+TEST_CASE("parse test pattern: int + identifier;")
+{
+    int32_t mock_lex_prm;
+
+    vector<Token> token_test = {
+        {TokenIntType,   -1},
+        {TokenIdentifier,-1},
+        {TokenSemi,      -1},
+        {TokenEoi,       -1}
+    };
+    token_test[1].id_str = strdup("abc");
+
+    MockLexCreate(token_test);
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out5"));
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+    // TODO check result
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    MockLexDestroy();
+}
+
+TEST_CASE("parse test pattern: Identifier = 10;")
+{
+    int32_t mock_lex_prm;
+
+    vector<Token> token_test = {
+        {TokenIdentifier,-1},
+        {TokenEqual,     -1},
+        {TokenNumber,    10},
+        {TokenSemi,      -1},
+        {TokenEoi,       -1}
+    };
+    token_test[0].id_str = strdup("abc");
+
+    MockLexCreate(token_test);
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out5"));
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+    // TODO check result
 
     ParseClose(parse_prm);
     ParseDestroy();

@@ -98,18 +98,46 @@ int32_t ParseProc(void* prm)
 
 void statements(ParseParameter* parse_prm)
 {
-    /* statements -> expression SEMI 1
+    /* statements -> expression SEMI
      *            -> expression SEMI statements
-     *            -> print expression SEMI statements
+     *            -> 'print' expression   SEMI statements
+     *            -> 'int'   identifier   SEMI statements
+     *            ->  identifier '=' expression  SEMI statements
      */
 
-    AstNode* node;
+    AstNode *node, *node1;
+    Token op_tok;
     while ( !match(parse_prm, TokenEoi)) {
         if (match (parse_prm, TokenPrint)) {
-            Token op_tok = parse_prm->cur_token;
+            // stmt print
+            op_tok = parse_prm->cur_token;
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-            AstNode* node1 = expression(parse_prm);
+            node1 = expression(parse_prm);
             node = ast_create_unary(op_tok, node1);
+        } else if (match (parse_prm, TokenIntType)) {
+            // stmt int
+            op_tok = parse_prm->cur_token;
+            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+            if (!match (parse_prm, TokenIdentifier)) {
+                printf("Expect Identifier but token %d\n",parse_prm->cur_token.tok);
+            }
+            node1 = ast_create_leaf(parse_prm->cur_token);
+            node = ast_create_unary(op_tok, node1);
+            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        } else if (match (parse_prm, TokenIdentifier)) {
+            // stmt identifier
+            node = ast_create_leaf(parse_prm->cur_token);
+
+            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+            if (!match (parse_prm, TokenEqual)) {
+                printf("Expect Equal but token %d\n",parse_prm->cur_token.tok);
+            }
+            op_tok = parse_prm->cur_token;
+
+            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+            node1 = expression(parse_prm);
+
+            node = ast_create_node(op_tok, node, node1);
         } else {
             node = expression(parse_prm);
         }
@@ -120,10 +148,12 @@ void statements(ParseParameter* parse_prm)
             printf("Missing semicolon\n");
         }
 
-        // TODO: consider better meaning
         int32_t res = ast_interpreter(node);
-        char* r = ast_gen(parse_prm->gen_prm, node);
-        GenOut(parse_prm->gen_prm, r);
+        // TODO: tentative disable gen x86 asm code, it will be removed after x64 support
+        if (node->type != AstIntType && node->type != AstEqual) {
+            char* r = ast_gen(parse_prm->gen_prm, node);
+            GenOut(parse_prm->gen_prm, r);
+        }
     }
 }
 
@@ -174,7 +204,7 @@ AstNode* factor(ParseParameter* parse_prm)
             fprintf(stderr, "Missing close parenthesis\n");
         }
     } else {
-        fprintf(stderr, "Number or identifier expected\n");
+        fprintf(stderr, "Number or identifier expected but tok %d\n", parse_prm->cur_token.tok);
     }
 
     return node;
