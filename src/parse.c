@@ -67,6 +67,8 @@ int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm)
     g_parse_prm[i].lex_prm = lex_prm;
     g_parse_prm[i].gen_prm = gen_prm;
     g_parse_prm[i].cur_token.tok = -1;
+    // initialize symbol table
+    symtable_init(&(g_parse_prm[i].symbol_table));
 
     *parse_prm = &g_parse_prm[i];
 
@@ -121,12 +123,22 @@ void statements(ParseParameter* parse_prm)
             if (!match (parse_prm, TokenIdentifier)) {
                 printf("Expect Identifier but token %d\n",parse_prm->cur_token.tok);
             }
+
+            // add the identifier to symbol table
+            symtable_add(&(parse_prm->symbol_table), parse_prm->cur_token.id_str);
+
             node1 = ast_create_leaf(parse_prm->cur_token);
             node = ast_create_unary(op_tok, node1);
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else if (match (parse_prm, TokenIdentifier)) {
             // stmt identifier
             node = ast_create_leaf(parse_prm->cur_token);
+
+            // verify that existence in symbol table
+            if (Success != symtable_find(&(parse_prm->symbol_table), parse_prm->cur_token.id_str)) {
+                printf("Can not find symbol %s\n",parse_prm->cur_token.id_str);
+                exit(1);
+            }
 
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
             if (!match (parse_prm, TokenEqual)) {

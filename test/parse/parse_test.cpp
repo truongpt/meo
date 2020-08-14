@@ -267,13 +267,18 @@ TEST_CASE("parse test pattern: Identifier = 10;")
     int32_t mock_lex_prm;
 
     vector<Token> token_test = {
+        {TokenIntType,   -1},
+        {TokenIdentifier,-1},
+        {TokenSemi,      -1},
         {TokenIdentifier,-1},
         {TokenEqual,     -1},
         {TokenNumber,    10},
         {TokenSemi,      -1},
         {TokenEoi,       -1}
     };
-    token_test[0].id_str = strdup("abc");
+
+    token_test[1].id_str = strdup("abc");
+    token_test[3].id_str = strdup("abc");
 
     MockLexCreate(token_test);
     void* gen_prm = NULL;
