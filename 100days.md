@@ -167,3 +167,6 @@ assertions: 107 | 106 passed | 1 failed
 - Support scan & parse Equal, Identifier token
 - Todo:
   - Gen code for Equal, Identifier to support simple version of variable.
+
+## Day 25
+- Struggling how to process Identifier with specific type and arithmetic operator. -> Need refactor AST.
