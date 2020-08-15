@@ -170,3 +170,6 @@ assertions: 107 | 106 passed | 1 failed
 
 ## Day 25
 - Struggling how to process Identifier with specific type and arithmetic operator. -> Need refactor AST.
+
+## Day 26
+- Supporting variable ...
