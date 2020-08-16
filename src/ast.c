@@ -87,10 +87,12 @@ AstNode* ast_create_unary(Token token, AstNode* left)
 }
 
 // for interpreter
-AstNode* ast_bin_op(int32_t op, AstNode* left, AstNode* right)
+AstNode* ast_bin_op(SymbolTable* var_table, AstNode* op, AstNode* left, AstNode* right)
 {
-    int32_t l_value = left->value, r_value = right->value;
-    switch (op) {
+    int32_t l_value = (AstIdentifier != left->type) ? left->value : symtable_get_value(var_table, left->id_str);;
+    int32_t r_value = (AstIdentifier != right->type) ? right->value : symtable_get_value(var_table, right->id_str);;
+
+    switch (op->type) {
     case AstPlus:
         l_value = l_value + r_value;
         break;
@@ -104,10 +106,10 @@ AstNode* ast_bin_op(int32_t op, AstNode* left, AstNode* right)
         l_value = l_value / r_value;
         break;
     default:
-        printf("Operator error %d\n",op);
+        printf("Operator error %d\n",op->type);
     }
-    left->value = l_value;
-    return left;
+    op->value = l_value;
+    return op;
 }
 
 AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
@@ -122,7 +124,7 @@ AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
 
     switch (node->type) {
     case AstPrint:
-        if (AstNumber == left->type) {
+        if (AstIdentifier != left->type) {
             printf("%d\n",left->value);
         } else {
             printf("%d\n",symtable_get_value(&(parse_prm->var_table), left->id_str));
@@ -139,7 +141,7 @@ AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
     case AstEqual:
     {
         int32_t value = 0;
-        if (AstNumber == right->type) {
+        if (AstIdentifier != right->type) {
             value = right->value;
         } else {
             value = symtable_get_value(&(parse_prm->var_table), right->id_str);
@@ -151,7 +153,7 @@ AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
     case AstMinus:
     case AstMul:
     case AstDiv:
-        return ast_bin_op(node->type, left, right);
+        return ast_bin_op(&(parse_prm->var_table), node, left, right);
     default:
         printf("Not yet to support ast type %d\n",node->type);
     }

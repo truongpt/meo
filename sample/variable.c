@@ -1,9 +1,11 @@
 int a;
 int b;
-a= 6+7;
+a= 2;
 b= 8;
 int c;
-c = b;
+c = a+b-3;
+a=a+b*a-b;
 print a;
 print b;
 print c;
+print a+b*a-b;
