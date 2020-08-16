@@ -173,3 +173,6 @@ assertions: 107 | 106 passed | 1 failed
 
 ## Day 26
 - Supporting variable ...
+
+## Day 27
+- Just finish firs step to support variable in case interpreter.
