@@ -12,13 +12,7 @@
 #include "symtable.h"
 #include "error_code.h"
 
-typedef struct ParseParameter{
-    bool avail;
-    void *lex_prm;
-    void *gen_prm;
-    SymbolTable symbol_table;
-    Token cur_token;
-} ParseParameter;
+#include "parse_internal.h"
 
 #define MAX_PARSE_RSC 10
 
@@ -69,6 +63,7 @@ int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm)
     g_parse_prm[i].cur_token.tok = -1;
     // initialize symbol table
     symtable_init(&(g_parse_prm[i].symbol_table));
+    symtable_init(&(g_parse_prm[i].var_table));
 
     *parse_prm = &g_parse_prm[i];
 
@@ -135,7 +130,7 @@ void statements(ParseParameter* parse_prm)
             node = ast_create_leaf(parse_prm->cur_token);
 
             // verify that existence in symbol table
-            if (Success != symtable_find(&(parse_prm->symbol_table), parse_prm->cur_token.id_str)) {
+            if (-1 == symtable_find(&(parse_prm->symbol_table), parse_prm->cur_token.id_str)) {
                 printf("Can not find symbol %s\n",parse_prm->cur_token.id_str);
                 exit(1);
             }
@@ -160,12 +155,12 @@ void statements(ParseParameter* parse_prm)
             printf("Missing semicolon\n");
         }
 
-        int32_t res = ast_interpreter(node);
+        ast_interpreter(parse_prm, node);
         // TODO: tentative disable gen x86 asm code, it will be removed after x64 support
-        if (node->type != AstIntType && node->type != AstEqual) {
-            char* r = ast_gen(parse_prm->gen_prm, node);
-            GenOut(parse_prm->gen_prm, r);
-        }
+        /* if (node->type != AstIntType && node->type != AstEqual) { */
+        /*     char* r = ast_gen(parse_prm->gen_prm, node); */
+        /*     GenOut(parse_prm->gen_prm, r); */
+        /* } */
     }
 }
 
@@ -204,7 +199,7 @@ AstNode* factor(ParseParameter* parse_prm)
 {
     //TODO: confirm start valid token
     AstNode* node;
-    if (match(parse_prm, TokenNumber)) { // TODO: or TokenId
+    if (match(parse_prm, TokenNumber) || match(parse_prm, TokenIdentifier)) {
         node = ast_create_leaf(parse_prm->cur_token);
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     } else if (match(parse_prm, TokenLP)) {

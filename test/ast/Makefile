@@ -13,6 +13,7 @@ TOP_TEST = ../../test
 
 INC := -I$(TOP_SRC)/inc
 INC += -I$(TOP_TEST)/inc
+INC += -I$(TOP_SRC)/src
 
 SRC_CPP := ast_test.cpp
 SRC_CPP += main.cpp

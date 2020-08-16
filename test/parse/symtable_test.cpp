@@ -15,12 +15,12 @@ TEST_CASE("symtable add - find work")
     char* s3 = "conchocanconmeoconmeoduoiconchuot";
     REQUIRE(Success == symtable_init(&st));
     REQUIRE(Success == symtable_add(&st, s1));
-    REQUIRE(Success == symtable_find(&st, s1));
-    REQUIRE(SymbolNotFound == symtable_find(&st, s2));
+    REQUIRE(-1 != symtable_find(&st, s1));
+    REQUIRE(-1 == symtable_find(&st, s2));
     REQUIRE(Success == symtable_add(&st, s2));
-    REQUIRE(Success == symtable_find(&st, s2));
+    REQUIRE(-1 != symtable_find(&st, s2));
 
-    REQUIRE(SymbolNotFound == symtable_find(&st, s3));
+    REQUIRE(-1 == symtable_find(&st, s3));
     REQUIRE(Success == symtable_add(&st, s3));
-    REQUIRE(Success == symtable_find(&st, s3));
+    REQUIRE(-1 != symtable_find(&st, s3));
 }

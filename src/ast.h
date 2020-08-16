@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "meo.h"
+#include "parse_internal.h"
 
 #ifndef _AST_H_
 #define _AST_H_
@@ -38,7 +39,7 @@ enum AstType {
 AstNode* ast_create_node(Token token, AstNode* left, AstNode* right);
 AstNode* ast_create_leaf(Token token);
 AstNode* ast_create_unary(Token token, AstNode* left);
-int32_t ast_interpreter(AstNode* node);
+AstNode* ast_interpreter(ParseParameter* parse_prm, AstNode* node);
 char* ast_gen(void* gen_prm, AstNode* node);
 
 #ifdef __cplusplus

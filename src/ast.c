@@ -7,6 +7,7 @@
 #include "ast.h"
 #include "lex.h"
 #include "gen.h"
+#include "parse_internal.h"
 
 static int32_t tok_2_ast (int32_t tok_type);
 
@@ -86,34 +87,66 @@ AstNode* ast_create_unary(Token token, AstNode* left)
 }
 
 // for interpreter
-int32_t ast_interpreter(AstNode* node)
+AstNode* ast_bin_op(int32_t op, AstNode* left, AstNode* right)
 {
-    int32_t left = -1, right = -1;
+    int32_t l_value = left->value, r_value = right->value;
+    switch (op) {
+    case AstPlus:
+        l_value = l_value + r_value;
+        break;
+    case AstMinus:
+        l_value = l_value - r_value;
+        break;
+    case AstMul:
+        l_value = l_value * r_value;
+        break;
+    case AstDiv:
+        l_value = l_value / r_value;
+        break;
+    default:
+        printf("Operator error %d\n",op);
+    }
+    left->value = l_value;
+    return left;
+}
+AstNode* ast_interpreter(ParseParameter* parse_prm, AstNode* node)
+{
+    AstNode *left = NULL, *right = NULL;
     if (NULL != node->left) {
-        left = ast_interpreter(node->left);
+        left = ast_interpreter(parse_prm, node->left);
     }
     if (NULL != node->right) {
-        right = ast_interpreter(node->right);
+        right = ast_interpreter(parse_prm, node->right);
     }
 
     switch (node->type) {
     case AstPrint:
-        printf("%d\n",left);
-        return 0;
+        if (AstNumber == left->type) {
+            printf("%d\n",left->value);
+        } else {
+            printf("%d\n",symtable_get_value(&(parse_prm->var_table), left->id_str));
+        }
+        return left;
     case AstNumber:
-        return node->value;
-     case AstPlus:
-        return (left+right);
+        return node;
+    case AstIdentifier:
+        symtable_add(&(parse_prm->var_table), node->id_str);
+        return node;
+    case AstIntType:
+        symtable_set_type(&(parse_prm->var_table), left->id_str, SymbolInt);
+        return left;
+    case AstEqual:
+        symtable_set_value(&(parse_prm->var_table), left->id_str, right->value);
+        return left;
+    case AstPlus:
     case AstMinus:
-        return (left-right);
     case AstMul:
-        return (left*right);
     case AstDiv:
-        return (left/right);
+        return ast_bin_op(node->type, left, right);
     default:
         printf("Not yet to support ast type %d\n",node->type);
     }
-    return -1;
+    return NULL;
 }
 
 char* ast_gen(void* gen_prm, AstNode* node)

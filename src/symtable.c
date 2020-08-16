@@ -42,16 +42,60 @@ int32_t symtable_remove(SymbolTable* st, char* symbol)
 int32_t symtable_find(SymbolTable* st, char* symbol)
 {
     if (NULL == symbol) {
-        return InParameterInvalid;
+        return -1;
     }
 
     for (int i = 0; i <= st->cur_pos; i++) {
         if (*(st->data[i].name) == *symbol &&
             strlen(st->data[i].name) == strlen(symbol) &&
             !strncmp(st->data[i].name, symbol, strlen(symbol))) {
-            return Success;
+            return i;
         }
     }
 
-    return SymbolNotFound;
+    return -1;
 }
+
+int32_t symtable_get_value(SymbolTable* st, char* symbol)
+{
+    int32_t idx = symtable_find(st, symbol);
+    if (-1 == idx) {
+        printf("Not found the symbol %s\n", symbol);
+        return -1;
+    }
+
+    if (SymbolInt == st->data[idx].type) {
+        return st->data[idx].int_value;
+    } else {
+        printf("Currently, only support Int type\n");
+    }
+    return -1;
+}
+
+int32_t symtable_set_type(SymbolTable* st, char* symbol, int32_t type)
+{
+    int32_t idx = symtable_find(st, symbol);
+    if (-1 == idx) {
+        printf("Not found the symbol %s\n", symbol);
+        return -1;
+    }
+    st->data[idx].type = type;
+    return 0;
+}
+
+int32_t symtable_set_value(SymbolTable* st, char* symbol, int32_t value)
+{
+    int32_t idx = symtable_find(st, symbol);
+    if (-1 == idx) {
+        printf("Not found the symbol %s\n", symbol);
+        return -1;
+    }
+
+    if (SymbolInt == st->data[idx].type) {
+        st->data[idx].int_value = value;
+    } else {
+        printf("Currently, only support Int type\n");
+    }
+    return 0;
+}
+

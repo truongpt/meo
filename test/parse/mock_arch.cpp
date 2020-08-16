@@ -33,6 +33,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
         mem[r] = 0;
     }
     cur = 0;
+    last_value = 0;
     return Success;
 }
 
