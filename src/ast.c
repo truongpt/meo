@@ -137,8 +137,16 @@ AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
         symtable_set_type(&(parse_prm->var_table), left->id_str, SymbolInt);
         return left;
     case AstEqual:
-        symtable_set_value(&(parse_prm->var_table), left->id_str, right->value);
+    {
+        int32_t value = 0;
+        if (AstNumber == right->type) {
+            value = right->value;
+        } else {
+            value = symtable_get_value(&(parse_prm->var_table), right->id_str);
+        }
+        symtable_set_value(&(parse_prm->var_table), left->id_str, value);
         return left;
+    }
     case AstPlus:
     case AstMinus:
     case AstMul:
