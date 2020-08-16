@@ -109,14 +109,15 @@ AstNode* ast_bin_op(int32_t op, AstNode* left, AstNode* right)
     left->value = l_value;
     return left;
 }
-AstNode* ast_interpreter(ParseParameter* parse_prm, AstNode* node)
+
+AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
 {
     AstNode *left = NULL, *right = NULL;
     if (NULL != node->left) {
-        left = ast_interpreter(parse_prm, node->left);
+        left = ast_interpret(parse_prm, node->left);
     }
     if (NULL != node->right) {
-        right = ast_interpreter(parse_prm, node->right);
+        right = ast_interpret(parse_prm, node->right);
     }
 
     switch (node->type) {
@@ -149,14 +150,15 @@ AstNode* ast_interpreter(ParseParameter* parse_prm, AstNode* node)
     return NULL;
 }
 
-char* ast_gen(void* gen_prm, AstNode* node)
+//todo: upgrade later
+char* ast_compile(void* gen_prm, AstNode* node)
 {
     char *left = NULL, *right = NULL;
     if (NULL != node->left) {
-        left = ast_gen(gen_prm, node->left);
+        left = ast_compile(gen_prm, node->left);
     }
     if (NULL != node->right) {
-        right = ast_gen(gen_prm, node->right);
+        right = ast_compile(gen_prm, node->right);
     }
 
     switch (node->type) {
@@ -177,4 +179,16 @@ char* ast_gen(void* gen_prm, AstNode* node)
         printf("Not yet to support ast type %d\n",node->type);
     }
     return NULL;
+}
+
+void ast_gen(ParseParameter* parse_prm, AstNode* node)
+{
+    if (parse_prm->is_interpret) {
+        ast_interpret(parse_prm, node);
+    } else {
+        if (node->type != AstIntType && node->type != AstEqual) {
+            char* r = ast_compile(parse_prm->gen_prm, node);
+            GenOut(parse_prm->gen_prm, r);
+        }
+    }
 }

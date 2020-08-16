@@ -39,8 +39,9 @@ enum AstType {
 AstNode* ast_create_node(Token token, AstNode* left, AstNode* right);
 AstNode* ast_create_leaf(Token token);
 AstNode* ast_create_unary(Token token, AstNode* left);
-AstNode* ast_interpreter(ParseParameter* parse_prm, AstNode* node);
-char* ast_gen(void* gen_prm, AstNode* node);
+AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node);
+char* ast_compile(void* gen_prm, AstNode* node);
+void ast_gen(ParseParameter* parse_prm, AstNode* node);
 
 #ifdef __cplusplus
 }

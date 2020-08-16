@@ -60,6 +60,7 @@ int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm)
 
     g_parse_prm[i].lex_prm = lex_prm;
     g_parse_prm[i].gen_prm = gen_prm;
+    g_parse_prm[i].is_interpret = true;
     g_parse_prm[i].cur_token.tok = -1;
     // initialize symbol table
     symtable_init(&(g_parse_prm[i].symbol_table));
@@ -155,12 +156,8 @@ void statements(ParseParameter* parse_prm)
             printf("Missing semicolon\n");
         }
 
-        ast_interpreter(parse_prm, node);
-        // TODO: tentative disable gen x86 asm code, it will be removed after x64 support
-        /* if (node->type != AstIntType && node->type != AstEqual) { */
-        /*     char* r = ast_gen(parse_prm->gen_prm, node); */
-        /*     GenOut(parse_prm->gen_prm, r); */
-        /* } */
+        // code gen
+        ast_gen(parse_prm, node);
     }
 }
 

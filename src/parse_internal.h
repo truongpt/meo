@@ -12,6 +12,7 @@
 
 typedef struct ParseParameter{
     bool avail;
+    bool is_interpret;
     void *lex_prm;
     void *gen_prm;
     SymbolTable symbol_table;
