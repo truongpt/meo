@@ -40,7 +40,7 @@ int32_t ParseDestroy(void)
     return Success;
 }
 
-int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm)
+int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm, bool is_interpret)
 {
     if (NULL != *parse_prm ||
         NULL == lex_prm ||
@@ -60,7 +60,7 @@ int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm)
 
     g_parse_prm[i].lex_prm = lex_prm;
     g_parse_prm[i].gen_prm = gen_prm;
-    g_parse_prm[i].is_interpret = true;
+    g_parse_prm[i].is_interpret = is_interpret;
     g_parse_prm[i].cur_token.tok = -1;
     // initialize symbol table
     symtable_init(&(g_parse_prm[i].symbol_table));

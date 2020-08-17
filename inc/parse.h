@@ -15,7 +15,7 @@ extern "C" {
 
 int32_t ParseCreate(void);
 int32_t ParseDestroy(void);
-int32_t ParseOpen(void** prm, void* scan_prm, void* gen_prm);
+int32_t ParseOpen(void** prm, void* scan_prm, void* gen_prm, bool is_interpreter);
 int32_t ParseClose(void* prm);
 int32_t ParseProc(void* prm);
 

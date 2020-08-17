@@ -38,7 +38,7 @@ TEST_CASE("parse test get single resource")
 
     void* prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&prm, lex_prm, gen_prm));
+    REQUIRE(Success == ParseOpen(&prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseClose(prm));
     REQUIRE(Success == ParseDestroy());
@@ -68,14 +68,14 @@ TEST_CASE("parse test get multi resource")
     vector<void*> prm = vector<void*>(10,NULL);
     REQUIRE(Success == ParseCreate());
     for (auto& p : prm) {
-        REQUIRE(Success == ParseOpen(&p, lex_prm, gen_prm));
+        REQUIRE(Success == ParseOpen(&p, lex_prm, gen_prm, false));
         REQUIRE(NULL != p);
     }
 
-    REQUIRE(InParameterInvalid == ParseOpen(&prm[0], lex_prm, gen_prm));
+    REQUIRE(InParameterInvalid == ParseOpen(&prm[0], lex_prm, gen_prm, false));
 
     void* a_prm = NULL;
-    REQUIRE(ParseLimitResource == ParseOpen(&a_prm, lex_prm, gen_prm));
+    REQUIRE(ParseLimitResource == ParseOpen(&a_prm, lex_prm, gen_prm, false));
     REQUIRE(NULL == a_prm);
 
     for (auto& p : prm) {
@@ -113,7 +113,7 @@ TEST_CASE("parse test plus token: (1+2);")
 
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
     
     REQUIRE(Success == ParseProc(parse_prm));
     REQUIRE(MockGetLatest() == (1+2));
@@ -145,7 +145,7 @@ TEST_CASE("parse test plus token: (2*3);")
 
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
 
@@ -182,7 +182,7 @@ TEST_CASE("parse test plus token: (1+2*3+4);")
 
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
 
@@ -221,7 +221,7 @@ TEST_CASE("parse test plus token: (1+2)*(3+4);")
 
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
     REQUIRE(MockGetLatest() == ((1+2)*(3+4)));
@@ -251,7 +251,7 @@ TEST_CASE("parse test pattern: int + identifier;")
 
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
     // TODO check result
@@ -287,7 +287,7 @@ TEST_CASE("parse test pattern: Identifier = 10;")
 
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
-    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm));
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
     // TODO check result

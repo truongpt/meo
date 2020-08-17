@@ -4,6 +4,8 @@
  */
 
 #include<stdio.h>
+#include<stdbool.h>
+#include<string.h>
 #include "lex.h"
 #include "parse.h"
 #include "gen.h"
@@ -22,17 +24,27 @@ int main(int argc, char*argv[])
         return -1;
     }
 
+    char* in_file = NULL;
+    bool is_interpreter = false;
+    if (!strncmp(argv[1], "-i", sizeof("-i"))) {
+        is_interpreter = true;
+        in_file = argv[2];
+    } else {
+        is_interpreter = false;
+        in_file = argv[1];
+    }
+
     char* out_file = "out.s";
     MeoHandle meo_handle = {NULL, NULL};
 
     LexCreate();
-    LexOpen(&(meo_handle.lex_prm), argv[1]);
+    LexOpen(&(meo_handle.lex_prm), in_file);
 
     GenCreate();
     GenOpen(&(meo_handle.gen_prm), GenX86_64, out_file);
 
     ParseCreate();
-    ParseOpen(&(meo_handle.parse_prm), meo_handle.lex_prm, meo_handle.gen_prm);
+    ParseOpen(&(meo_handle.parse_prm), meo_handle.lex_prm, meo_handle.gen_prm, is_interpreter);
 
     ParseProc(meo_handle.parse_prm);
 
