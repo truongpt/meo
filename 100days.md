@@ -176,3 +176,7 @@ assertions: 107 | 106 passed | 1 failed
 
 ## Day 27
 - Just finish firs step to support variable in case interpreter.
+
+## Day 28
+- Add option to select interpreter or compiler.
+- Tentative add x86-64 call printf to display result.
