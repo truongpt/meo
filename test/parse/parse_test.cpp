@@ -298,3 +298,35 @@ TEST_CASE("parse test pattern: Identifier = 10;")
     MockLexDestroy();
 }
 
+TEST_CASE("parse test print token: print (1+2);")
+{
+
+    int32_t mock_lex_prm;
+
+    MockLexCreate(vector<Token> {
+            {TokenPrint, -1},
+            {TokenLP,    -1},
+            {TokenNumber, 1},
+            {TokenPlus,  -1},
+            {TokenNumber, 2},
+            {TokenRP,    -1},
+            {TokenSemi,  -1},
+            {TokenEoi,   -1}
+        });
+
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out2"));
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
+    
+    REQUIRE(Success == ParseProc(parse_prm));
+    // todo: consider method to confirm
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    MockLexDestroy();
+}

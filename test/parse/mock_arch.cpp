@@ -9,6 +9,7 @@
 using namespace std;
 static char* mock_load(int32_t value, FILE* out_file);
 static char* mock_out(char* r, FILE* out_file);
+static char* mock_print(char* r, FILE* out_file);
 static char* mock_add(char* r1, char* r2, FILE* out_file);
 static char* mock_sub(char* r1, char* r2, FILE* out_file);
 static char* mock_mul(char* r1, char* r2, FILE* out_file);
@@ -23,12 +24,13 @@ unordered_map<char*, int32_t> mem;
 
 int32_t GenLoadX86_64(GenFuncTable *func)
 {
-    func->f_load = &mock_load;
-    func->f_out  = &mock_out;
-    func->f_add  = &mock_add;
-    func->f_sub  = &mock_sub;
-    func->f_mul  = &mock_mul;
-    func->f_div  = &mock_div;
+    func->f_load  = &mock_load;
+    func->f_out   = &mock_out;
+    func->f_print = &mock_print;
+    func->f_add   = &mock_add;
+    func->f_sub   = &mock_sub;
+    func->f_mul   = &mock_mul;
+    func->f_div   = &mock_div;
     for (auto r : reg) {
         mem[r] = 0;
     }
@@ -75,6 +77,13 @@ static char* mock_out(char* r, FILE* out_file)
     reg_free(r);
     return r;
 }
+
+static char* mock_print(char* r, FILE* out_file)
+{
+    printf("%d\n",mem[r]);
+    return r;
+}
+
 static char* mock_add(char* r1, char* r2, FILE* out_file)
 {
     mem[r1] += mem[r2];
