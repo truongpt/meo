@@ -32,6 +32,7 @@ char* GenDiv(void* gen_prm, char* r1, char* r2);
 
 // tentative
 void GenOut(void* gen_prm, char* r);
+char* GenPrint(void* gen_prm, char* r);
 
 #ifdef __cplusplus
 }

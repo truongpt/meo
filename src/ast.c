@@ -175,8 +175,7 @@ char* ast_compile(void* gen_prm, AstNode* node)
     case AstNumber:
         return GenLoad(gen_prm,node->value);
     case AstPrint:
-        //todo
-        return 0;
+        return GenPrint(gen_prm, left);
     case AstPlus:
         return GenPlus(gen_prm, left, right);
     case AstMinus:

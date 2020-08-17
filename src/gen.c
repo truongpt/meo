@@ -59,6 +59,8 @@ int32_t GenOpen(void** gen_prm, int32_t arch, char* out_file_name)
     switch (arch) {
     case GenX86_64:
         // todo: hardcode
+        fprintf(g_gen_prm[i].out_asm_file,"%s\n",".LC0:");
+        fprintf(g_gen_prm[i].out_asm_file,"\t.string \"%%d\\n\"\n");
         fprintf(g_gen_prm[i].out_asm_file,"\t%s\t%s\n",".globl","main");
         fprintf(g_gen_prm[i].out_asm_file,"\t%s\t%s\n",".type","main, @function");
         fprintf(g_gen_prm[i].out_asm_file,"%s\n","main:");
@@ -117,4 +119,10 @@ void GenOut(void* gen_prm, char* r)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
     prm->func.f_out(r, prm->out_asm_file);
+}
+
+char* GenPrint(void* gen_prm, char* r)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_print(r, prm->out_asm_file);
 }

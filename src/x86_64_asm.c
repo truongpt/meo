@@ -9,6 +9,7 @@
 
 char* x86_64_load(int32_t value, FILE* out_file);
 char* x86_64_out(char* value, FILE* out_file);
+char* x86_64_print(char* r, FILE* out_file);
 char* x86_64_add(char* r1, char* r2, FILE* out_file);
 char* x86_64_sub(char* r1, char* r2, FILE* out_file);
 char* x86_64_mul(char* r1, char* r2, FILE* out_file);
@@ -21,6 +22,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
 {
     func->f_load = &x86_64_load;
     func->f_out  = &x86_64_out;
+    func->f_print  = &x86_64_print;
     func->f_add  = &x86_64_add;
     func->f_sub  = &x86_64_sub;
     func->f_mul  = &x86_64_mul;
@@ -58,6 +60,15 @@ char* x86_64_out(char* r, FILE* out_file)
 {
     fprintf(out_file,"\tmovq %s, %s\n",r,"%rax");
     fprintf(out_file,"\tret\n");
+    return r;
+}
+
+char* x86_64_print(char* r, FILE* out_file)
+{
+    fprintf(out_file,"\tmovq %s, %%rsi\n",r);
+    fprintf(out_file,"\tmovq $.LC0, %%rdi\n");
+    fprintf(out_file,"\tmovq $0, %%rax\n");
+    fprintf(out_file,"\tcall printf\n");
     return r;
 }
 
