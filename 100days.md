@@ -180,3 +180,5 @@ assertions: 107 | 106 passed | 1 failed
 ## Day 28
 - Add option to select interpreter or compiler.
 - Tentative add x86-64 call printf to display result.
+  - https://montcs.bloomu.edu/~bobmon/Code/Asm.and.C/hello-asms.html
+  - https://stackoverflow.com/questions/38335212/calling-printf-in-x86-64-using-gnu-assembler/38335743
