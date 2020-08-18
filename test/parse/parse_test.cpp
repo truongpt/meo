@@ -232,6 +232,7 @@ TEST_CASE("parse test plus token: (1+2)*(3+4);")
     MockLexDestroy();
 }
 
+
 TEST_CASE("parse test pattern: int + identifier;")
 {
     int32_t mock_lex_prm;
@@ -262,6 +263,7 @@ TEST_CASE("parse test pattern: int + identifier;")
     MockLexDestroy();
 }
 
+#if 0
 TEST_CASE("parse test pattern: Identifier = 10;")
 {
     int32_t mock_lex_prm;
@@ -330,3 +332,4 @@ TEST_CASE("parse test print token: print (1+2);")
 
     MockLexDestroy();
 }
+#endif

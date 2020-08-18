@@ -29,10 +29,11 @@ char* GenPlus(void* gen_prm, char* r1, char* r2);
 char* GenMinus(void* gen_prm, char* r1, char* r2);
 char* GenMul(void* gen_prm, char* r1, char* r2);
 char* GenDiv(void* gen_prm, char* r1, char* r2);
-
-// tentative
 void GenOut(void* gen_prm, char* r);
 char* GenPrint(void* gen_prm, char* r);
+char* GenVar(void* gen_prm, char* var);
+char* GenStore(void* gen_prm, char* var, char* r);
+char* GenLoadVar(void* gen_prm, char* var);
 
 #ifdef __cplusplus
 }

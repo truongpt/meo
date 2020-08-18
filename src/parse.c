@@ -114,7 +114,7 @@ void statements(ParseParameter* parse_prm)
             node = ast_create_unary(op_tok, node1);
         } else if (match (parse_prm, TokenIntType)) {
             // stmt int
-            op_tok = parse_prm->cur_token;
+            node1 = ast_create_leaf(parse_prm->cur_token);
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
             if (!match (parse_prm, TokenIdentifier)) {
                 printf("Expect Identifier but token %d\n",parse_prm->cur_token.tok);
@@ -122,9 +122,9 @@ void statements(ParseParameter* parse_prm)
 
             // add the identifier to symbol table
             symtable_add(&(parse_prm->symbol_table), parse_prm->cur_token.id_str);
+            symtable_set_type(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, SymbolInt);
 
-            node1 = ast_create_leaf(parse_prm->cur_token);
-            node = ast_create_unary(op_tok, node1);
+            node = ast_create_unary(parse_prm->cur_token, node1);
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else if (match (parse_prm, TokenIdentifier)) {
             // stmt identifier

@@ -133,11 +133,22 @@ AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
     case AstNumber:
         return node;
     case AstIdentifier:
-        symtable_add(&(parse_prm->var_table), node->id_str);
+    {
+        // symtable_add(&(parse_prm->var_table), node->id_str);
+        if (-1 == symtable_find(&(parse_prm->var_table), node->id_str)) {
+            // declare
+            if (NULL == left) {printf("Declare but unknow type\n");}
+            symtable_add(&(parse_prm->var_table), node->id_str);
+            if (AstIntType == left->type) {
+                symtable_set_type(&(parse_prm->var_table), node->id_str, SymbolInt);
+            } else {
+                printf("[clgt] Not yet support the type %d\n",left->type);
+            }
+        } 
         return node;
+    }
     case AstIntType:
-        symtable_set_type(&(parse_prm->var_table), left->id_str, SymbolInt);
-        return left;
+        return node;
     case AstEqual:
     {
         int32_t value = 0;
@@ -161,14 +172,14 @@ AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
 }
 
 //todo: upgrade later
-char* ast_compile(void* gen_prm, AstNode* node)
+void* ast_compile(void* gen_prm, AstNode* node)
 {
     char *left = NULL, *right = NULL;
     if (NULL != node->left) {
-        left = ast_compile(gen_prm, node->left);
+        left = (char*)ast_compile(gen_prm, node->left);
     }
     if (NULL != node->right) {
-        right = ast_compile(gen_prm, node->right);
+        right = (char*)ast_compile(gen_prm, node->right);
     }
 
     switch (node->type) {
@@ -176,6 +187,16 @@ char* ast_compile(void* gen_prm, AstNode* node)
         return GenLoad(gen_prm,node->value);
     case AstPrint:
         return GenPrint(gen_prm, left);
+    case AstIntType:
+        return node;
+    case AstIdentifier:
+        if (NULL != left && AstIntType == ((AstNode*)left)->type) {
+            // declare variable
+            return GenVar(gen_prm, node->id_str);
+        }
+        return GenLoadVar(gen_prm, node->id_str);
+    case AstEqual:
+        return GenStore(gen_prm, node->left->id_str, right);
     case AstPlus:
         return GenPlus(gen_prm, left, right);
     case AstMinus:
@@ -195,9 +216,6 @@ void ast_gen(ParseParameter* parse_prm, AstNode* node)
     if (parse_prm->is_interpret) {
         ast_interpret(parse_prm, node);
     } else {
-        if (node->type != AstIntType && node->type != AstEqual) {
-            char* r = ast_compile(parse_prm->gen_prm, node);
-            GenOut(parse_prm->gen_prm, r);
-        }
+        char* r = ast_compile(parse_prm->gen_prm, node);
     }
 }

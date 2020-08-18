@@ -15,11 +15,14 @@ extern "C" {
 typedef struct GenFuncTable {
     char* (*f_load)(int32_t value, FILE*);
     char* (*f_out)(char* r, FILE*);
+    char* (*f_var)(char* var, FILE*);
     char* (*f_print)(char* r, FILE*);
     char* (*f_add)(char* r1, char* r2, FILE*);
     char* (*f_sub)(char* r1, char* r2, FILE*);
     char* (*f_mul)(char* r1, char* r2, FILE*);
     char* (*f_div)(char* r1, char* r2, FILE*);
+    char* (*f_store)(char* var, char* r, FILE*);
+    char* (*f_load_var)(char* var, FILE*);
 } GenFuncTable;
 
 int32_t GenLoadX86_64(GenFuncTable *func);
