@@ -182,3 +182,6 @@ assertions: 107 | 106 passed | 1 failed
 - Tentative add x86-64 call printf to display result.
   - https://montcs.bloomu.edu/~bobmon/Code/Asm.and.C/hello-asms.html
   - https://stackoverflow.com/questions/38335212/calling-printf-in-x86-64-using-gnu-assembler/38335743
+
+## Day 29
+- Even still having alot of NG design and mess code, but currently variable is supported also compiler and interpreter.
