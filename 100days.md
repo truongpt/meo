@@ -185,3 +185,8 @@ assertions: 107 | 106 passed | 1 failed
 
 ## Day 29
 - Even still having alot of NG design and mess code, but currently variable is supported also compiler and interpreter.
+
+## Day 30
+- Add log function.
+- Maintain test and consider add integration test.
+- Consider refine current result.
