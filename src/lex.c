@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 
+#include "log.h"
 #include "lex.h"
 #include "error_code.h"
 
@@ -132,6 +133,7 @@ int32_t LexProc(void* prm, Token *t)
         read_identifier(lex_prm, c, t);
         break;
     default:
+        mlog(CLGT, "Syntax Error\n");
         return SyntaxError;
     }
     return Success;

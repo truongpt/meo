@@ -3,6 +3,7 @@
  * This file is released under the GPLv3
  */
 
+#include "log.h"
 #include "gen.h"
 #include "gen_internal.h"
 #include "error_code.h"
@@ -40,7 +41,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
 char* reg_alloc()
 {
     if (cur_reg >= sizeof(reg)/sizeof(*reg)) {
-        printf("Not available register\n");
+        mlog(CLGT,"Not available register\n");
         return NULL;
     }
     return reg[cur_reg++];
@@ -49,7 +50,7 @@ char* reg_alloc()
 void reg_free(char* r)
 {
     if (0 == cur_reg) {
-        printf("Free register invalid\n");
+        mlog(CLGT,"Free register invalid\n");
         exit(1);
     }
     reg[--cur_reg] = r;

@@ -5,6 +5,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include "log.h"
 #include "parse.h"
 #include "lex.h"
 #include "ast.h"
@@ -117,7 +118,7 @@ void statements(ParseParameter* parse_prm)
             node1 = ast_create_leaf(parse_prm->cur_token);
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
             if (!match (parse_prm, TokenIdentifier)) {
-                printf("Expect Identifier but token %d\n",parse_prm->cur_token.tok);
+                mlog(CLGT,"Expect Identifier but token: %s\n",tok2str(parse_prm->cur_token.tok));
             }
 
             // add the identifier to symbol table
@@ -132,13 +133,13 @@ void statements(ParseParameter* parse_prm)
 
             // verify that existence in symbol table
             if (-1 == symtable_find(&(parse_prm->symbol_table), parse_prm->cur_token.id_str)) {
-                printf("Can not find symbol %s\n",parse_prm->cur_token.id_str);
+                mlog(CLGT, "Can not find symbol %s\n",parse_prm->cur_token.id_str);
                 exit(1);
             }
 
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
             if (!match (parse_prm, TokenEqual)) {
-                printf("Expect Equal but token %d\n",parse_prm->cur_token.tok);
+                mlog(CLGT,"Expect Equal but token: %s\n",tok2str(parse_prm->cur_token.tok));
             }
             op_tok = parse_prm->cur_token;
 
@@ -153,7 +154,7 @@ void statements(ParseParameter* parse_prm)
         if (match (parse_prm, TokenSemi)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
         } else {
-            printf("Missing semicolon\n");
+            mlog(CLGT,"Missing semicolon\n");
         }
 
         // code gen
@@ -205,10 +206,10 @@ AstNode* factor(ParseParameter* parse_prm)
         if (match(parse_prm, TokenRP)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else {
-            fprintf(stderr, "Missing close parenthesis\n");
+            mlog(CLGT,"Missing close parenthesis\n");
         }
     } else {
-        fprintf(stderr, "Number or identifier expected but tok %d\n", parse_prm->cur_token.tok);
+        mlog(CLGT, "Number or identifier expected but token: %s\n", tok2str(parse_prm->cur_token.tok));
     }
 
     return node;

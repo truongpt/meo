@@ -14,6 +14,7 @@ SRC += $(TOP_SRC)/symtable.c
 SRC += $(TOP_SRC)/ast.c
 SRC += $(TOP_SRC)/gen.c
 SRC += $(TOP_SRC)/x86_64_asm.c
+SRC += $(TOP_SRC)/log.c
 
 CFLAGS += $(INC)
 

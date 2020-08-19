@@ -10,6 +10,7 @@
 #include "parse.h"
 #include "gen.h"
 #include "meo.h"
+#include "log.h"
 
 typedef struct MeoHandle {
     void* lex_prm;
@@ -20,7 +21,7 @@ typedef struct MeoHandle {
 int main(int argc, char*argv[])
 {
     if (argc < 2) {
-        printf ("input parameter error\n");
+        mlog(CLGT,"input parameter error\n");
         return -1;
     }
 

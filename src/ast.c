@@ -4,6 +4,7 @@
  */
 
 #include <string.h>
+#include "log.h"
 #include "ast.h"
 #include "lex.h"
 #include "gen.h"
@@ -43,7 +44,7 @@ int32_t tok_2_ast (int32_t tok_type)
         ast = AstEqual;
         break;
     default:
-        printf("Can not create AstNode with tok %d\n", tok_type);
+        mlog(CLGT,"Can not create AstNode with token: %s\n", tok2str(tok_type));
     }
 
     return ast;
@@ -106,7 +107,7 @@ AstNode* ast_bin_op(SymbolTable* var_table, AstNode* op, AstNode* left, AstNode*
         l_value = l_value / r_value;
         break;
     default:
-        printf("Operator error %d\n",op->type);
+        mlog(CLGT,"Operator error %d\n",op->type);
     }
     op->value = l_value;
     return op;
@@ -137,12 +138,14 @@ AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
         // symtable_add(&(parse_prm->var_table), node->id_str);
         if (-1 == symtable_find(&(parse_prm->var_table), node->id_str)) {
             // declare
-            if (NULL == left) {printf("Declare but unknow type\n");}
+            if (NULL == left) {
+                mlog(CLGT, "Declare but unknow type\n");
+            }
             symtable_add(&(parse_prm->var_table), node->id_str);
             if (AstIntType == left->type) {
                 symtable_set_type(&(parse_prm->var_table), node->id_str, SymbolInt);
             } else {
-                printf("[clgt] Not yet support the type %d\n",left->type);
+                mlog(CLGT, "Not yet support the type %d\n",left->type);
             }
         } 
         return node;
@@ -166,7 +169,7 @@ AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
     case AstDiv:
         return ast_bin_op(&(parse_prm->var_table), node, left, right);
     default:
-        printf("Not yet to support ast type %d\n",node->type);
+        mlog(CLGT, "Not yet to support ast type %d\n",node->type);
     }
     return NULL;
 }
@@ -206,7 +209,7 @@ void* ast_compile(void* gen_prm, AstNode* node)
     case AstDiv:
         return GenDiv(gen_prm, left, right);
     default:
-        printf("Not yet to support ast type %d\n",node->type);
+        mlog(CLGT,"Not yet to support ast type %d\n",node->type);
     }
     return NULL;
 }

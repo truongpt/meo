@@ -7,6 +7,7 @@
  * Symtable for quick simple version. poor performance.
  * It will be replace by hashtable version later.
  */
+#include "log.h"
 #include "symtable.h"
 #include <string.h>
 #include <stdlib.h>
@@ -60,14 +61,14 @@ int32_t symtable_get_value(SymbolTable* st, char* symbol)
 {
     int32_t idx = symtable_find(st, symbol);
     if (-1 == idx) {
-        printf("Not found the symbol %s\n", symbol);
+        mlog(CLGT,"Not found the symbol %s\n", symbol);
         return -1;
     }
 
     if (SymbolInt == st->data[idx].type) {
         return st->data[idx].int_value;
     } else {
-        printf("Currently, only support Int type\n");
+        mlog(CLGT,"Currently, only support Int type\n");
     }
     return -1;
 }
@@ -76,7 +77,7 @@ int32_t symtable_set_type(SymbolTable* st, char* symbol, int32_t type)
 {
     int32_t idx = symtable_find(st, symbol);
     if (-1 == idx) {
-        printf("Not found the symbol %s\n", symbol);
+        mlog(CLGT,"Not found the symbol %s\n", symbol);
         return -1;
     }
     st->data[idx].type = type;
@@ -87,14 +88,14 @@ int32_t symtable_set_value(SymbolTable* st, char* symbol, int32_t value)
 {
     int32_t idx = symtable_find(st, symbol);
     if (-1 == idx) {
-        printf("Not found the symbol %s\n", symbol);
+        mlog(CLGT,"Not found the symbol %s\n", symbol);
         return -1;
     }
 
     if (SymbolInt == st->data[idx].type) {
         st->data[idx].int_value = value;
     } else {
-        printf("Currently, only support Int type\n");
+        mlog(CLGT,"Currently, only support Int type\n");
     }
     return 0;
 }
