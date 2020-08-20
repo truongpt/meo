@@ -24,6 +24,7 @@ SRC := $(TOP_SRC)/src/parse.c
 SRC += $(TOP_SRC)/src/gen.c
 SRC += $(TOP_SRC)/src/ast.c
 SRC += $(TOP_SRC)/src/symtable.c
+SRC += $(TOP_SRC)/src/log.c
 
 CFLAGS += $(INC)
 

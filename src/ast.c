@@ -64,8 +64,9 @@ AstNode* ast_create_node(
         node->value = token.value;
         break;
     case AstIdentifier:
-        node->id_str = (char*)malloc(strlen(token.id_str));
+        node->id_str = (char*)malloc(strlen(token.id_str)+1);
         memcpy(node->id_str, token.id_str, strlen(token.id_str));
+        node->id_str[strlen(token.id_str)] = '\0';
         break;
     /* default: */
     }
