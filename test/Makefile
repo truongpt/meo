@@ -1,6 +1,6 @@
 TOPTARGETS := all clean
 
-SUBDIRS := lex parse gen ast
+SUBDIRS := lex parse gen ast intergration
 
 $(TOPTARGETS): $(SUBDIRS)
 $(SUBDIRS):
@@ -14,4 +14,4 @@ run:
 	./parse/parse_test
 	./gen/gen_test
 	./ast/ast_test
-
+	./intergration/intergration_test

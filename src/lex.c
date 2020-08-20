@@ -156,7 +156,9 @@ static void read_identifier(LexParameter* lex_prm, char c, Token* t)
     id[i++] = c;
 
     c = fgetc(lex_prm->in_file);
-    while ('a' <= c && c <= 'z') {
+    while (('a' <= c && c <= 'z') ||
+           ('A' <= c && c <= 'Z') ||
+           ('0' <= c && c <= '9')) {
         id[i++] = c;
         c = fgetc(lex_prm->in_file);
     }
