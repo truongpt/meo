@@ -21,6 +21,7 @@ int32_t MockGetPrintValue();
 
 TEST_CASE("basic arithmetic op parttern:print 1+2;")
 {
+    create_folder("data");
     std::ofstream outfile ("data/test1");
     outfile << "print 1+2;" << std::endl;
     outfile.close();
