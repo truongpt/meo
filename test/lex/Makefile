@@ -17,6 +17,7 @@ INC += -I$(TOP_TEST)/inc
 SRC_CPP := lex_test.cpp
 SRC_CPP += main.cpp
 SRC := $(TOP_SRC)/src/lex.c
+SRC += $(TOP_SRC)/src/log.c
 
 CFLAGS += $(INC)
 

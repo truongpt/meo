@@ -190,3 +190,6 @@ assertions: 107 | 106 passed | 1 failed
 - Add log function.
 - Maintain test and consider add integration test.
 - Consider refine current result.
+
+## Day 31
+- Add more mock function of ARCH to test parse.
