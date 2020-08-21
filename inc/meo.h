@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifndef _MEO_H_
 #define _MEO_H_
@@ -13,7 +14,10 @@ typedef struct Token {
     int32_t tok;
     union {
         int32_t value;
-        char* id_str;
+        struct {
+            char* id_str;
+            bool left_value;
+        };
     };
 } Token;
 

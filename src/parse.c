@@ -125,10 +125,12 @@ void statements(ParseParameter* parse_prm)
             symtable_add(&(parse_prm->symbol_table), parse_prm->cur_token.id_str);
             symtable_set_type(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, SymbolInt);
 
+            parse_prm->cur_token.left_value = true;
             node = ast_create_unary(parse_prm->cur_token, node1);
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else if (match (parse_prm, TokenIdentifier)) {
             // stmt identifier
+            parse_prm->cur_token.left_value = true;
             node = ast_create_leaf(parse_prm->cur_token);
 
             // verify that existence in symbol table
@@ -145,7 +147,6 @@ void statements(ParseParameter* parse_prm)
 
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
             node1 = expression(parse_prm);
-
             node = ast_create_node(op_tok, node, node1);
         } else {
             node = expression(parse_prm);
@@ -198,6 +199,10 @@ AstNode* factor(ParseParameter* parse_prm)
     //TODO: confirm start valid token
     AstNode* node;
     if (match(parse_prm, TokenNumber) || match(parse_prm, TokenIdentifier)) {
+        if (match(parse_prm, TokenIdentifier)) {
+            // right value
+            parse_prm->cur_token.left_value = false;
+        }
         node = ast_create_leaf(parse_prm->cur_token);
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     } else if (match(parse_prm, TokenLP)) {

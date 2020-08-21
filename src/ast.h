@@ -33,6 +33,8 @@ enum AstType {
     AstPrint,
     AstIntType,
     AstIdentifier,
+    AstLeftVar,
+    AstRightVar,
     AstAssign
 };
 

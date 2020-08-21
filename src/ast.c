@@ -10,12 +10,12 @@
 #include "gen.h"
 #include "parse_internal.h"
 
-static int32_t tok_2_ast (int32_t tok_type);
+static int32_t tok_2_ast (Token token);
 
-int32_t tok_2_ast (int32_t tok_type)
+int32_t tok_2_ast (Token token)
 {
     int ast = -1;
-    switch (tok_type) {
+    switch (token.tok) {
     case TokenPlus:
         ast = AstPlus;
         break;
@@ -38,13 +38,13 @@ int32_t tok_2_ast (int32_t tok_type)
         ast = AstIntType;
         break;
     case TokenIdentifier:
-        ast = AstIdentifier;
+        ast = token.left_value ? AstLeftVar : AstRightVar;
         break;
     case TokenAssign:
         ast = AstAssign;
         break;
     default:
-        mlog(CLGT,"Can not create AstNode with token: %s\n", tok2str(tok_type));
+        mlog(CLGT,"Can not create AstNode with token: %s\n", tok2str(token.tok));
     }
 
     return ast;
@@ -57,13 +57,15 @@ AstNode* ast_create_node(
     AstNode* right)
 {
     AstNode* node = (AstNode*) malloc(sizeof(AstNode));
-    int32_t ast_type = tok_2_ast(token.tok);
+    int32_t ast_type = tok_2_ast(token);
     switch (ast_type)
     {
     case AstNumber:
         node->value = token.value;
         break;
     case AstIdentifier:
+    case AstLeftVar:
+    case AstRightVar:
         node->id_str = (char*)malloc(strlen(token.id_str)+1);
         memcpy(node->id_str, token.id_str, strlen(token.id_str));
         node->id_str[strlen(token.id_str)] = '\0';
@@ -193,14 +195,16 @@ void* ast_compile(void* gen_prm, AstNode* node)
         return GenPrint(gen_prm, left);
     case AstIntType:
         return node;
-    case AstIdentifier:
+    case AstLeftVar:
         if (NULL != left && AstIntType == ((AstNode*)left)->type) {
             // declare variable
             return GenVar(gen_prm, node->id_str);
         }
+        return node->id_str;
+    case AstRightVar:
         return GenLoadVar(gen_prm, node->id_str);
     case AstAssign:
-        return GenStore(gen_prm, node->left->id_str, right);
+        return GenStore(gen_prm, left, right);
     case AstPlus:
         return GenPlus(gen_prm, left, right);
     case AstMinus:
