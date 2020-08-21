@@ -310,7 +310,7 @@ TEST_CASE("parse test pattern: int a; a = 10; print a;")
         {TokenIdentifier,-1},
         {TokenSemi,      -1},
         {TokenIdentifier,-1},
-        {TokenEqual,     -1},
+        {TokenAssign,    -1},
         {TokenNumber,    10},
         {TokenSemi,      -1},
         {TokenPrint,     -1},
@@ -353,11 +353,11 @@ TEST_CASE("parse test pattern: a+b;")
         {TokenIdentifier,-1}, //4
         {TokenSemi,      -1}, // int b;/
         {TokenIdentifier,-1}, //6: a = 1
-        {TokenEqual,     -1},
+        {TokenAssign,    -1},
         {TokenNumber,     1},
         {TokenSemi,      -1},
         {TokenIdentifier,-1}, //10: b = 2
-        {TokenEqual,     -1},
+        {TokenAssign,    -1},
         {TokenNumber,     2},
         {TokenSemi,      -1},
         {TokenPrint,     -1}, // print a+b;

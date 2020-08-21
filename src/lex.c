@@ -122,7 +122,7 @@ int32_t LexProc(void* prm, Token *t)
         t->tok = TokenSemi;
         break;
     case '=':
-        t->tok = TokenEqual;
+        t->tok = TokenAssign;
         //todo: separate with ==, =<
         break;
     case '0' ... '9':

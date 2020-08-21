@@ -35,7 +35,7 @@ enum TokenType{
     TokenRP,
     TokenLBracket,
     TokenRBracket,
-    TokenEqual,
+    TokenAssign,
 
     TokenPrint,
     TokenReturn,

@@ -138,7 +138,7 @@ void statements(ParseParameter* parse_prm)
             }
 
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-            if (!match (parse_prm, TokenEqual)) {
+            if (!match (parse_prm, TokenAssign)) {
                 mlog(CLGT,"Expect Equal but token: %s\n",tok2str(parse_prm->cur_token.tok));
             }
             op_tok = parse_prm->cur_token;

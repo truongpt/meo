@@ -33,7 +33,7 @@ enum AstType {
     AstPrint,
     AstIntType,
     AstIdentifier,
-    AstEqual
+    AstAssign
 };
 
 AstNode* ast_create_node(Token token, AstNode* left, AstNode* right);

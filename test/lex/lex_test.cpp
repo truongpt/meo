@@ -279,7 +279,7 @@ TEST_CASE("lex test token: int type, equal, identifier")
     vector<Token> expect = vector<Token>{
         {TokenIntType    ,-1},
         {TokenIdentifier ,-1},
-        {TokenEqual      ,-1},
+        {TokenAssign     ,-1},
         {TokenNumber     ,10},
         {TokenSemi       ,-1},
         {TokenEoi        ,-1}

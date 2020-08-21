@@ -49,7 +49,7 @@ static char* g_token_str[] = {
     "TokenRP",
     "TokenLBracket",
     "TokenRBracket",
-    "TokenEqual",
+    "TokenAssign",
     "TokenPrint",
     "TokenReturn",
     "TokenEoi",

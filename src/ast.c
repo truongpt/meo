@@ -40,8 +40,8 @@ int32_t tok_2_ast (int32_t tok_type)
     case TokenIdentifier:
         ast = AstIdentifier;
         break;
-    case TokenEqual:
-        ast = AstEqual;
+    case TokenAssign:
+        ast = AstAssign;
         break;
     default:
         mlog(CLGT,"Can not create AstNode with token: %s\n", tok2str(tok_type));
@@ -153,7 +153,7 @@ AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
     }
     case AstIntType:
         return node;
-    case AstEqual:
+    case AstAssign:
     {
         int32_t value = 0;
         if (AstIdentifier != right->type) {
@@ -199,7 +199,7 @@ void* ast_compile(void* gen_prm, AstNode* node)
             return GenVar(gen_prm, node->id_str);
         }
         return GenLoadVar(gen_prm, node->id_str);
-    case AstEqual:
+    case AstAssign:
         return GenStore(gen_prm, node->left->id_str, right);
     case AstPlus:
         return GenPlus(gen_prm, left, right);
