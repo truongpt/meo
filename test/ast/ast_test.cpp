@@ -8,6 +8,8 @@
 #include <iostream>
 #include <fstream>
 #include "ast.h"
+#include "gen.h"
+#include "parse.h"
 #include "error_code.h"
 
 #include "common.h"
@@ -17,7 +19,7 @@ using namespace std;
 
 TEST_CASE("ast test")
 {
-
+    create_folder("data");
     Token T = {TokenNumber, 10};
     AstNode* node = ast_create_leaf(T);
     REQUIRE(NULL != node);
@@ -49,6 +51,14 @@ TEST_CASE("ast test operator +")
 
 TEST_CASE("ast test operator -")
 {
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out1"));
+
+    int32_t mock_lex_prm;
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     Token T = {TokenNumber, 10};
     AstNode* node = ast_create_leaf(T);
@@ -66,6 +76,9 @@ TEST_CASE("ast test operator -")
     AstNode* node2 = ast_create_node(T2, node, node1);
     REQUIRE(NULL != node2);
     REQUIRE(AstMinus == node2->type);
-    // REQUIRE(5 == ast_interpreter(node2));
+    ast_gen(parse_prm, node2);
+
+    ParseClose(parse_prm);
+    ParseDestroy();
 }
 

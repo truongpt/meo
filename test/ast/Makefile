@@ -17,9 +17,11 @@ INC += -I$(TOP_SRC)/src
 
 SRC_CPP := ast_test.cpp
 SRC_CPP += main.cpp
+SRC_CPP += mock_lex.cpp
 SRC := $(TOP_SRC)/src/ast.c
 SRC += $(TOP_SRC)/src/symtable.c
 SRC += $(TOP_SRC)/src/gen.c
+SRC += $(TOP_SRC)/src/parse.c
 SRC += $(TOP_SRC)/src/x86_64_asm.c
 SRC += $(TOP_SRC)/src/log.c
 
