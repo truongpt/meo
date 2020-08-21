@@ -193,3 +193,9 @@ assertions: 107 | 106 passed | 1 failed
 
 ## Day 31
 - Add more mock function of ARCH to test parse.
+
+## Day 32
+- Remove interpreter, consider later if interest.
+- Refine lexical analyzer.
+- Add intergration test, with pseudo ASM code.
+
