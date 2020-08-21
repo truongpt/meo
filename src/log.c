@@ -41,6 +41,12 @@ static char* g_token_str[] = {
     "TokenMinus",
     "TokenMul",
     "TokenDiv",
+    "TokenEqual",
+    "TokenNE",
+    "TokenLT",
+    "TokenLE",
+    "TokenGT",
+    "TokenGE",
     "TokenIntType",
     "TokenVoidType",
     "TokenLongType",
@@ -64,6 +70,9 @@ void set_mlog_level(int level)
 
 char* tok2str(int tok)
 {
+    if (tok >= sizeof(g_token_str)/sizeof(g_token_str[0])) {
+        return "NULL";
+    }
     return g_token_str[tok];
 }
 

@@ -29,6 +29,13 @@ enum TokenType{
     TokenMinus,
     TokenMul,
     TokenDiv,
+    TokenEqual,
+    TokenNE,
+    TokenLT,
+    TokenLE,
+    TokenGT,
+    TokenGE,
+
     // data type
     TokenIntType,
     TokenVoidType,

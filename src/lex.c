@@ -25,7 +25,7 @@ LexParameter g_lex_prm[MAX_LEX_RSC];
 
 static char get_char(LexParameter *prm);
 static char get_next(LexParameter *prm);
-static char put_back(LexParameter *prm, char c);
+static char push_back(LexParameter *prm, char c);
 static void read_number(LexParameter* lex_prm, char c, Token* t);
 static void read_identifier(LexParameter* lex_prm, char c, Token* t);
 
@@ -124,7 +124,40 @@ int32_t LexProc(void* prm, Token *t)
         t->tok = TokenSemi;
         break;
     case '=':
-        t->tok = TokenAssign;
+        c = get_char(lex_prm);
+        if (c == '=') {
+            t->tok = TokenEqual;
+        } else {
+            t->tok = TokenAssign;
+            push_back(lex_prm, c);
+        }
+        break;
+    case '!':
+        c = get_char(lex_prm);
+        if (c == '=') {
+            t->tok = TokenNE;
+        } else {
+            mlog(ERROR,"Not yet support the lexeme\n");
+            // push_back(lex_prm, c);
+        }
+        break;
+    case '>':
+        c = get_char(lex_prm);
+        if (c == '=') {
+            t->tok = TokenGE;
+        } else {
+            t->tok = TokenGT;
+            push_back(lex_prm, c);
+        }
+        break;
+    case '<':
+        c = get_char(lex_prm);
+        if (c == '=') {
+            t->tok = TokenLE;
+        } else {
+            t->tok = TokenLT;
+            push_back(lex_prm, c);
+        }
         break;
     case '0' ... '9':
         read_number(lex_prm, c, t);
@@ -181,7 +214,7 @@ static void read_identifier(LexParameter* lex_prm, char c, Token* t)
         memcpy(t->id_str, id, i);
         t->id_str[i] = '\0';
     }
-    put_back(lex_prm, c);
+    push_back(lex_prm, c);
 }
 
 void read_number(LexParameter* lex_prm, char c, Token* t)
@@ -194,11 +227,11 @@ void read_number(LexParameter* lex_prm, char c, Token* t)
             t->value = t->value*10 + c-'0';
             c = get_char(lex_prm);
         }
-        put_back(lex_prm, c);
+        push_back(lex_prm, c);
     }
 }
 
-static char put_back(LexParameter *prm, char c)
+static char push_back(LexParameter *prm, char c)
 {
     prm->push_back = c;
 }

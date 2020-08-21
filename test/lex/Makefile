@@ -12,6 +12,7 @@ TOP_TEST = ../../test
 
 
 INC := -I$(TOP_SRC)/inc
+INC += -I$(TOP_SRC)/src
 INC += -I$(TOP_TEST)/inc
 
 SRC_CPP := lex_test.cpp

@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include "lex.h"
+#include "log.h"
 #include "error_code.h"
 
 #include "common.h"
@@ -270,7 +271,7 @@ TEST_CASE("lex test token: int type, L&R bracket, return")
     REQUIRE(Success == LexDestroy());
 }
 
-TEST_CASE("lex test token: int type, equal, identifier")
+TEST_CASE("lex test token: int type, assign, identifier")
 {
     std::ofstream outfile ("data/test7");
     outfile << "int cnt1234 = 10;" << std::endl;
@@ -310,3 +311,68 @@ TEST_CASE("lex test token: int type, equal, identifier")
     REQUIRE(Success == LexDestroy());
 }
 
+
+TEST_CASE("lex test bool operator: == <= >= !=")
+{
+    std::ofstream outfile ("data/test8");
+    outfile << "1 == 2;" << std::endl;
+    outfile << "1 >= 2;" << std::endl;
+    outfile << "1 <= 2;" << std::endl;
+    outfile << "1 != 2;" << std::endl;
+    outfile << "1 > 2;" << std::endl;
+    outfile << "1 < 2;" << std::endl;
+    outfile.close();
+    vector<Token> expect = vector<Token>{
+        {TokenNumber ,1},
+        {TokenEqual ,-1},
+        {TokenNumber ,2},
+        {TokenSemi , -1},
+        {TokenNumber ,1},
+        {TokenGE    ,-1},
+        {TokenNumber ,2},
+        {TokenSemi , -1},
+        {TokenNumber ,1},
+        {TokenLE    ,-1},
+        {TokenNumber ,2},
+        {TokenSemi , -1},
+        {TokenNumber ,1},
+        {TokenNE    ,-1},
+        {TokenNumber ,2},
+        {TokenSemi , -1},
+        {TokenNumber ,1},
+        {TokenGT    ,-1},
+        {TokenNumber ,2},
+        {TokenSemi , -1},
+        {TokenNumber ,1},
+        {TokenLT    ,-1},
+        {TokenNumber ,2},
+        {TokenSemi  ,-1},
+        {TokenEoi   ,-1}
+    };
+
+    void* prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&prm, (char*)"data/test8"));
+
+    Token T;
+    int i = 0;
+    while(Success == LexProc(prm, &T)) {
+        Token t = expect[i];
+        if (T.tok != t.tok) {
+            mlog(ERROR,"%s == %s\n",tok2str(T.tok), tok2str(t.tok));
+            mlog(ERROR, "error index %d\n",i);
+            REQUIRE(T.tok == t.tok);
+        }
+        if (TokenNumber == t.tok) {
+            REQUIRE(T.value == t.value);
+        }
+        i++;
+        if (TokenEoi == T.tok) {
+            break;
+        }
+    }
+
+    REQUIRE(i == expect.size());
+    REQUIRE(Success == LexClose(prm));
+    REQUIRE(Success == LexDestroy());
+}
