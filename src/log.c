@@ -24,7 +24,7 @@
 #define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
 #define LOG_OFF 0xFFFF
-static int g_log_level = 0;
+static int g_log_level = 2;
 
 static char* g_log_level_msg[] = {
     "TRACE",

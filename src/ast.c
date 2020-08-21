@@ -63,14 +63,14 @@ AstNode* ast_create_node(
     case AstNumber:
         node->value = token.value;
         break;
-    case AstIdentifier:
     case AstLeftVar:
     case AstRightVar:
         node->id_str = (char*)malloc(strlen(token.id_str)+1);
         memcpy(node->id_str, token.id_str, strlen(token.id_str));
         node->id_str[strlen(token.id_str)] = '\0';
         break;
-    /* default: */
+    default:
+        mlog(TRACE, "AstNode %d\n", ast_type);
     }
 
     node->type = ast_type;
@@ -90,94 +90,6 @@ AstNode* ast_create_unary(Token token, AstNode* left)
     return ast_create_node(token, left, NULL);
 }
 
-// for interpreter
-AstNode* ast_bin_op(SymbolTable* var_table, AstNode* op, AstNode* left, AstNode* right)
-{
-    int32_t l_value = (AstIdentifier != left->type) ? left->value : symtable_get_value(var_table, left->id_str);;
-    int32_t r_value = (AstIdentifier != right->type) ? right->value : symtable_get_value(var_table, right->id_str);;
-
-    switch (op->type) {
-    case AstPlus:
-        l_value = l_value + r_value;
-        break;
-    case AstMinus:
-        l_value = l_value - r_value;
-        break;
-    case AstMul:
-        l_value = l_value * r_value;
-        break;
-    case AstDiv:
-        l_value = l_value / r_value;
-        break;
-    default:
-        mlog(CLGT,"Operator error %d\n",op->type);
-    }
-    op->value = l_value;
-    return op;
-}
-
-AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node)
-{
-    AstNode *left = NULL, *right = NULL;
-    if (NULL != node->left) {
-        left = ast_interpret(parse_prm, node->left);
-    }
-    if (NULL != node->right) {
-        right = ast_interpret(parse_prm, node->right);
-    }
-
-    switch (node->type) {
-    case AstPrint:
-        if (AstIdentifier != left->type) {
-            printf("%d\n",left->value);
-        } else {
-            printf("%d\n",symtable_get_value(&(parse_prm->var_table), left->id_str));
-        }
-        return left;
-    case AstNumber:
-        return node;
-    case AstIdentifier:
-    {
-        // symtable_add(&(parse_prm->var_table), node->id_str);
-        if (-1 == symtable_find(&(parse_prm->var_table), node->id_str)) {
-            // declare
-            if (NULL == left) {
-                mlog(CLGT, "Declare but unknow type\n");
-            }
-            symtable_add(&(parse_prm->var_table), node->id_str);
-            if (AstIntType == left->type) {
-                symtable_set_type(&(parse_prm->var_table), node->id_str, SymbolInt);
-            } else {
-                mlog(CLGT, "Not yet support the type %d\n",left->type);
-            }
-        } 
-        return node;
-    }
-    case AstIntType:
-        return node;
-    case AstAssign:
-    {
-        int32_t value = 0;
-        if (AstIdentifier != right->type) {
-            value = right->value;
-        } else {
-            value = symtable_get_value(&(parse_prm->var_table), right->id_str);
-        }
-        symtable_set_value(&(parse_prm->var_table), left->id_str, value);
-        return left;
-    }
-    case AstPlus:
-    case AstMinus:
-    case AstMul:
-    case AstDiv:
-        return ast_bin_op(&(parse_prm->var_table), node, left, right);
-    default:
-        mlog(CLGT, "Not yet to support ast type %d\n",node->type);
-    }
-    return NULL;
-}
-
-//todo: upgrade later
 void* ast_compile(void* gen_prm, AstNode* node)
 {
     char *left = NULL, *right = NULL;
@@ -222,7 +134,8 @@ void* ast_compile(void* gen_prm, AstNode* node)
 void ast_gen(ParseParameter* parse_prm, AstNode* node)
 {
     if (parse_prm->is_interpret) {
-        ast_interpret(parse_prm, node);
+        // todo:
+        // ast_interpret(parse_prm, node);
     } else {
         char* r = ast_compile(parse_prm->gen_prm, node);
     }
