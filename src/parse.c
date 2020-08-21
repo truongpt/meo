@@ -118,7 +118,7 @@ void statements(ParseParameter* parse_prm)
             node1 = ast_create_leaf(parse_prm->cur_token);
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
             if (!match (parse_prm, TokenIdentifier)) {
-                mlog(CLGT,"Expect Identifier but token: %s\n",tok2str(parse_prm->cur_token.tok));
+                mlog(CLGT,"Expect Identifier but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
             }
 
             // add the identifier to symbol table
@@ -135,13 +135,13 @@ void statements(ParseParameter* parse_prm)
 
             // verify that existence in symbol table
             if (-1 == symtable_find(&(parse_prm->symbol_table), parse_prm->cur_token.id_str)) {
-                mlog(CLGT, "Can not find symbol %s\n",parse_prm->cur_token.id_str);
+                mlog(CLGT, "Can not find symbol %s at line: %d\n",parse_prm->cur_token.id_str, LexGetLine(parse_prm->lex_prm));
                 exit(1);
             }
 
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
             if (!match (parse_prm, TokenAssign)) {
-                mlog(CLGT,"Expect Equal but token: %s\n",tok2str(parse_prm->cur_token.tok));
+                mlog(CLGT,"Expect Equal but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok),LexGetLine(parse_prm->lex_prm));
             }
             op_tok = parse_prm->cur_token;
 
@@ -155,7 +155,7 @@ void statements(ParseParameter* parse_prm)
         if (match (parse_prm, TokenSemi)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
         } else {
-            mlog(CLGT,"Missing semicolon\n");
+            mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
         }
 
         // code gen
@@ -211,10 +211,10 @@ AstNode* factor(ParseParameter* parse_prm)
         if (match(parse_prm, TokenRP)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else {
-            mlog(CLGT,"Missing close parenthesis\n");
+            mlog(CLGT,"Missing close parenthesis at line: %d\n",LexGetLine(parse_prm->lex_prm));
         }
     } else {
-        mlog(CLGT, "Number or identifier expected but token: %s\n", tok2str(parse_prm->cur_token.tok));
+        mlog(CLGT, "Number or identifier expected but token: %s at line %d\n", tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
     }
 
     return node;

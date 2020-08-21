@@ -24,6 +24,8 @@ typedef struct LexParameter{
 LexParameter g_lex_prm[MAX_LEX_RSC];
 
 static char get_char(LexParameter *prm);
+static char get_next(LexParameter *prm);
+static char put_back(LexParameter *prm, char c);
 static void read_number(LexParameter* lex_prm, char c, Token* t);
 static void read_identifier(LexParameter* lex_prm, char c, Token* t);
 
@@ -62,7 +64,7 @@ int32_t LexOpen(void** lex_prm, const char* file_name)
 
     g_lex_prm[i].in_file = fopen(file_name, "r");
     g_lex_prm[i].push_back = -1; // -1 is OK? LOL
-    g_lex_prm[i].line = 0;
+    g_lex_prm[i].line = 1;
     *lex_prm = &g_lex_prm[i];
     return Success;
 }
@@ -89,7 +91,7 @@ int32_t LexProc(void* prm, Token *t)
     }
 
     LexParameter* lex_prm = (LexParameter*)prm;
-    char c = get_char(lex_prm);
+    char c = get_next(lex_prm);
     switch (c) {
     case EOF:
         t->tok = TokenEoi;
@@ -123,7 +125,6 @@ int32_t LexProc(void* prm, Token *t)
         break;
     case '=':
         t->tok = TokenAssign;
-        //todo: separate with ==, =<
         break;
     case '0' ... '9':
         read_number(lex_prm, c, t);
@@ -150,17 +151,20 @@ int32_t LexGetLine(void* prm)
 
 static void read_identifier(LexParameter* lex_prm, char c, Token* t)
 {
-    //todo: refine stupid code
     char id[100] = "";
     int i = 0;
     id[i++] = c;
 
-    c = fgetc(lex_prm->in_file);
+    c = get_char(lex_prm);
     while (('a' <= c && c <= 'z') ||
            ('A' <= c && c <= 'Z') ||
            ('0' <= c && c <= '9')) {
+        if (i >= 100) {
+            mlog(CLGT, "wft identifier too long\n");
+            exit(1);
+        }
         id[i++] = c;
-        c = fgetc(lex_prm->in_file);
+        c = get_char(lex_prm);
     }
 
     if (!strncmp(id, "int", sizeof("int"))) {
@@ -177,36 +181,39 @@ static void read_identifier(LexParameter* lex_prm, char c, Token* t)
         memcpy(t->id_str, id, i);
         t->id_str[i] = '\0';
     }
-
-    if (c != ' '  &&
-        c != '\t' &&
-        c != '\n' &&
-        c != '\v') {
-        lex_prm->push_back = c;
-    }
-    
+    put_back(lex_prm, c);
 }
+
 void read_number(LexParameter* lex_prm, char c, Token* t)
 {
-    //todo: refine stupid code
     if ('0' <= c && c <= '9') {
         t->value = c - '0';
         t->tok = TokenNumber;
-
-        c = fgetc(lex_prm->in_file);
-
+        c = get_char(lex_prm);
         while ('0' <= c && c <= '9') {
             t->value = t->value*10 + c-'0';
-            c = fgetc(lex_prm->in_file);
+            c = get_char(lex_prm);
         }
-
-        if (c != ' '  &&
-            c != '\t' &&
-            c != '\n' &&
-            c != '\v') {
-            lex_prm->push_back = c;
-        }
+        put_back(lex_prm, c);
     }
+}
+
+static char put_back(LexParameter *prm, char c)
+{
+    prm->push_back = c;
+}
+
+static char get_next(LexParameter *prm)
+{
+    char c = get_char(prm);
+    while (c == ' '  ||
+           c == '\t' ||
+           c == '\n' ||
+           c == '\v') {
+        c = get_char(prm);
+    }
+
+    return c;
 }
 
 static char get_char(LexParameter *prm)
@@ -217,14 +224,9 @@ static char get_char(LexParameter *prm)
         prm->push_back = -1;
         return c;
     }
-
     c = fgetc(prm->in_file);
-    while (c == ' '  ||
-           c == '\t' ||
-           c == '\n' ||
-           c == '\v') {
-        c = fgetc(prm->in_file);
+    if ('\n' == c) {
+        prm->line++;
     }
-
     return c;
 }

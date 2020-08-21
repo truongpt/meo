@@ -273,7 +273,7 @@ TEST_CASE("lex test token: int type, L&R bracket, return")
 TEST_CASE("lex test token: int type, equal, identifier")
 {
     std::ofstream outfile ("data/test7");
-    outfile << "int cnt = 10;" << std::endl;
+    outfile << "int cnt1234 = 10;" << std::endl;
 
     outfile.close();
     vector<Token> expect = vector<Token>{
@@ -285,7 +285,7 @@ TEST_CASE("lex test token: int type, equal, identifier")
         {TokenEoi        ,-1}
     };
 
-    expect[1].id_str = strdup("cnt");
+    expect[1].id_str = strdup("cnt1234");
     void* prm = NULL;
     REQUIRE(Success == LexCreate());
     REQUIRE(Success == LexOpen(&prm, (char*)"data/test7"));
