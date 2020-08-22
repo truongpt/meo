@@ -199,3 +199,6 @@ assertions: 107 | 106 passed | 1 failed
 - Refine lexical analyzer.
 - Add intergration test, with pseudo ASM code.
 
+## Day 33
+- Consider support COMPARISONS.
+- Studying "5 Syntax-Directed Translation" of Dragon book.
