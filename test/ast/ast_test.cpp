@@ -76,7 +76,7 @@ TEST_CASE("ast test operator -")
     AstNode* node2 = ast_create_node(T2, node, node1);
     REQUIRE(NULL != node2);
     REQUIRE(AstMinus == node2->type);
-    ast_gen(parse_prm, node2);
+    ast_gen((ParseParameter*)parse_prm, node2);
 
     ParseClose(parse_prm);
     ParseDestroy();
