@@ -131,6 +131,7 @@ char* GenVar(void* gen_prm, char* var)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
     prm->func.f_var(var, prm->out_asm_file);
+    return var;
 }
 
 char* GenStore(void* gen_prm, char* var, char* r)
