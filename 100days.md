@@ -202,3 +202,7 @@ assertions: 107 | 106 passed | 1 failed
 ## Day 33
 - Consider support COMPARISONS.
 - Studying "5 Syntax-Directed Translation" of Dragon book.
+
+# Day 34
+- Update parse to support COMPARISONS (ex: relational operators <, <=, >, >=)
+- Study by reading https://github.com/rui314/9cc
