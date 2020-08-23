@@ -20,7 +20,9 @@
 ParseParameter g_parse_prm[MAX_PARSE_RSC];
 
 static AstNode* factor(ParseParameter* parse_prm);
-static AstNode* term(ParseParameter* parse_prm);
+static AstNode* mul(ParseParameter* parse_prm);
+static AstNode* add(ParseParameter* parse_prm);
+static AstNode* relational(ParseParameter* parse_prm);
 static AstNode* expression(ParseParameter* parse_prm);
 static void statements(ParseParameter* parse_prm);
 static bool match(ParseParameter* parse_prm, int32_t tok_type);
@@ -165,24 +167,37 @@ void statements(ParseParameter* parse_prm)
 
 AstNode* expression(ParseParameter* parse_prm)
 {
-    /*
-     * expression -> term expression'
-     * expression' -> PLUS term expression'
-     */
-    //TODO: confirm start valid token?
-    AstNode* node = term(parse_prm);
+    return relational(parse_prm);
+}
+
+AstNode* relational(ParseParameter* parse_prm) {
+    AstNode* node = add(parse_prm);
+    while (match(parse_prm, TokenLT) ||
+           match(parse_prm, TokenLE) ||
+           match(parse_prm, TokenGT) ||
+           match(parse_prm, TokenGE)) {
+        Token op_tok = parse_prm->cur_token;
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        AstNode* node1 = add(parse_prm);
+        node = ast_create_node(op_tok, node, node1);
+    }
+    return node;    
+}
+
+AstNode* add(ParseParameter* parse_prm)
+{
+    AstNode* node = mul(parse_prm);
     while (match(parse_prm, TokenPlus) || match(parse_prm, TokenMinus)) {
         Token op_tok = parse_prm->cur_token;
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        AstNode* node1 = term(parse_prm);
+        AstNode* node1 = mul(parse_prm);
         node = ast_create_node(op_tok, node, node1);
     }
     return node;
 }
 
-AstNode* term(ParseParameter* parse_prm)
+AstNode* mul(ParseParameter* parse_prm)
 {
-    //TODO: confirm start valid token
     AstNode *node, *node1;
     node = factor(parse_prm);
     while (match(parse_prm, TokenMul) || match(parse_prm, TokenDiv)) {

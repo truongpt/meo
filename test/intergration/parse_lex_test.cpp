@@ -138,3 +138,79 @@ TEST_CASE("basic variable parttern: hw reg resource manager test")
 
 }
 
+
+TEST_CASE("relational basic pattern")
+{
+    std::ofstream outfile ("data/test4");
+    outfile << "print 1 < 2;" << std::endl;
+    outfile << "print 1 <= 1;" << std::endl;
+    outfile << "print 1 > 2;" << std::endl;
+    outfile << "print 2 >= 2;" << std::endl;
+    outfile.close();
+
+    void* lex_prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/test4"));
+
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out4"));
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+    REQUIRE(MockGetPrintValue() == 1);
+    REQUIRE(MockGetPrintValue() == 1);
+    REQUIRE(MockGetPrintValue() == 0);
+    REQUIRE(MockGetPrintValue() == 1);
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    REQUIRE(Success == GenClose(gen_prm));
+    REQUIRE(Success == GenDestroy());
+
+    REQUIRE(Success == LexClose(lex_prm));
+    REQUIRE(Success == LexDestroy());
+}
+
+TEST_CASE("relational basic pattern with variable")
+{
+    std::ofstream outfile ("data/test5");
+    outfile << "int a1;" << std::endl;
+    outfile << "int a2;" << std::endl;
+    outfile << "a1 = 1;" << std::endl;
+    outfile << "a2 = 2;" << std::endl;
+    outfile << "print a1 > a2;" << std::endl;
+    outfile << "print a1 < a2;" << std::endl;
+    outfile.close();
+
+    void* lex_prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/test5"));
+
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out5"));
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+    REQUIRE(MockGetPrintValue() == 0);
+    REQUIRE(MockGetPrintValue() == 1);
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    REQUIRE(Success == GenClose(gen_prm));
+    REQUIRE(Success == GenDestroy());
+
+    REQUIRE(Success == LexClose(lex_prm));
+    REQUIRE(Success == LexDestroy());
+
+}
+

@@ -115,6 +115,30 @@ char* GenDiv(void* gen_prm, char* r1, char* r2)
     return prm->func.f_div(r1, r2, prm->out_asm_file);
 }
 
+char* GenLT(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_lt(r1, r2, prm->out_asm_file);
+}
+
+char* GenLE(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_le(r1, r2, prm->out_asm_file);
+}
+
+char* GenGT(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_gt(r1, r2, prm->out_asm_file);
+}
+
+char* GenGE(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_ge(r1, r2, prm->out_asm_file);
+}
+
 void GenOut(void* gen_prm, char* r)
 {
     GenParameter* prm = (GenParameter*)gen_prm;

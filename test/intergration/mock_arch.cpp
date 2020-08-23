@@ -14,6 +14,11 @@ static char* mock_add(char* r1, char* r2, FILE* out_file);
 static char* mock_sub(char* r1, char* r2, FILE* out_file);
 static char* mock_mul(char* r1, char* r2, FILE* out_file);
 static char* mock_div(char* r1, char* r2, FILE* out_file);
+static char* mock_lt(char* r1, char* r2, FILE* out_file);
+static char* mock_le(char* r1, char* r2, FILE* out_file);
+static char* mock_gt(char* r1, char* r2, FILE* out_file);
+static char* mock_ge(char* r1, char* r2, FILE* out_file);
+
 static char* mock_var(char* var, FILE* out_file);
 static char* mock_store(char* r, char* var, FILE* out_file);
 static char* mock_load_var(char* var, FILE* out_file);
@@ -37,6 +42,11 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_sub   = &mock_sub;
     func->f_mul   = &mock_mul;
     func->f_div   = &mock_div;
+    func->f_lt    = &mock_lt;
+    func->f_le    = &mock_le;
+    func->f_gt    = &mock_gt;
+    func->f_ge    = &mock_ge;
+
     func->f_store    = &mock_store;
     func->f_load_var = &mock_load_var;
 
@@ -83,6 +93,7 @@ static char* mock_load(int32_t value, FILE* out_file)
         return NULL;
     }
     mem[r] = value;
+    fprintf(out_file,"[LOAD]:\t %s = %d\n", r, value);
     return r;
 }
 
@@ -133,6 +144,42 @@ static char* mock_div(char* r1, char* r2, FILE* out_file)
     mem[r2] = 0;
     reg_free(r2);
     fprintf(out_file,"[DIV ]:\t %s = %s/%s\n",r1,r1,r2);
+    return r1;
+}
+
+static char* mock_lt(char* r1, char* r2, FILE* out_file)
+{
+    mem[r1] = (mem[r1] < mem[r2]);
+    mem[r2] = 0;
+    reg_free(r2);
+    fprintf(out_file,"[LT  ]:\t %s = %s < %s\n",r1,r1,r2);
+    return r1;
+}
+
+static char* mock_le(char* r1, char* r2, FILE* out_file)
+{
+    mem[r1] = (mem[r1] <= mem[r2]);
+    mem[r2] = 0;
+    reg_free(r2);
+    fprintf(out_file,"[LE  ]:\t %s = %s <= %s\n",r1,r1,r2);
+    return r1;
+}
+
+static char* mock_gt(char* r1, char* r2, FILE* out_file)
+{
+    mem[r1] = (mem[r1] > mem[r2]);
+    mem[r2] = 0;
+    reg_free(r2);
+    fprintf(out_file,"[GT  ]:\t %s = %s > %s\n",r1,r1,r2);
+    return r1;
+}
+
+static char* mock_ge(char* r1, char* r2, FILE* out_file)
+{
+    mem[r1] = (mem[r1] <= mem[r2]);
+    mem[r2] = 0;
+    reg_free(r2);
+    fprintf(out_file,"[GE  ]:\t %s = %s >= %s\n",r1,r1,r2);
     return r1;
 }
 

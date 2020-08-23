@@ -28,6 +28,18 @@ int32_t tok_2_ast (Token token)
     case TokenDiv:
         ast = AstDiv;
         break;
+    case TokenLT:
+        ast = AstLT;
+        break;
+    case TokenLE:
+        ast = AstLE;
+        break;
+    case TokenGT:
+        ast = AstGT;
+        break;
+    case TokenGE:
+        ast = AstGE;
+        break;
     case TokenNumber:
         ast = AstNumber;
         break;
@@ -125,6 +137,14 @@ void* ast_compile(void* gen_prm, AstNode* node)
         return GenMul(gen_prm, left, right);
     case AstDiv:
         return GenDiv(gen_prm, left, right);
+    case AstLT:
+        return GenLT(gen_prm, left, right);
+    case AstLE:
+        return GenLE(gen_prm, left, right);
+    case AstGT:
+        return GenGT(gen_prm, left, right);
+    case AstGE:
+        return GenGE(gen_prm, left, right);
     default:
         mlog(CLGT,"Not yet to support ast type %d\n",node->type);
     }
