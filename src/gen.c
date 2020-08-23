@@ -91,6 +91,12 @@ char* GenLoad(void* gen_prm, int32_t value)
     return prm->func.f_load(value, prm->out_asm_file);
 }
 
+char* GenFree(void* gen_prm, char* r)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_free(r, prm->out_asm_file);
+}
+
 char* GenPlus(void* gen_prm, char* r1, char* r2)
 {
     GenParameter* prm = (GenParameter*)gen_prm;

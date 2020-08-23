@@ -14,6 +14,7 @@ extern "C" {
 
 typedef struct GenFuncTable {
     char* (*f_load)(int32_t value, FILE*);
+    char* (*f_free)(char* r, FILE*);
     char* (*f_out)(char* r, FILE*);
     char* (*f_var)(char* var, FILE*);
     char* (*f_print)(char* r, FILE*);

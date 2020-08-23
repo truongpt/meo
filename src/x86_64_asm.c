@@ -3,12 +3,15 @@
  * This file is released under the GPLv3
  */
 
+#include <string.h>
 #include "log.h"
 #include "gen.h"
 #include "gen_internal.h"
 #include "error_code.h"
 
+int32_t reg_index(char* r);
 char* x86_64_load(int32_t value, FILE* out_file);
+char* x86_64_free(char* r, FILE* out_file);
 char* x86_64_out(char* value, FILE* out_file);
 char* x86_64_print(char* r, FILE* out_file);
 char* x86_64_var(char* var, FILE* out_file);
@@ -16,15 +19,23 @@ char* x86_64_add(char* r1, char* r2, FILE* out_file);
 char* x86_64_sub(char* r1, char* r2, FILE* out_file);
 char* x86_64_mul(char* r1, char* r2, FILE* out_file);
 char* x86_64_div(char* r1, char* r2, FILE* out_file);
+char* x86_64_lt(char* r1, char* r2, FILE* out_file);
+char* x86_64_le(char* r1, char* r2, FILE* out_file);
+char* x86_64_gt(char* r1, char* r2, FILE* out_file);
+char* x86_64_ge(char* r1, char* r2, FILE* out_file);
+
 char* x86_64_store(char* r, char* var, FILE* out_file);
 char* x86_64_load_var(char* var, FILE* out_file);
 
 static char* reg[] = {"%r8","%r9","%r10","%r11","%r12","%r13","%r14","%r15"};
+static char* breg[] = {"%r8b","%r9b","%r10b","%r11b","%r12b","%r13b","%r14b","%r15b"};
+
 static int cur_reg = 0;
 
 int32_t GenLoadX86_64(GenFuncTable *func)
 {
     func->f_load   = &x86_64_load;
+    func->f_free   = &x86_64_free;
     func->f_out    = &x86_64_out;
     func->f_var    = &x86_64_var;
     func->f_print  = &x86_64_print;
@@ -32,6 +43,10 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_sub    = &x86_64_sub;
     func->f_mul    = &x86_64_mul;
     func->f_div    = &x86_64_div;
+    func->f_lt     = &x86_64_lt;
+    func->f_le     = &x86_64_le;
+    func->f_gt     = &x86_64_gt;
+    func->f_ge     = &x86_64_ge;
     func->f_store  = &x86_64_store;
     func->f_load_var = &x86_64_load_var;
     cur_reg = 0;
@@ -56,10 +71,26 @@ void reg_free(char* r)
     reg[--cur_reg] = r;
 }
 
+int32_t reg_index(char* r)
+{
+    for (int i = 0; i < sizeof(reg)/sizeof(reg[0]); i++) {
+        if (!strncmp(reg[i],r,strlen(r))) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 char* x86_64_load(int32_t value, FILE* out_file)
 {
     char* r = reg_alloc();
     fprintf(out_file,"\tmovq $%d, %s\n",value,r);
+    return r;
+}
+
+char* x86_64_free(char* r, FILE* out_file)
+{
+    reg_free(r);
     return r;
 }
 
@@ -112,6 +143,46 @@ char* x86_64_div(char* r1, char* r2, FILE* out_file)
     fprintf(out_file, "\tcqo\n");
     fprintf(out_file,"\tidivq %s\n",r2);
     fprintf(out_file,"\tmovq %s, %s\n","%rax",r2);
+    reg_free(r1);
+    return r2;
+}
+
+char* x86_64_lt(char* r1, char* r2, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq\t%s, %s\n", r2, r1);
+    int ir2 = reg_index(r2);
+    fprintf(out_file, "\tsetl %s\n", breg[ir2]);
+    fprintf(out_file, "\tandq $255,%s\n", r2);
+    reg_free(r1);
+    return r2;
+}
+
+char* x86_64_le(char* r1, char* r2, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq\t%s, %s\n", r2, r1);
+    int ir2 = reg_index(r2);
+    fprintf(out_file, "\tsetle %s\n", breg[ir2]);
+    fprintf(out_file, "\tandq $255,%s\n", r2);
+    reg_free(r1);
+    return r2;
+}
+
+char* x86_64_gt(char* r1, char* r2, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq\t%s, %s\n", r2, r1);
+    int ir2 = reg_index(r2);
+    fprintf(out_file, "\tsetg %s\n", breg[ir2]);
+    fprintf(out_file, "\tandq $255,%s\n", r2);
+    reg_free(r1);
+    return r2;
+}
+
+char* x86_64_ge(char* r1, char* r2, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq\t%s, %s\n", r2, r1);
+    int ir2 = reg_index(r2);
+    fprintf(out_file, "\tsetge %s\n", breg[ir2]);
+    fprintf(out_file, "\tandq $255,%s\n", r2);
     reg_free(r1);
     return r2;
 }
