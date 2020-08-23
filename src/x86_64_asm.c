@@ -98,6 +98,7 @@ char* x86_64_out(char* r, FILE* out_file)
 {
     fprintf(out_file,"\tmovq %s, %s\n",r,"%rax");
     fprintf(out_file,"\tret\n");
+    reg_free(r);
     return r;
 }
 
@@ -107,6 +108,7 @@ char* x86_64_print(char* r, FILE* out_file)
     fprintf(out_file,"\tmovq $.LC0, %%rdi\n");
     fprintf(out_file,"\tmovq $0, %%rax\n");
     fprintf(out_file,"\tcall printf\n");
+    reg_free(r);
     return r;
 }
 
@@ -149,7 +151,7 @@ char* x86_64_div(char* r1, char* r2, FILE* out_file)
 
 char* x86_64_lt(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq\t%s, %s\n", r2, r1);
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
     int ir2 = reg_index(r2);
     fprintf(out_file, "\tsetl %s\n", breg[ir2]);
     fprintf(out_file, "\tandq $255,%s\n", r2);
@@ -159,7 +161,7 @@ char* x86_64_lt(char* r1, char* r2, FILE* out_file)
 
 char* x86_64_le(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq\t%s, %s\n", r2, r1);
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
     int ir2 = reg_index(r2);
     fprintf(out_file, "\tsetle %s\n", breg[ir2]);
     fprintf(out_file, "\tandq $255,%s\n", r2);
@@ -169,7 +171,7 @@ char* x86_64_le(char* r1, char* r2, FILE* out_file)
 
 char* x86_64_gt(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq\t%s, %s\n", r2, r1);
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
     int ir2 = reg_index(r2);
     fprintf(out_file, "\tsetg %s\n", breg[ir2]);
     fprintf(out_file, "\tandq $255,%s\n", r2);
@@ -179,7 +181,7 @@ char* x86_64_gt(char* r1, char* r2, FILE* out_file)
 
 char* x86_64_ge(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq\t%s, %s\n", r2, r1);
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
     int ir2 = reg_index(r2);
     fprintf(out_file, "\tsetge %s\n", breg[ir2]);
     fprintf(out_file, "\tandq $255,%s\n", r2);
