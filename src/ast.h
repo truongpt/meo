@@ -33,6 +33,8 @@ enum AstType {
     AstLE,
     AstGT,
     AstGE,
+    AstEQ,
+    AstNE,
     AstNumber,
     AstPrint,
     AstIntType,

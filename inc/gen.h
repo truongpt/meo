@@ -34,6 +34,9 @@ char* GenLT(void* gen_prm, char* r1, char* r2);
 char* GenLE(void* gen_prm, char* r1, char* r2);
 char* GenGE(void* gen_prm, char* r1, char* r2);
 char* GenGT(void* gen_prm, char* r1, char* r2);
+char* GenEQ(void* gen_prm, char* r1, char* r2);
+char* GenNE(void* gen_prm, char* r1, char* r2);
+
 void GenOut(void* gen_prm, char* r);
 char* GenPrint(void* gen_prm, char* r);
 char* GenVar(void* gen_prm, char* var);

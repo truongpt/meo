@@ -23,6 +23,8 @@ char* x86_64_lt(char* r1, char* r2, FILE* out_file);
 char* x86_64_le(char* r1, char* r2, FILE* out_file);
 char* x86_64_gt(char* r1, char* r2, FILE* out_file);
 char* x86_64_ge(char* r1, char* r2, FILE* out_file);
+char* x86_64_eq(char* r1, char* r2, FILE* out_file);
+char* x86_64_ne(char* r1, char* r2, FILE* out_file);
 
 char* x86_64_store(char* r, char* var, FILE* out_file);
 char* x86_64_load_var(char* var, FILE* out_file);
@@ -63,6 +65,8 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_le     = &x86_64_le;
     func->f_gt     = &x86_64_gt;
     func->f_ge     = &x86_64_ge;
+    func->f_eq     = &x86_64_eq;
+    func->f_ne     = &x86_64_ne;
     func->f_store  = &x86_64_store;
     func->f_load_var = &x86_64_load_var;
     cur_reg = 0;
@@ -196,6 +200,24 @@ char* x86_64_ge(char* r1, char* r2, FILE* out_file)
 {
     fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
     fprintf(out_file, "\tsetge %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq $255,%s\n", r2);
+    reg_free(r1);
+    return r2;
+}
+
+char* x86_64_eq(char* r1, char* r2, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
+    fprintf(out_file, "\tsete %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq $255,%s\n", r2);
+    reg_free(r1);
+    return r2;
+}
+
+char* x86_64_ne(char* r1, char* r2, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
+    fprintf(out_file, "\tsetne %s\n", reg64_to_8(r2));
     fprintf(out_file, "\tandq $255,%s\n", r2);
     reg_free(r1);
     return r2;

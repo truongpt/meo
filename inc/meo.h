@@ -29,7 +29,7 @@ enum TokenType{
     TokenMinus,
     TokenMul,
     TokenDiv,
-    TokenEqual,
+    TokenEQ,
     TokenNE,
     TokenLT,
     TokenLE,

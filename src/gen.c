@@ -145,6 +145,18 @@ char* GenGE(void* gen_prm, char* r1, char* r2)
     return prm->func.f_ge(r1, r2, prm->out_asm_file);
 }
 
+char* GenEQ(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_eq(r1, r2, prm->out_asm_file);
+}
+
+char* GenNE(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_ne(r1, r2, prm->out_asm_file);
+}
+
 void GenOut(void* gen_prm, char* r)
 {
     GenParameter* prm = (GenParameter*)gen_prm;

@@ -324,7 +324,7 @@ TEST_CASE("lex test bool operator: == <= >= !=")
     outfile.close();
     vector<Token> expect = vector<Token>{
         {TokenNumber ,1},
-        {TokenEqual ,-1},
+        {TokenEQ ,   -1},
         {TokenNumber ,2},
         {TokenSemi , -1},
         {TokenNumber ,1},

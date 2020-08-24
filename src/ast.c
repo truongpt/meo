@@ -40,6 +40,12 @@ int32_t tok_2_ast (Token token)
     case TokenGE:
         ast = AstGE;
         break;
+    case TokenEQ:
+        ast = AstEQ;
+        break;
+    case TokenNE:
+        ast = AstNE;
+        break;
     case TokenNumber:
         ast = AstNumber;
         break;
@@ -145,6 +151,10 @@ void* ast_compile(void* gen_prm, AstNode* node)
         return GenGT(gen_prm, left, right);
     case AstGE:
         return GenGE(gen_prm, left, right);
+    case AstEQ:
+        return GenEQ(gen_prm, left, right);
+    case AstNE:
+        return GenNE(gen_prm, left, right);
     default:
         mlog(CLGT,"Not yet to support ast type %d\n",node->type);
     }

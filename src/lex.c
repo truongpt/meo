@@ -126,7 +126,7 @@ int32_t LexProc(void* prm, Token *t)
     case '=':
         c = get_char(lex_prm);
         if (c == '=') {
-            t->tok = TokenEqual;
+            t->tok = TokenEQ;
         } else {
             t->tok = TokenAssign;
             push_back(lex_prm, c);

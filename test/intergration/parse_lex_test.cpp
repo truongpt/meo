@@ -214,3 +214,41 @@ TEST_CASE("relational basic pattern with variable")
 
 }
 
+TEST_CASE("equal basic pattern with variable")
+{
+    std::ofstream outfile ("data/test6");
+    outfile << "int a1;" << std::endl;
+    outfile << "int a2;" << std::endl;
+    outfile << "a1 = 2;" << std::endl;
+    outfile << "a2 = 2;" << std::endl;
+    outfile << "print a1 == a2;" << std::endl;
+    outfile << "print a1 != a2;" << std::endl;
+    outfile.close();
+
+    void* lex_prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/test6"));
+
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out6"));
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+    REQUIRE(MockGetPrintValue() == 1);
+    REQUIRE(MockGetPrintValue() == 0);
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    REQUIRE(Success == GenClose(gen_prm));
+    REQUIRE(Success == GenDestroy());
+
+    REQUIRE(Success == LexClose(lex_prm));
+    REQUIRE(Success == LexDestroy());
+
+}
+
