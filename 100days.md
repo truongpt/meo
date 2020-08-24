@@ -206,3 +206,9 @@ assertions: 107 | 106 passed | 1 failed
 # Day 34
 - Update parse to support COMPARISONS (ex: relational operators <, <=, >, >=)
 - Study by reading https://github.com/rui314/9cc
+
+# Day 35
+- Add gen ASM for relational operators <, <=, >, >=
+- Support equal op ==, !=
+- Slightly refactor parse syntax.
+- Add parse token: if, else, while, do, for.
