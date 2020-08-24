@@ -208,6 +208,16 @@ static void read_identifier(LexParameter* lex_prm, char c, Token* t)
         t->tok = TokenReturn;
     } else if (!strncmp(id, "print", sizeof("print"))) {
         t->tok = TokenPrint;
+    } else if (!strncmp(id, "if", sizeof("if"))) {
+        t->tok = TokenIf;
+    } else if (!strncmp(id, "else", sizeof("else"))) {
+        t->tok = TokenElse;
+    } else if (!strncmp(id, "while", sizeof("while"))) {
+        t->tok = TokenWhile;
+    } else if (!strncmp(id, "do", sizeof("do"))) {
+        t->tok = TokenDo;
+    } else if (!strncmp(id, "for", sizeof("for"))) {
+        t->tok = TokenFor;
     } else {
         t->tok = TokenIdentifier;
         t->id_str = (char*)malloc(i+1);

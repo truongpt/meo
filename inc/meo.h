@@ -36,6 +36,13 @@ enum TokenType{
     TokenGT,
     TokenGE,
 
+    // 
+    TokenIf,
+    TokenElse,
+    TokenWhile,
+    TokenDo,
+    TokenFor,
+
     // data type
     TokenIntType,
     TokenVoidType,

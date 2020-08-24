@@ -376,3 +376,59 @@ TEST_CASE("lex test bool operator: == <= >= !=")
     REQUIRE(Success == LexClose(prm));
     REQUIRE(Success == LexDestroy());
 }
+
+TEST_CASE("lex test if-then- operator: == <= >= !=")
+{
+    std::ofstream outfile ("data/test9");
+    outfile << "if (1 == 2)"<< std::endl;
+    outfile << "{ print 1;}"<< std::endl;
+    outfile << "else       "<< std::endl;
+    outfile << "{ print 2;}" << std::endl;
+    outfile.close();
+    vector<Token> expect = vector<Token>{
+        {TokenIf,      -1},
+        {TokenLP,      -1},
+        {TokenNumber,   1},
+        {TokenEQ,      -1},
+        {TokenNumber,   2},
+        {TokenRP,      -1},
+        {TokenLBracket,-1},
+        {TokenPrint,   -1},
+        {TokenNumber,   1},
+        {TokenSemi,    -1},
+        {TokenRBracket,-1},
+        {TokenElse,    -1},
+        {TokenLBracket,-1},
+        {TokenPrint,   -1},
+        {TokenNumber,   2},
+        {TokenSemi,    -1},
+        {TokenRBracket,-1},
+        {TokenEoi     ,-1}
+    };
+
+    void* prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&prm, (char*)"data/test9"));
+
+    Token T;
+    int i = 0;
+    while(Success == LexProc(prm, &T)) {
+        Token t = expect[i];
+        if (T.tok != t.tok) {
+            mlog(ERROR,"%s == %s\n",tok2str(T.tok), tok2str(t.tok));
+            mlog(ERROR, "error index %d\n",i);
+            REQUIRE(T.tok == t.tok);
+        }
+        if (TokenNumber == t.tok) {
+            REQUIRE(T.value == t.value);
+        }
+        i++;
+        if (TokenEoi == T.tok) {
+            break;
+        }
+    }
+
+    REQUIRE(i == expect.size());
+    REQUIRE(Success == LexClose(prm));
+    REQUIRE(Success == LexDestroy());
+}
