@@ -24,9 +24,15 @@ static AstNode* mul(ParseParameter* parse_prm);
 static AstNode* add(ParseParameter* parse_prm);
 static AstNode* relational(ParseParameter* parse_prm);
 static AstNode* equal(ParseParameter* parse_prm);
-
 static AstNode* expression(ParseParameter* parse_prm);
+
 static void statements(ParseParameter* parse_prm);
+static AstNode* stmt_print(ParseParameter* parse_prm);
+static AstNode* stmt_decl(ParseParameter* parse_prm);
+static AstNode* stmt_ident(ParseParameter* parse_prm);
+static AstNode* stmt_expr(ParseParameter* parse_prm);
+static AstNode* stmt_if(ParseParameter* parse_prm);
+
 static bool match(ParseParameter* parse_prm, int32_t tok_type);
 
 int32_t ParseCreate(void)
@@ -99,6 +105,102 @@ int32_t ParseProc(void* prm)
     return Success;
 }
 
+AstNode* stmt_print(ParseParameter* parse_prm)
+{
+    AstNode *node, *node1;
+    Token op_tok;
+    op_tok = parse_prm->cur_token;
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    node1 = expression(parse_prm);
+    node = ast_create_unary(op_tok, node1);
+
+    if (match (parse_prm, TokenSemi)) {
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
+    } else {
+        mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
+    }
+
+    return node;
+}
+
+AstNode* stmt_decl(ParseParameter* parse_prm)
+{
+    // stmt int
+    AstNode *node, *node1;
+
+    node1 = ast_create_leaf(parse_prm->cur_token);
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    if (!match (parse_prm, TokenIdentifier)) {
+        mlog(CLGT,"Expect Identifier but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
+    }
+
+    // add the identifier to symbol table
+    symtable_add(&(parse_prm->symbol_table), parse_prm->cur_token.id_str);
+    symtable_set_type(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, SymbolInt);
+
+    parse_prm->cur_token.left_value = true;
+    node = ast_create_unary(parse_prm->cur_token, node1);
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+
+    if (match (parse_prm, TokenSemi)) {
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
+    } else {
+        mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
+    }
+
+    return node;
+}
+
+AstNode* stmt_ident(ParseParameter* parse_prm)
+{
+    AstNode *node, *node1;
+    Token op_tok;
+
+    parse_prm->cur_token.left_value = true;
+    node = ast_create_leaf(parse_prm->cur_token);
+
+    // verify that existence in symbol table
+    if (-1 == symtable_find(&(parse_prm->symbol_table), parse_prm->cur_token.id_str)) {
+        mlog(CLGT, "Can not find symbol %s at line: %d\n",parse_prm->cur_token.id_str, LexGetLine(parse_prm->lex_prm));
+        exit(1);
+    }
+
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    if (!match (parse_prm, TokenAssign)) {
+        mlog(CLGT,"Expect Equal but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok),LexGetLine(parse_prm->lex_prm));
+    }
+    op_tok = parse_prm->cur_token;
+
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    node1 = expression(parse_prm);
+    node = ast_create_node(op_tok, node, node1);
+
+    if (match (parse_prm, TokenSemi)) {
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
+    } else {
+        mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
+    }
+
+    return node;
+}
+
+AstNode* stmt_if(ParseParameter* parse_prm)
+{
+    //todo
+    return NULL;
+}
+
+AstNode* stmt_expr(ParseParameter* parse_prm)
+{
+    AstNode* node = expression(parse_prm);
+    if (match (parse_prm, TokenSemi)) {
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
+    } else {
+        mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
+    }
+    return node;
+}
+
 void statements(ParseParameter* parse_prm)
 {
     /* statements -> expression SEMI
@@ -107,61 +209,25 @@ void statements(ParseParameter* parse_prm)
      *            -> 'int'   identifier   SEMI statements
      *            ->  identifier '=' expression  SEMI statements
      */
-
-    AstNode *node, *node1;
-    Token op_tok;
-    while ( !match(parse_prm, TokenEoi)) {
-        if (match (parse_prm, TokenPrint)) {
-            // stmt print
-            op_tok = parse_prm->cur_token;
-            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-            node1 = expression(parse_prm);
-            node = ast_create_unary(op_tok, node1);
-        } else if (match (parse_prm, TokenIntType)) {
-            // stmt int
-            node1 = ast_create_leaf(parse_prm->cur_token);
-            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-            if (!match (parse_prm, TokenIdentifier)) {
-                mlog(CLGT,"Expect Identifier but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
-            }
-
-            // add the identifier to symbol table
-            symtable_add(&(parse_prm->symbol_table), parse_prm->cur_token.id_str);
-            symtable_set_type(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, SymbolInt);
-
-            parse_prm->cur_token.left_value = true;
-            node = ast_create_unary(parse_prm->cur_token, node1);
-            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        } else if (match (parse_prm, TokenIdentifier)) {
-            // stmt identifier
-            parse_prm->cur_token.left_value = true;
-            node = ast_create_leaf(parse_prm->cur_token);
-
-            // verify that existence in symbol table
-            if (-1 == symtable_find(&(parse_prm->symbol_table), parse_prm->cur_token.id_str)) {
-                mlog(CLGT, "Can not find symbol %s at line: %d\n",parse_prm->cur_token.id_str, LexGetLine(parse_prm->lex_prm));
-                exit(1);
-            }
-
-            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-            if (!match (parse_prm, TokenAssign)) {
-                mlog(CLGT,"Expect Equal but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok),LexGetLine(parse_prm->lex_prm));
-            }
-            op_tok = parse_prm->cur_token;
-
-            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-            node1 = expression(parse_prm);
-            node = ast_create_node(op_tok, node, node1);
-        } else {
-            node = expression(parse_prm);
+    AstNode* node;
+    while (!match(parse_prm, TokenEoi)) {
+        switch(parse_prm->cur_token.tok)
+        {
+        case TokenPrint:
+            node = stmt_print(parse_prm);
+            break;
+        case TokenIntType:
+            node = stmt_decl(parse_prm);
+            break;
+        case TokenIdentifier:
+            node = stmt_ident(parse_prm);
+            break;
+        case TokenIf:
+            node = stmt_if(parse_prm);
+            break;
+        default:
+            node = stmt_expr(parse_prm);
         }
-
-        if (match (parse_prm, TokenSemi)) {
-            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
-        } else {
-            mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
-        }
-
         // code gen
         ast_gen(parse_prm, node);
     }
