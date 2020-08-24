@@ -27,8 +27,24 @@ char* x86_64_ge(char* r1, char* r2, FILE* out_file);
 char* x86_64_store(char* r, char* var, FILE* out_file);
 char* x86_64_load_var(char* var, FILE* out_file);
 
+typedef struct RegMap {
+    char* reg64;
+    char* reg8;
+} RegMap;
+
 static char* reg[] = {"%r8","%r9","%r10","%r11","%r12","%r13","%r14","%r15"};
 static char* breg[] = {"%r8b","%r9b","%r10b","%r11b","%r12b","%r13b","%r14b","%r15b"};
+
+static RegMap reg_map[] = {
+    {"%r8",  "%r8b"},
+    {"%r9",  "%r9b"},
+    {"%r10", "%r10b"},
+    {"%r11", "%r11b"},
+    {"%r12", "%r12b"},
+    {"%r13", "%r13b"},
+    {"%r14", "%r14b"},
+    {"%r15", "%r15b"}
+};
 
 static int cur_reg = 0;
 
@@ -71,14 +87,14 @@ void reg_free(char* r)
     reg[--cur_reg] = r;
 }
 
-int32_t reg_index(char* r)
+char* reg64_to_8(char* r)
 {
-    for (int i = 0; i < sizeof(reg)/sizeof(reg[0]); i++) {
-        if (!strncmp(reg[i],r,strlen(r))) {
-            return i;
+    for (int i = 0; i < sizeof(reg_map)/sizeof(reg_map[0]); i++) {
+        if (!strncmp(reg_map[i].reg64 , r, strlen(r))) {
+            return reg_map[i].reg8;
         }
     }
-    return -1;
+    return NULL;
 }
 
 char* x86_64_load(int32_t value, FILE* out_file)
@@ -152,8 +168,7 @@ char* x86_64_div(char* r1, char* r2, FILE* out_file)
 char* x86_64_lt(char* r1, char* r2, FILE* out_file)
 {
     fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    int ir2 = reg_index(r2);
-    fprintf(out_file, "\tsetl %s\n", breg[ir2]);
+    fprintf(out_file, "\tsetl %s\n", reg64_to_8(r2));
     fprintf(out_file, "\tandq $255,%s\n", r2);
     reg_free(r1);
     return r2;
@@ -162,8 +177,7 @@ char* x86_64_lt(char* r1, char* r2, FILE* out_file)
 char* x86_64_le(char* r1, char* r2, FILE* out_file)
 {
     fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    int ir2 = reg_index(r2);
-    fprintf(out_file, "\tsetle %s\n", breg[ir2]);
+    fprintf(out_file, "\tsetle %s\n", reg64_to_8(r2));
     fprintf(out_file, "\tandq $255,%s\n", r2);
     reg_free(r1);
     return r2;
@@ -172,8 +186,7 @@ char* x86_64_le(char* r1, char* r2, FILE* out_file)
 char* x86_64_gt(char* r1, char* r2, FILE* out_file)
 {
     fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    int ir2 = reg_index(r2);
-    fprintf(out_file, "\tsetg %s\n", breg[ir2]);
+    fprintf(out_file, "\tsetg %s\n", reg64_to_8(r2));
     fprintf(out_file, "\tandq $255,%s\n", r2);
     reg_free(r1);
     return r2;
@@ -182,8 +195,7 @@ char* x86_64_gt(char* r1, char* r2, FILE* out_file)
 char* x86_64_ge(char* r1, char* r2, FILE* out_file)
 {
     fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    int ir2 = reg_index(r2);
-    fprintf(out_file, "\tsetge %s\n", breg[ir2]);
+    fprintf(out_file, "\tsetge %s\n", reg64_to_8(r2));
     fprintf(out_file, "\tandq $255,%s\n", r2);
     reg_free(r1);
     return r2;
