@@ -212,3 +212,6 @@ assertions: 107 | 106 passed | 1 failed
 - Support equal op ==, !=
 - Slightly refactor parse syntax.
 - Add parse token: if, else, while, do, for.
+
+# Day 36
+- Study how to parse IF statement?
