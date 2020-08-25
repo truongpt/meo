@@ -203,15 +203,15 @@ assertions: 107 | 106 passed | 1 failed
 - Consider support COMPARISONS.
 - Studying "5 Syntax-Directed Translation" of Dragon book.
 
-# Day 34
+## Day 34
 - Update parse to support COMPARISONS (ex: relational operators <, <=, >, >=)
 - Study by reading https://github.com/rui314/9cc
 
-# Day 35
+## Day 35
 - Add gen ASM for relational operators <, <=, >, >=
 - Support equal op ==, !=
 - Slightly refactor parse syntax.
 - Add parse token: if, else, while, do, for.
 
-# Day 36
+## Day 36
 - Study how to parse IF statement?
