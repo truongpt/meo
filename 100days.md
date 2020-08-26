@@ -215,3 +215,6 @@ assertions: 107 | 106 passed | 1 failed
 
 ## Day 36
 - Study how to parse IF statement?
+
+## Day 37
+- Tag v0.2 https://github.com/truongpt/meo/releases/tag/v0.2
