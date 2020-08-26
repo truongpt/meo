@@ -26,13 +26,13 @@ static AstNode* relational(ParseParameter* parse_prm);
 static AstNode* equal(ParseParameter* parse_prm);
 static AstNode* expression(ParseParameter* parse_prm);
 
-static void statements(ParseParameter* parse_prm);
+static AstNode* statements(ParseParameter* parse_prm);
 static AstNode* stmt_print(ParseParameter* parse_prm);
 static AstNode* stmt_decl(ParseParameter* parse_prm);
 static AstNode* stmt_ident(ParseParameter* parse_prm);
 static AstNode* stmt_expr(ParseParameter* parse_prm);
 static AstNode* stmt_if(ParseParameter* parse_prm);
-
+static AstNode* stmt_scope(ParseParameter* parse_prm);
 static bool match(ParseParameter* parse_prm, int32_t tok_type);
 
 int32_t ParseCreate(void)
@@ -100,7 +100,9 @@ int32_t ParseProc(void* prm)
     }
 
     ParseParameter* parse_prm = (ParseParameter*)prm;
-    statements(parse_prm);    
+    while (!match(parse_prm, TokenEoi)) {
+        statements(parse_prm);
+    }
 
     return Success;
 }
@@ -119,7 +121,8 @@ AstNode* stmt_print(ParseParameter* parse_prm)
     } else {
         mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
-
+    // code gen
+    ast_gen(parse_prm, node);
     return node;
 }
 
@@ -148,6 +151,8 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
         mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
 
+    // code gen
+    ast_gen(parse_prm, node);
     return node;
 }
 
@@ -181,6 +186,8 @@ AstNode* stmt_ident(ParseParameter* parse_prm)
         mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
 
+    // code gen
+    ast_gen(parse_prm, node);
     return node;
 }
 
@@ -190,18 +197,34 @@ AstNode* stmt_if(ParseParameter* parse_prm)
     return NULL;
 }
 
+AstNode* stmt_scope(ParseParameter* parse_prm)
+{
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    statements(parse_prm);
+    if (match (parse_prm, TokenRBracket)) {
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    } else {
+        mlog(CLGT,"Missing left braces } at line: %d\n",LexGetLine(parse_prm->lex_prm));
+    }
+    return NULL;
+}
+
+
 AstNode* stmt_expr(ParseParameter* parse_prm)
 {
     AstNode* node = expression(parse_prm);
-    if (match (parse_prm, TokenSemi)) {
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
+    if (match(parse_prm, TokenSemi)) {
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     } else {
         mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
+
+    // code gen
+    ast_gen(parse_prm, node);
     return node;
 }
 
-void statements(ParseParameter* parse_prm)
+AstNode* statements(ParseParameter* parse_prm)
 {
     /* statements -> expression SEMI
      *            -> expression SEMI statements
@@ -210,26 +233,28 @@ void statements(ParseParameter* parse_prm)
      *            ->  identifier '=' expression  SEMI statements
      */
     AstNode* node;
-    while (!match(parse_prm, TokenEoi)) {
-        switch(parse_prm->cur_token.tok)
-        {
-        case TokenPrint:
-            node = stmt_print(parse_prm);
-            break;
-        case TokenIntType:
-            node = stmt_decl(parse_prm);
-            break;
-        case TokenIdentifier:
-            node = stmt_ident(parse_prm);
-            break;
-        case TokenIf:
-            node = stmt_if(parse_prm);
-            break;
-        default:
-            node = stmt_expr(parse_prm);
-        }
-        // code gen
-        ast_gen(parse_prm, node);
+    switch(parse_prm->cur_token.tok)
+    {
+    case TokenPrint:
+        node = stmt_print(parse_prm);
+        break;
+    case TokenIntType:
+        node = stmt_decl(parse_prm);
+        break;
+    case TokenIdentifier:
+        node = stmt_ident(parse_prm);
+        break;
+    case TokenIf:
+        node = stmt_if(parse_prm);
+        break;
+    case TokenLBracket:
+        node = stmt_scope(parse_prm);
+        break;
+    case TokenRBracket:
+        // do nothing
+        break;
+    default:
+        node = stmt_expr(parse_prm);
     }
 }
 

@@ -110,6 +110,11 @@ AstNode* ast_create_unary(Token token, AstNode* left)
 
 void* ast_compile(void* gen_prm, AstNode* node)
 {
+    if (NULL == node) {
+        // do nothing
+        mlog(DEBUG,"NULL node \n");
+        return NULL;
+    }
     char *left = NULL, *right = NULL;
     if (NULL != node->left) {
         left = (char*)ast_compile(gen_prm, node->left);

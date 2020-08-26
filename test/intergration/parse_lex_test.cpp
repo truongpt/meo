@@ -252,6 +252,45 @@ TEST_CASE("equal basic pattern with variable")
 
 }
 
+TEST_CASE("basic parttern with {}")
+{
+    std::ofstream outfile ("data/test7");
+    outfile << "int a1;" << std::endl;
+    outfile << "int a2;" << std::endl;
+    outfile << "{a1 = 1;}" << std::endl;
+    outfile << "a2 = 2;" << std::endl;
+    outfile << "{print a1;}" << std::endl;
+    outfile << "{{{{print a2;}}}}" << std::endl;
+    outfile.close();
+
+    void* lex_prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/test7"));
+
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out7"));
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+    REQUIRE(MockGetPrintValue() == 1);
+    REQUIRE(MockGetPrintValue() == 2);
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    REQUIRE(Success == GenClose(gen_prm));
+    REQUIRE(Success == GenDestroy());
+
+    REQUIRE(Success == LexClose(lex_prm));
+    REQUIRE(Success == LexDestroy());
+
+}
+
+#if 0
 TEST_CASE("basic if-else pattern")
 {
     std::ofstream outfile ("data/test7");
@@ -291,3 +330,4 @@ TEST_CASE("basic if-else pattern")
 
 }
 
+#endif
