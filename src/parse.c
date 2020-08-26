@@ -200,12 +200,15 @@ AstNode* stmt_if(ParseParameter* parse_prm)
 AstNode* stmt_scope(ParseParameter* parse_prm)
 {
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-    statements(parse_prm);
-    if (match (parse_prm, TokenRBracket)) {
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-    } else {
+    while (!match(parse_prm, TokenRBracket) && !match(parse_prm, TokenEoi)) {
+        statements(parse_prm);
+    }
+
+    if (match(parse_prm, TokenEoi)) {
         mlog(CLGT,"Missing left braces } at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
+
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     return NULL;
 }
 
@@ -251,7 +254,9 @@ AstNode* statements(ParseParameter* parse_prm)
         node = stmt_scope(parse_prm);
         break;
     case TokenRBracket:
-        // do nothing
+        mlog(CLGT,"Redundancy right braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        // Ignore to next
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         break;
     default:
         node = stmt_expr(parse_prm);
