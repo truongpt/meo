@@ -254,6 +254,7 @@ AstNode* statements(ParseParameter* parse_prm)
         node = stmt_scope(parse_prm);
         break;
     case TokenRBracket:
+        node = NULL;
         mlog(CLGT,"Redundancy right braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
         // Ignore to next
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -323,7 +324,7 @@ AstNode* mul(ParseParameter* parse_prm)
 AstNode* factor(ParseParameter* parse_prm)
 {
     //TODO: confirm start valid token
-    AstNode* node;
+    AstNode* node = NULL;
     if (match(parse_prm, TokenNumber) || match(parse_prm, TokenIdentifier)) {
         if (match(parse_prm, TokenIdentifier)) {
             // right value
