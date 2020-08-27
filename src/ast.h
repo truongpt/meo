@@ -41,12 +41,16 @@ enum AstType {
     AstIdentifier,
     AstLeftVar,
     AstRightVar,
-    AstAssign
+    AstAssign,
+
+    // Link statements
+    AstLink
 };
 
 AstNode* ast_create_node(Token token, AstNode* left, AstNode* right);
 AstNode* ast_create_leaf(Token token);
 AstNode* ast_create_unary(Token token, AstNode* left);
+AstNode* ast_create_link(AstNode* left, AstNode* right);
 AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node);
 void* ast_compile(void* gen_prm, AstNode* node);
 void ast_gen(ParseParameter* parse_prm, AstNode* node);

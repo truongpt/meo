@@ -11,6 +11,7 @@
 #include "parse_internal.h"
 
 static int32_t tok_2_ast (Token token);
+static void ast_tree_free(AstNode* node);
 
 int32_t tok_2_ast (Token token)
 {
@@ -69,6 +70,17 @@ int32_t tok_2_ast (Token token)
 
 }
 
+AstNode* ast_create_link(
+    AstNode* left,
+    AstNode* right)
+{
+    AstNode* node = (AstNode*) malloc(sizeof(AstNode));
+    node->type = AstLink;
+    node->left = left;
+    node->right = right;
+    return node;
+}
+
 AstNode* ast_create_node(
     Token token,
     AstNode* left,
@@ -95,6 +107,7 @@ AstNode* ast_create_node(
     node->left = left;
     node->right = right;
 
+    // TODO: Add free memory of TOKEN
     return node;
 }
 
@@ -115,6 +128,13 @@ void* ast_compile(void* gen_prm, AstNode* node)
         mlog(DEBUG,"NULL node \n");
         return NULL;
     }
+
+    if (AstLink == node->type) {
+        ast_compile(gen_prm, node->left);
+        ast_compile(gen_prm, node->right);
+        return NULL;
+    }
+
     char *left = NULL, *right = NULL;
     if (NULL != node->left) {
         left = (char*)ast_compile(gen_prm, node->left);
@@ -173,6 +193,11 @@ void ast_gen(ParseParameter* parse_prm, AstNode* node)
         // ast_interpret(parse_prm, node);
     } else {
         ast_compile(parse_prm->gen_prm, node);
-        /* GenFree(parse_prm->gen_prm, r); */
+        ast_tree_free(node);
     }
+}
+
+void ast_tree_free(AstNode* node)
+{
+    // TODO: support later
 }

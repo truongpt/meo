@@ -26,7 +26,7 @@ static AstNode* relational(ParseParameter* parse_prm);
 static AstNode* equal(ParseParameter* parse_prm);
 static AstNode* expression(ParseParameter* parse_prm);
 
-static AstNode* statements(ParseParameter* parse_prm);
+static AstNode* statements(ParseParameter* parse_prm, AstNode* root);
 static AstNode* stmt_print(ParseParameter* parse_prm);
 static AstNode* stmt_decl(ParseParameter* parse_prm);
 static AstNode* stmt_ident(ParseParameter* parse_prm);
@@ -100,10 +100,13 @@ int32_t ParseProc(void* prm)
     }
 
     ParseParameter* parse_prm = (ParseParameter*)prm;
+    AstNode* node = NULL;
     while (!match(parse_prm, TokenEoi)) {
-        statements(parse_prm);
+        node = statements(parse_prm, node);
     }
 
+    // gen code
+    ast_gen(parse_prm, node);
     return Success;
 }
 
@@ -121,8 +124,6 @@ AstNode* stmt_print(ParseParameter* parse_prm)
     } else {
         mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
-    // code gen
-    ast_gen(parse_prm, node);
     return node;
 }
 
@@ -151,8 +152,6 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
         mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
 
-    // code gen
-    ast_gen(parse_prm, node);
     return node;
 }
 
@@ -186,8 +185,6 @@ AstNode* stmt_ident(ParseParameter* parse_prm)
         mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
 
-    // code gen
-    ast_gen(parse_prm, node);
     return node;
 }
 
@@ -200,8 +197,9 @@ AstNode* stmt_if(ParseParameter* parse_prm)
 AstNode* stmt_scope(ParseParameter* parse_prm)
 {
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    AstNode* node = NULL;
     while (!match(parse_prm, TokenRBracket) && !match(parse_prm, TokenEoi)) {
-        statements(parse_prm);
+        node = statements(parse_prm, node);
     }
 
     if (match(parse_prm, TokenEoi)) {
@@ -209,7 +207,7 @@ AstNode* stmt_scope(ParseParameter* parse_prm)
     }
 
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-    return NULL;
+    return node;
 }
 
 
@@ -222,12 +220,10 @@ AstNode* stmt_expr(ParseParameter* parse_prm)
         mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
 
-    // code gen
-    ast_gen(parse_prm, node);
     return node;
 }
 
-AstNode* statements(ParseParameter* parse_prm)
+AstNode* statements(ParseParameter* parse_prm, AstNode* root)
 {
     /* statements -> expression SEMI
      *            -> expression SEMI statements
@@ -235,7 +231,7 @@ AstNode* statements(ParseParameter* parse_prm)
      *            -> 'int'   identifier   SEMI statements
      *            ->  identifier '=' expression  SEMI statements
      */
-    AstNode* node;
+    AstNode* node = NULL;
     switch(parse_prm->cur_token.tok)
     {
     case TokenPrint:
@@ -254,7 +250,6 @@ AstNode* statements(ParseParameter* parse_prm)
         node = stmt_scope(parse_prm);
         break;
     case TokenRBracket:
-        node = NULL;
         mlog(CLGT,"Redundancy right braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
         // Ignore to next
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -262,7 +257,12 @@ AstNode* statements(ParseParameter* parse_prm)
     default:
         node = stmt_expr(parse_prm);
     }
-    return node;
+
+    if (NULL == root) {
+        return ast_create_link(node, NULL);
+    } else {
+        return ast_create_link(root, node);
+    }
 }
 
 AstNode* expression(ParseParameter* parse_prm)
