@@ -1,4 +1,4 @@
-CC = gcc
+CC = gcc -Wall -Werror
 LD = gcc
 LDFLAGS  += 
 CMNFLAGS := -g -O0

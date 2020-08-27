@@ -261,6 +261,7 @@ AstNode* statements(ParseParameter* parse_prm)
     default:
         node = stmt_expr(parse_prm);
     }
+    return node;
 }
 
 AstNode* expression(ParseParameter* parse_prm)

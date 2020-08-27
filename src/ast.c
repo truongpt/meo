@@ -172,7 +172,7 @@ void ast_gen(ParseParameter* parse_prm, AstNode* node)
         // todo:
         // ast_interpret(parse_prm, node);
     } else {
-        char* r = ast_compile(parse_prm->gen_prm, node);
+        ast_compile(parse_prm->gen_prm, node);
         /* GenFree(parse_prm->gen_prm, r); */
     }
 }

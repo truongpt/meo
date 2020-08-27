@@ -25,7 +25,7 @@ LexParameter g_lex_prm[MAX_LEX_RSC];
 
 static char get_char(LexParameter *prm);
 static char get_next(LexParameter *prm);
-static char push_back(LexParameter *prm, char c);
+static void push_back(LexParameter *prm, char c);
 static void read_number(LexParameter* lex_prm, char c, Token* t);
 static void read_identifier(LexParameter* lex_prm, char c, Token* t);
 
@@ -241,7 +241,7 @@ void read_number(LexParameter* lex_prm, char c, Token* t)
     }
 }
 
-static char push_back(LexParameter *prm, char c)
+static void push_back(LexParameter *prm, char c)
 {
     prm->push_back = c;
 }
