@@ -218,3 +218,7 @@ assertions: 107 | 106 passed | 1 failed
 
 ## Day 37
 - Tag v0.2 https://github.com/truongpt/meo/releases/tag/v0.2
+
+## Day 38
+- Add compiler option to prevent stupid mistake.
+- Refactoring parser to prepare support IF statement.
