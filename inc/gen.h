@@ -24,6 +24,7 @@ int32_t GenDestroy(void);
 int32_t GenOpen(void** gen_prm, int32_t arch, char* out_file);
 int32_t GenClose(void* gen_prm);
 
+int32_t GenGetLabel(void* gen_prm);
 char* GenLoad(void* gen_prm, int32_t value);
 char* GenFree(void* gen_prm, char* r);
 char* GenPlus(void* gen_prm, char* r1, char* r2);

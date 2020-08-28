@@ -19,6 +19,7 @@ SRC_CPP := gen_test.cpp
 SRC_CPP += mock_arch.cpp
 SRC_CPP += main.cpp
 SRC := $(TOP_SRC)/src/gen.c
+SRC += $(TOP_SRC)/src/log.c
 
 CFLAGS += $(INC)
 

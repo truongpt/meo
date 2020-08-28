@@ -141,7 +141,45 @@ void* ast_compile_if(void* gen_prm, AstNode* node)
     return NULL;
 }
 
-void* ast_compile(void* gen_prm, AstNode* node)
+char* gen_bin_op(void* gen_prm, char* left, char* right, int type)
+{
+    switch (type) {
+    case AstPlus:
+        return GenPlus(gen_prm, left, right);
+    case AstMinus:
+        return GenMinus(gen_prm, left, right);
+    case AstMul:
+        return GenMul(gen_prm, left, right);
+    case AstDiv:
+        return GenDiv(gen_prm, left, right);
+    default:
+        mlog(CLGT,"Invalid type binary operator\n");
+        return NULL;
+    }
+}
+
+char* gen_relational_op(void* gen_prm, char* left, char* right, int type)
+{
+    switch (type) {
+    case AstLT:
+        return GenLT(gen_prm, left, right);
+    case AstLE:
+        return GenLE(gen_prm, left, right);
+    case AstGT:
+        return GenGT(gen_prm, left, right);
+    case AstGE:
+        return GenGE(gen_prm, left, right);
+    case AstEQ:
+        return GenEQ(gen_prm, left, right);
+    case AstNE:
+        return GenNE(gen_prm, left, right);
+    default:
+        mlog(CLGT,"Invalid type relational operator\n");
+        return NULL;
+    }
+}
+
+void* ast_compile(void* gen_prm, AstNode* node, int parent_type)
 {
     if (NULL == node) {
         // do nothing
@@ -152,8 +190,8 @@ void* ast_compile(void* gen_prm, AstNode* node)
     switch (node->type)
     {
     case AstLink:
-        ast_compile(gen_prm, node->left);
-        ast_compile(gen_prm, node->right);
+        ast_compile(gen_prm, node->left, node->type);
+        ast_compile(gen_prm, node->right, node->type);
         return NULL;
     case AstIf:
         return ast_compile_if(gen_prm, node);
@@ -161,10 +199,10 @@ void* ast_compile(void* gen_prm, AstNode* node)
 
     char *left = NULL, *right = NULL;
     if (NULL != node->left) {
-        left = (char*)ast_compile(gen_prm, node->left);
+        left = (char*)ast_compile(gen_prm, node->left, node->type);
     }
     if (NULL != node->right) {
-        right = (char*)ast_compile(gen_prm, node->right);
+        right = (char*)ast_compile(gen_prm, node->right, node->type);
     }
 
     switch (node->type) {
@@ -185,25 +223,17 @@ void* ast_compile(void* gen_prm, AstNode* node)
     case AstAssign:
         return GenStore(gen_prm, left, right);
     case AstPlus:
-        return GenPlus(gen_prm, left, right);
     case AstMinus:
-        return GenMinus(gen_prm, left, right);
     case AstMul:
-        return GenMul(gen_prm, left, right);
     case AstDiv:
-        return GenDiv(gen_prm, left, right);
+        return gen_bin_op(gen_prm, left, right, node->type);
     case AstLT:
-        return GenLT(gen_prm, left, right);
     case AstLE:
-        return GenLE(gen_prm, left, right);
     case AstGT:
-        return GenGT(gen_prm, left, right);
     case AstGE:
-        return GenGE(gen_prm, left, right);
     case AstEQ:
-        return GenEQ(gen_prm, left, right);
     case AstNE:
-        return GenNE(gen_prm, left, right);
+        return gen_relational_op(gen_prm, left, right, node->type);
     default:
         mlog(CLGT,"Not yet to support ast type %d\n",node->type);
     }
@@ -216,7 +246,7 @@ void ast_gen(ParseParameter* parse_prm, AstNode* node)
         // todo:
         // ast_interpret(parse_prm, node);
     } else {
-        ast_compile(parse_prm->gen_prm, node);
+        ast_compile(parse_prm->gen_prm, node, -1);
         ast_tree_free(node);
     }
 }

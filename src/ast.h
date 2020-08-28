@@ -55,7 +55,7 @@ AstNode* ast_create_unary(Token token, AstNode* left);
 AstNode* ast_create_link(AstNode* left, AstNode* right);
 AstNode* ast_create_ifnode(AstNode* left, AstNode* mid, AstNode* right);
 AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node);
-void* ast_compile(void* gen_prm, AstNode* node);
+void* ast_compile(void* gen_prm, AstNode* node, int parent_type);
 void ast_gen(ParseParameter* parse_prm, AstNode* node);
 
 #ifdef __cplusplus

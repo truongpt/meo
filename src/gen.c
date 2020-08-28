@@ -4,17 +4,19 @@
  */
 
 #include <stdbool.h>
-#include <stdarg.h> 
+#include <stdarg.h>
+#include <limits.h>
 #include "gen.h"
 #include "meo.h"
 #include "error_code.h"
-
+#include "log.h"
 #include "gen_internal.h"
 
 typedef struct GenParameter{
     bool avail;
     FILE* out_asm_file;
     GenFuncTable func;
+    int32_t label_id;
 } GenParameter;
 
 #define MAX_GEN_RSC 10
@@ -53,6 +55,7 @@ int32_t GenOpen(void** gen_prm, int32_t arch, char* out_file_name)
     }
 
     g_gen_prm[i].out_asm_file = fopen(out_file_name, "w");
+    g_gen_prm[i].label_id = 0;
     if (NULL == g_gen_prm[i].out_asm_file) {
         return OpenFileError;
     }
@@ -83,6 +86,16 @@ int32_t GenClose(void* gen_prm)
     fclose(l_gen_prm->out_asm_file);
 
     return Success;
+}
+
+int32_t GenGetLabel(void* gen_prm)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    if (prm->label_id == INT_MAX) {
+        mlog(CLGT,"Too much label \n");
+        exit(1);
+    }
+    return ++(prm->label_id);
 }
 
 char* GenLoad(void* gen_prm, int32_t value)
