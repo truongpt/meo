@@ -290,10 +290,9 @@ TEST_CASE("basic parttern with {}")
 
 }
 
-#if 0
 TEST_CASE("basic if-else pattern")
 {
-    std::ofstream outfile ("data/test7");
+    std::ofstream outfile ("data/test8");
     outfile << "int a1;" << std::endl;
     outfile << "int a2;" << std::endl;
     outfile << "a1 = 1;" << std::endl;
@@ -306,11 +305,11 @@ TEST_CASE("basic if-else pattern")
 
     void* lex_prm = NULL;
     REQUIRE(Success == LexCreate());
-    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/test7"));
+    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/test8"));
 
     void* gen_prm = NULL;
     REQUIRE(Success == GenCreate());
-    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out7"));
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out8"));
 
     void* parse_prm = NULL;
     REQUIRE(Success == ParseCreate());
@@ -329,5 +328,3 @@ TEST_CASE("basic if-else pattern")
     REQUIRE(Success == LexDestroy());
 
 }
-
-#endif

@@ -190,12 +190,37 @@ AstNode* stmt_ident(ParseParameter* parse_prm)
 
 AstNode* stmt_if(ParseParameter* parse_prm)
 {
-    //todo
-    return NULL;
+    /* if_statement: if_head
+    *      |        if_head 'else' compound_statement
+    *      ;
+    */
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    if (!match(parse_prm, TokenLP)){
+        mlog(CLGT,"Missing open parentheses ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        exit(1);
+    }
+
+    AstNode* cond = expression(parse_prm);
+    AstNode* true_stmt = stmt_scope(parse_prm);
+
+    // else
+    AstNode* false_stmt = NULL;
+    if (match(parse_prm, TokenElse)){
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        false_stmt = stmt_scope(parse_prm);
+    }
+
+    // create If node
+    return ast_create_ifnode(cond, true_stmt, false_stmt);
 }
 
 AstNode* stmt_scope(ParseParameter* parse_prm)
 {
+    if(!match(parse_prm, TokenLBracket)) {
+        mlog(CLGT,"Missing open braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        exit(1);
+    }
+
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     AstNode* node = NULL;
     while (!match(parse_prm, TokenRBracket) && !match(parse_prm, TokenEoi)) {
@@ -203,7 +228,7 @@ AstNode* stmt_scope(ParseParameter* parse_prm)
     }
 
     if (match(parse_prm, TokenEoi)) {
-        mlog(CLGT,"Missing left braces } at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        mlog(CLGT,"Missing close braces } at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
 
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -230,6 +255,7 @@ AstNode* statements(ParseParameter* parse_prm, AstNode* root)
      *            -> 'print' expression   SEMI statements
      *            -> 'int'   identifier   SEMI statements
      *            ->  identifier '=' expression  SEMI statements
+     *            ->  if_statement
      */
     AstNode* node = NULL;
     switch(parse_prm->cur_token.tok)
@@ -246,11 +272,14 @@ AstNode* statements(ParseParameter* parse_prm, AstNode* root)
     case TokenIf:
         node = stmt_if(parse_prm);
         break;
+    /* case TokenElse: */
+    /*     return root; */
+    /*     break; */
     case TokenLBracket:
         node = stmt_scope(parse_prm);
         break;
     case TokenRBracket:
-        mlog(CLGT,"Redundancy right braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        mlog(CLGT,"Redundancy open braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
         // Ignore to next
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         break;

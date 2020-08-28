@@ -81,6 +81,19 @@ AstNode* ast_create_link(
     return node;
 }
 
+AstNode* ast_create_ifnode(
+    AstNode* left,
+    AstNode* mid,
+    AstNode* right)
+{
+    AstNode* node = (AstNode*) malloc(sizeof(AstNode));
+    node->type = AstIf;
+    node->left = left;
+    node->mid = mid;
+    node->right = right;
+    return node;
+}
+
 AstNode* ast_create_node(
     Token token,
     AstNode* left,
@@ -121,6 +134,13 @@ AstNode* ast_create_unary(Token token, AstNode* left)
     return ast_create_node(token, left, NULL);
 }
 
+void* ast_compile_if(void* gen_prm, AstNode* node)
+{
+    //todo:
+    mlog(CLGT, "UNSUPPORT\n");
+    return NULL;
+}
+
 void* ast_compile(void* gen_prm, AstNode* node)
 {
     if (NULL == node) {
@@ -129,10 +149,14 @@ void* ast_compile(void* gen_prm, AstNode* node)
         return NULL;
     }
 
-    if (AstLink == node->type) {
+    switch (node->type)
+    {
+    case AstLink:
         ast_compile(gen_prm, node->left);
         ast_compile(gen_prm, node->right);
         return NULL;
+    case AstIf:
+        return ast_compile_if(gen_prm, node);
     }
 
     char *left = NULL, *right = NULL;
