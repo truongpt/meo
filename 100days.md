@@ -222,3 +222,7 @@ assertions: 107 | 106 passed | 1 failed
 ## Day 38
 - Add compiler option to prevent stupid mistake.
 - Refactoring parser to prepare support IF statement.
+
+## Day 39
+- Support parse If statements.
+- TODO: code gen for If statements.
