@@ -9,12 +9,12 @@
 ## Milestone
 - [x] Run basic math operator +,-,*,/ on X86_64 GNU/Linux -> [v0.1](https://github.com/truongpt/meo/releases/tag/v0.1)
 - [x] Compile [clgt.c](sample/clgt.c)
-- [ ] Support IF condition
-- [ ] Support WHILE condition
-- [ ] Support FOR condition
-- [ ] Support function call condition
-- [ ] Todo and todo as :ocean: ... :satisfied:
-- [ ] Self compile
+- [x] Support IF statements -> Can compile [if_stmt.c](sample/if_stmt.c)
+- [ ] Support function & function call.
+- [ ] Support WHILE statements.
+- [ ] Support FOR statements.
+- [ ] Todo and todo ...
+- [ ] Self compile.
 
 ## Design
 - Using design as [four-pass compiler](system_struct.png), which is refered from [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf)
