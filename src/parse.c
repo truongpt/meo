@@ -201,13 +201,14 @@ AstNode* stmt_if(ParseParameter* parse_prm)
     }
 
     AstNode* cond = expression(parse_prm);
-    AstNode* true_stmt = stmt_scope(parse_prm);
+    AstNode* true_stmt = NULL;
+    true_stmt = statements(parse_prm, true_stmt);
 
     // else
     AstNode* false_stmt = NULL;
     if (match(parse_prm, TokenElse)){
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        false_stmt = stmt_scope(parse_prm);
+        false_stmt = statements(parse_prm, false_stmt);
     }
 
     // create If node
