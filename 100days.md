@@ -226,3 +226,7 @@ assertions: 107 | 106 passed | 1 failed
 ## Day 39
 - Support parse If statements.
 - TODO: code gen for If statements.
+
+## Day 40
+- code gen for If statements.
+- TODO: fix case if (1) {};
