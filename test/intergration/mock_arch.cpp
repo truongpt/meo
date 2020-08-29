@@ -10,16 +10,27 @@ using namespace std;
 static char* mock_load(int32_t value, FILE* out_file);
 static char* mock_out(char* r, FILE* out_file);
 static char* mock_print(char* r, FILE* out_file);
+
 static char* mock_add(char* r1, char* r2, FILE* out_file);
 static char* mock_sub(char* r1, char* r2, FILE* out_file);
 static char* mock_mul(char* r1, char* r2, FILE* out_file);
 static char* mock_div(char* r1, char* r2, FILE* out_file);
+
 static char* mock_lt(char* r1, char* r2, FILE* out_file);
 static char* mock_le(char* r1, char* r2, FILE* out_file);
 static char* mock_gt(char* r1, char* r2, FILE* out_file);
 static char* mock_ge(char* r1, char* r2, FILE* out_file);
 static char* mock_eq(char* r1, char* r2, FILE* out_file);
 static char* mock_ne(char* r1, char* r2, FILE* out_file);
+
+static char* mock_lt_j(char* r1, char* r2, char* l, FILE* out_file);
+static char* mock_le_j(char* r1, char* r2, char* l, FILE* out_file);
+static char* mock_gt_j(char* r1, char* r2, char* l, FILE* out_file);
+static char* mock_ge_j(char* r1, char* r2, char* l, FILE* out_file);
+static char* mock_eq_j(char* r1, char* r2, char* l, FILE* out_file);
+static char* mock_ne_j(char* r1, char* r2, char* l, FILE* out_file);
+static char* mock_jump(char* l, FILE* out_file);
+static char* mock_label(char* l, FILE* out_file);
 
 static char* mock_var(char* var, FILE* out_file);
 static char* mock_store(char* r, char* var, FILE* out_file);
@@ -50,6 +61,14 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_ge    = &mock_ge;
     func->f_eq    = &mock_eq;
     func->f_ne    = &mock_ne;
+    func->f_lt_j  = &mock_lt_j;
+    func->f_le_j  = &mock_le_j;
+    func->f_gt_j  = &mock_gt_j;
+    func->f_ge_j  = &mock_ge_j;
+    func->f_eq_j  = &mock_eq_j;
+    func->f_ne_j  = &mock_ne_j;
+    func->f_jump  = &mock_jump;
+    func->f_label = &mock_label;
 
     func->f_store    = &mock_store;
     func->f_load_var = &mock_load_var;
@@ -203,6 +222,68 @@ static char* mock_ne(char* r1, char* r2, FILE* out_file)
     reg_free(r2);
     fprintf(out_file,"[NE  ]:\t %s = %s != %s\n",r1,r1,r2);
     return r1;
+}
+
+static char* mock_lt_j(char* r1, char* r2, char* l, FILE* out_file)
+{
+    // TODO : add mock processing
+    reg_free(r1);
+    reg_free(r2);
+    fprintf(out_file,"[JUMP]:\t %s if %s < %s\n",l,r1,r2);
+    return l;
+}
+
+static char* mock_le_j(char* r1, char* r2, char* l, FILE* out_file)
+{
+    // TODO : add mock processing
+    reg_free(r1);
+    reg_free(r2);
+    fprintf(out_file,"[JUMP]:\t %s if %s <= %s\n",l,r1,r2);
+    return l;
+}
+
+static char* mock_gt_j(char* r1, char* r2, char* l, FILE* out_file)
+{
+    reg_free(r1);
+    reg_free(r2);
+    fprintf(out_file,"[JUMP]:\t %s if %s > %s\n",l,r1,r2);
+    return l;
+}
+
+static char* mock_ge_j(char* r1, char* r2, char* l, FILE* out_file)
+{
+    reg_free(r1);
+    reg_free(r2);
+    fprintf(out_file,"[JUMP]:\t %s if %s >= %s\n",l,r1,r2);
+    return l;
+}
+
+static char* mock_eq_j(char* r1, char* r2, char* l, FILE* out_file)
+{
+    reg_free(r1);
+    reg_free(r2);
+    fprintf(out_file,"[JUMP]:\t %s if %s == %s\n",l,r1,r2);
+    return l;
+}
+
+static char* mock_ne_j(char* r1, char* r2, char* l, FILE* out_file)
+{
+    reg_free(r1);
+    reg_free(r2);
+    fprintf(out_file,"[JUMP]:\t %s if %s != %s\n",l,r1,r2);
+    return l;
+}
+
+static char* mock_jump(char* l, FILE* out_file)
+{
+    fprintf(out_file,"[JUMP]:\t %s\n",l);
+    return l;
+}
+
+static char* mock_label(char* l, FILE* out_file)
+{
+    fprintf(out_file,"[LBEL]:\t %s: <- label\n",l);
+    return l;
 }
 
 static char* mock_var(char* var, FILE* out_file)
