@@ -9,32 +9,47 @@
 #include "gen_internal.h"
 #include "error_code.h"
 
-int32_t reg_index(char* r);
-char* x86_64_load(int32_t value, FILE* out_file);
-char* x86_64_free(char* r, FILE* out_file);
-char* x86_64_out(char* value, FILE* out_file);
-char* x86_64_print(char* r, FILE* out_file);
-char* x86_64_var(char* var, FILE* out_file);
-char* x86_64_add(char* r1, char* r2, FILE* out_file);
-char* x86_64_sub(char* r1, char* r2, FILE* out_file);
-char* x86_64_mul(char* r1, char* r2, FILE* out_file);
-char* x86_64_div(char* r1, char* r2, FILE* out_file);
-char* x86_64_lt(char* r1, char* r2, FILE* out_file);
-char* x86_64_le(char* r1, char* r2, FILE* out_file);
-char* x86_64_gt(char* r1, char* r2, FILE* out_file);
-char* x86_64_ge(char* r1, char* r2, FILE* out_file);
-char* x86_64_eq(char* r1, char* r2, FILE* out_file);
-char* x86_64_ne(char* r1, char* r2, FILE* out_file);
+static char* x86_64_load(int32_t value, FILE* out_file);
+static char* x86_64_free(char* r, FILE* out_file);
+static char* x86_64_out(char* value, FILE* out_file);
+static char* x86_64_print(char* r, FILE* out_file);
+static char* x86_64_var(char* var, FILE* out_file);
+static char* x86_64_add(char* r1, char* r2, FILE* out_file);
+static char* x86_64_sub(char* r1, char* r2, FILE* out_file);
+static char* x86_64_mul(char* r1, char* r2, FILE* out_file);
+static char* x86_64_div(char* r1, char* r2, FILE* out_file);
+static char* x86_64_lt(char* r1, char* r2, FILE* out_file);
+static char* x86_64_le(char* r1, char* r2, FILE* out_file);
+static char* x86_64_gt(char* r1, char* r2, FILE* out_file);
+static char* x86_64_ge(char* r1, char* r2, FILE* out_file);
+static char* x86_64_eq(char* r1, char* r2, FILE* out_file);
+static char* x86_64_ne(char* r1, char* r2, FILE* out_file);
+static char* x86_64_lt_j(char* r1, char* r2, char* label, FILE* out_file);
+static char* x86_64_le_j(char* r1, char* r2, char* label, FILE* out_file);
+static char* x86_64_gt_j(char* r1, char* r2, char* label, FILE* out_file);
+static char* x86_64_ge_j(char* r1, char* r2, char* label, FILE* out_file);
+static char* x86_64_eq_j(char* r1, char* r2, char* label, FILE* out_file);
+static char* x86_64_ne_j(char* r1, char* r2, char* label, FILE* out_file);
+static char* x86_64_jump(char* label, FILE* out_file);
+static char* x86_64_label(char* label, FILE* out_file);
 
-char* x86_64_store(char* r, char* var, FILE* out_file);
-char* x86_64_load_var(char* var, FILE* out_file);
+static char* x86_64_store(char* r, char* var, FILE* out_file);
+static char* x86_64_load_var(char* var, FILE* out_file);
 
 typedef struct RegMap {
     char* reg64;
     char* reg8;
 } RegMap;
 
-static char* reg[] = {"%r8","%r9","%r10","%r11","%r12","%r13","%r14","%r15"};
+static char* reg[] = {
+    "%r8",
+    "%r9",
+    "%r10",
+    "%r11",
+    "%r12",
+    "%r13",
+    "%r14",
+    "%r15"};
 
 static RegMap reg_map[] = {
     {"%r8",  "%r8b"},
@@ -66,6 +81,14 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_ge     = &x86_64_ge;
     func->f_eq     = &x86_64_eq;
     func->f_ne     = &x86_64_ne;
+    func->f_lt_j   = &x86_64_lt_j;
+    func->f_le_j   = &x86_64_le_j;
+    func->f_gt_j   = &x86_64_gt_j;
+    func->f_ge_j   = &x86_64_ge_j;
+    func->f_eq_j   = &x86_64_eq_j;
+    func->f_ne_j   = &x86_64_ne_j;
+    func->f_jump   = &x86_64_jump;
+    func->f_label  = &x86_64_label;
     func->f_store  = &x86_64_store;
     func->f_load_var = &x86_64_load_var;
     cur_reg = 0;
@@ -75,7 +98,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
 char* reg_alloc()
 {
     if (cur_reg >= sizeof(reg)/sizeof(*reg)) {
-        mlog(CLGT,"Not available register\n");
+        mlog(CLGT,"Not availabel register\n");
         return NULL;
     }
     return reg[cur_reg++];
@@ -220,6 +243,72 @@ char* x86_64_ne(char* r1, char* r2, FILE* out_file)
     fprintf(out_file, "\tandq $255,%s\n", r2);
     reg_free(r1);
     return r2;
+}
+
+char* x86_64_lt_j(char* r1, char* r2, char* label, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
+    fprintf(out_file, "\tjl %s\n", label);
+    reg_free(r1);
+    reg_free(r2);
+    return label;
+}
+
+char* x86_64_le_j(char* r1, char* r2, char* label, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
+    fprintf(out_file, "\tjle %s\n", label);
+    reg_free(r1);
+    reg_free(r2);
+    return label;
+}
+
+char* x86_64_gt_j(char* r1, char* r2, char* label, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
+    fprintf(out_file, "\tjg %s\n", label);
+    reg_free(r1);
+    reg_free(r2);
+    return label;
+}
+
+char* x86_64_ge_j(char* r1, char* r2, char* label, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
+    fprintf(out_file, "\tjge %s\n", label);
+    reg_free(r1);
+    reg_free(r2);
+    return label;
+}
+
+char* x86_64_eq_j(char* r1, char* r2, char* label, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
+    fprintf(out_file, "\tje %s\n", label);
+    reg_free(r1);
+    reg_free(r2);
+    return label;
+}
+
+char* x86_64_ne_j(char* r1, char* r2, char* label, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
+    fprintf(out_file, "\tjne %s\n", label);
+    reg_free(r1);
+    reg_free(r2);
+    return label;
+}
+
+char* x86_64_jump(char* label, FILE* out_file)
+{
+    fprintf(out_file, "\tjmp %s\n", label);
+    return label;
+}
+
+char* x86_64_label(char* label, FILE* out_file)
+{
+    fprintf(out_file, "\t%s:\n", label);
+    return label;
 }
 
 char* x86_64_store(char* var, char* r, FILE* out_file)

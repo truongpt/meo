@@ -95,7 +95,7 @@ int32_t GenGetLabel(void* gen_prm)
         mlog(CLGT,"Too much label \n");
         exit(1);
     }
-    return ++(prm->label_id);
+    return prm->label_id++;
 }
 
 char* GenLoad(void* gen_prm, int32_t value)
@@ -168,6 +168,54 @@ char* GenNE(void* gen_prm, char* r1, char* r2)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
     return prm->func.f_ne(r1, r2, prm->out_asm_file);
+}
+
+char* GenLtJump(void* gen_prm, char* r1, char* r2, char* label)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_lt_j(r1, r2, label, prm->out_asm_file);
+}
+
+char* GenLeJump(void* gen_prm, char* r1, char* r2, char* label)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_le_j(r1, r2, label, prm->out_asm_file);
+}
+
+char* GenGtJump(void* gen_prm, char* r1, char* r2, char* label)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_gt_j(r1, r2, label, prm->out_asm_file);
+}
+
+char* GenGeJump(void* gen_prm, char* r1, char* r2, char* label)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_ge_j(r1, r2, label, prm->out_asm_file);
+}
+
+char* GenEqJump(void* gen_prm, char* r1, char* r2, char* label)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_eq_j(r1, r2, label, prm->out_asm_file);
+}
+
+char* GenNeJump(void* gen_prm, char* r1, char* r2, char* label)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_ne_j(r1, r2, label, prm->out_asm_file);
+}
+
+char* GenJump(void* gen_prm, char* label)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_jump(label, prm->out_asm_file);
+}
+
+char* GenLabel(void* gen_prm, char* label)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_label(label, prm->out_asm_file);
 }
 
 void GenOut(void* gen_prm, char* r)
