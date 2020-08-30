@@ -230,3 +230,7 @@ assertions: 107 | 106 passed | 1 failed
 ## Day 40
 - code gen for If statements.
 - TODO: fix case if (1) {};
+
+## Day 41
+- Fix case if (1) {};
+- Support WHILE statement.

@@ -11,7 +11,7 @@
 - [x] Compile [clgt.c](sample/clgt.c)
 - [x] Support IF statements -> Can compile [if_stmt.c](sample/if_stmt.c)
 - [ ] Support function & function call.
-- [ ] Support WHILE statements.
+- [x] Support WHILE statements. -> Can compile [while_stmt.c](sample/while_stmt.c)
 - [ ] Support FOR statements.
 - [ ] Todo and todo ...
 - [ ] Self compile.
