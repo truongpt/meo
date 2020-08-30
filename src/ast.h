@@ -45,6 +45,7 @@ enum AstType {
     AstRightVar,
     AstAssign,
     AstIf,
+    AstWhile,
     // Link statements
     AstLink
 };

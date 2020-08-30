@@ -63,12 +63,14 @@ int32_t tok_2_ast (Token token)
     case TokenAssign:
         ast = AstAssign;
         break;
+    case TokenWhile:
+        ast = AstWhile;
+        break;
     default:
         mlog(CLGT,"Can not create AstNode with token: %s\n", tok2str(token.tok));
     }
 
     return ast;
-
 }
 
 // NOT logic
@@ -189,6 +191,34 @@ void* ast_compile_if(void* gen_prm, AstNode* node)
     return NULL;
 }
 
+void* ast_compile_while(void* gen_prm, AstNode* node)
+{
+    char label_start[10];
+    char label_end[10];
+    memset(label_start, 0x00, sizeof(label_start));
+    memset(label_end, 0x00, sizeof(label_end));
+
+    sprintf(label_start,"L%d",GenGetLabel(gen_prm));
+    sprintf(label_end,"L%d",GenGetLabel(gen_prm));
+
+    GenLabel(gen_prm, label_start);
+
+    // Generate condition WHILE
+    void* cond_value = ast_compile(gen_prm, node->left);
+    GenZeroJump(gen_prm, cond_value, label_end);
+
+    // Generation statements
+    ast_compile(gen_prm, node->right);
+
+    // Jump to start for continue loop
+    GenJump(gen_prm, label_start);
+
+    // End label
+    GenLabel(gen_prm, label_end);
+
+    return NULL;
+}
+
 char* gen_bin_op(void* gen_prm, char* left, char* right, int type)
 {
     switch (type) {
@@ -266,6 +296,8 @@ void* ast_compile(void* gen_prm, AstNode* node)
         return NULL;
     case AstIf:
         return ast_compile_if(gen_prm, node);
+    case AstWhile:
+        return ast_compile_while(gen_prm, node);
     }
 
     char *left = NULL, *right = NULL;

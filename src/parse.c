@@ -32,6 +32,7 @@ static AstNode* stmt_decl(ParseParameter* parse_prm);
 static AstNode* stmt_ident(ParseParameter* parse_prm);
 static AstNode* stmt_expr(ParseParameter* parse_prm);
 static AstNode* stmt_if(ParseParameter* parse_prm);
+static AstNode* stmt_while(ParseParameter* parse_prm);
 static AstNode* stmt_scope(ParseParameter* parse_prm);
 static bool match(ParseParameter* parse_prm, int32_t tok_type);
 
@@ -201,6 +202,10 @@ AstNode* stmt_if(ParseParameter* parse_prm)
     }
 
     AstNode* cond = expression(parse_prm);
+    if (NULL == cond) {
+        mlog(CLGT,"Error of IF condition at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        exit(1);
+    }
     AstNode* true_stmt = NULL;
     true_stmt = statements(parse_prm, true_stmt);
 
@@ -213,6 +218,26 @@ AstNode* stmt_if(ParseParameter* parse_prm)
 
     // create If node
     return ast_create_ifnode(cond, true_stmt, false_stmt);
+}
+
+AstNode* stmt_while(ParseParameter* parse_prm)
+{
+    Token tok = parse_prm->cur_token;
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    if (!match(parse_prm, TokenLP)){
+        mlog(CLGT,"Missing open parentheses ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        exit(1);
+    }
+
+    AstNode* cond = expression(parse_prm);
+    if (NULL == cond) {
+        mlog(CLGT,"Error of WHILE condition at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        exit(1);
+    }
+    AstNode* stmt = NULL;
+    stmt = statements(parse_prm, stmt);
+
+    return ast_create_node(tok, cond, stmt);
 }
 
 AstNode* stmt_scope(ParseParameter* parse_prm)
@@ -273,9 +298,9 @@ AstNode* statements(ParseParameter* parse_prm, AstNode* root)
     case TokenIf:
         node = stmt_if(parse_prm);
         break;
-    /* case TokenElse: */
-    /*     return root; */
-    /*     break; */
+    case TokenWhile:
+        node = stmt_while(parse_prm);
+        break;
     case TokenLBracket:
         node = stmt_scope(parse_prm);
         break;
