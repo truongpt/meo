@@ -30,6 +30,7 @@ static char* mock_ge_j(char* r1, char* r2, char* l, FILE* out_file);
 static char* mock_eq_j(char* r1, char* r2, char* l, FILE* out_file);
 static char* mock_ne_j(char* r1, char* r2, char* l, FILE* out_file);
 static char* mock_jump(char* l, FILE* out_file);
+static char* mock_zero_j(char* r, char* l, FILE* out_file);
 static char* mock_label(char* l, FILE* out_file);
 
 static char* mock_var(char* var, FILE* out_file);
@@ -68,6 +69,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_eq_j  = &mock_eq_j;
     func->f_ne_j  = &mock_ne_j;
     func->f_jump  = &mock_jump;
+    func->f_zero_j  = &mock_zero_j;
     func->f_label = &mock_label;
 
     func->f_store    = &mock_store;
@@ -278,6 +280,11 @@ static char* mock_jump(char* l, FILE* out_file)
 {
     fprintf(out_file,"[JUMP]:\t %s\n",l);
     return l;
+}
+
+static char* mock_zero_j(char* r, char* l, FILE* out_file)
+{
+    fprintf(out_file,"[JPZR]:\t %s if %s == 0\n",l,r);
 }
 
 static char* mock_label(char* l, FILE* out_file)

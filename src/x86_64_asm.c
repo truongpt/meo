@@ -31,6 +31,7 @@ static char* x86_64_ge_j(char* r1, char* r2, char* label, FILE* out_file);
 static char* x86_64_eq_j(char* r1, char* r2, char* label, FILE* out_file);
 static char* x86_64_ne_j(char* r1, char* r2, char* label, FILE* out_file);
 static char* x86_64_jump(char* label, FILE* out_file);
+static char* x86_64_zero_j(char* r, char* label, FILE* out_file);
 static char* x86_64_label(char* label, FILE* out_file);
 
 static char* x86_64_store(char* r, char* var, FILE* out_file);
@@ -88,6 +89,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_eq_j   = &x86_64_eq_j;
     func->f_ne_j   = &x86_64_ne_j;
     func->f_jump   = &x86_64_jump;
+    func->f_zero_j = &x86_64_zero_j;
     func->f_label  = &x86_64_label;
     func->f_store  = &x86_64_store;
     func->f_load_var = &x86_64_load_var;
@@ -302,6 +304,14 @@ char* x86_64_ne_j(char* r1, char* r2, char* label, FILE* out_file)
 char* x86_64_jump(char* label, FILE* out_file)
 {
     fprintf(out_file, "\tjmp %s\n", label);
+    return label;
+}
+
+char* x86_64_zero_j(char* r, char* label, FILE* out_file)
+{
+    fprintf(out_file, "\tcmpq $0, %s\n", r);
+    fprintf(out_file, "\tje %s\n", label);
+    reg_free(r);
     return label;
 }
 

@@ -212,6 +212,12 @@ char* GenJump(void* gen_prm, char* label)
     return prm->func.f_jump(label, prm->out_asm_file);
 }
 
+char* GenZeroJump(void* gen_prm, char* r, char* label)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_zero_j(r, label, prm->out_asm_file);
+}
+
 char* GenLabel(void* gen_prm, char* label)
 {
     GenParameter* prm = (GenParameter*)gen_prm;

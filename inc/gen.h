@@ -47,6 +47,7 @@ char* GenGtJump(void* gen_prm, char* r1, char* r2, char* label);
 char* GenEqJump(void* gen_prm, char* r1, char* r2, char* label);
 char* GenNeJump(void* gen_prm, char* r1, char* r2, char* label);
 char* GenJump(void* gen_prm, char* label);
+char* GenZeroJump(void* gen_prm, char* r, char* label);
 char* GenLabel(void* gen_prm, char* label);
 
 void GenOut(void* gen_prm, char* r);

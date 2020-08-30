@@ -169,10 +169,11 @@ void* ast_compile_if(void* gen_prm, AstNode* node)
     }
 
     // Generate condition IF
-    ast_compile(gen_prm, node->left, label_false, node->type);
+    void* cond_value = ast_compile(gen_prm, node->left);
+    GenZeroJump(gen_prm, cond_value, label_false);
 
     // Generation TRUE statements
-    ast_compile(gen_prm, node->mid, NULL, node->type);
+    ast_compile(gen_prm, node->mid);
 
     // Jump to end if having FALSE statements
     if (node->right) {
@@ -182,7 +183,7 @@ void* ast_compile_if(void* gen_prm, AstNode* node)
     GenLabel(gen_prm, label_false);
     if (node->right) {
         // Generation FALSE statements
-        ast_compile(gen_prm, node->right, NULL, node->type);
+        ast_compile(gen_prm, node->right);
         GenLabel(gen_prm, label_end);
     }
     return NULL;
@@ -249,7 +250,7 @@ char* gen_relational_jump(void* gen_prm, char* left, char* right, char* label, i
     }
 }
 
-void* ast_compile(void* gen_prm, AstNode* node, char* label, int parent_type)
+void* ast_compile(void* gen_prm, AstNode* node)
 {
     if (NULL == node) {
         // do nothing
@@ -260,8 +261,8 @@ void* ast_compile(void* gen_prm, AstNode* node, char* label, int parent_type)
     switch (node->type)
     {
     case AstLink:
-        ast_compile(gen_prm, node->left, NULL, node->type);
-        ast_compile(gen_prm, node->right, NULL, node->type);
+        ast_compile(gen_prm, node->left);
+        ast_compile(gen_prm, node->right);
         return NULL;
     case AstIf:
         return ast_compile_if(gen_prm, node);
@@ -269,10 +270,10 @@ void* ast_compile(void* gen_prm, AstNode* node, char* label, int parent_type)
 
     char *left = NULL, *right = NULL;
     if (NULL != node->left) {
-        left = (char*)ast_compile(gen_prm, node->left, NULL, node->type);
+        left = (char*)ast_compile(gen_prm, node->left);
     }
     if (NULL != node->right) {
-        right = (char*)ast_compile(gen_prm, node->right, NULL, node->type);
+        right = (char*)ast_compile(gen_prm, node->right);
     }
 
     switch (node->type) {
@@ -303,11 +304,7 @@ void* ast_compile(void* gen_prm, AstNode* node, char* label, int parent_type)
     case AstGE:
     case AstEQ:
     case AstNE:
-        if (AstIf == parent_type) {
-            return gen_relational_jump(gen_prm, left, right, label, node->type);
-        } else {
-            return gen_relational_op(gen_prm, left, right, node->type);
-        }
+        return gen_relational_op(gen_prm, left, right, node->type);
     default:
         mlog(CLGT,"Not yet to support ast type %d\n",node->type);
     }
@@ -320,7 +317,7 @@ void ast_gen(ParseParameter* parse_prm, AstNode* node)
         // todo:
         // ast_interpret(parse_prm, node);
     } else {
-        ast_compile(parse_prm->gen_prm, node, NULL, -1);
+        ast_compile(parse_prm->gen_prm, node);
         ast_tree_free(node);
     }
 }
