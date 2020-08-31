@@ -143,8 +143,23 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
     symtable_set_type(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, SymbolInt);
 
     node = ast_create_unary(parse_prm->cur_token, node1);
-    node->type = AstLeftVar; // todo: need consider better design, I don't want directly set.
+    node->type = AstLeftVar; // TODO: need consider better design, I don't want directly set.
+
+    Token var_tok = parse_prm->cur_token;
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+
+    if (match (parse_prm, TokenAssign)) {
+        // initialize value at declare timming
+        AstNode* left = ast_create_leaf(var_tok);
+        left->type = AstLeftVar;
+
+        Token op_tok = parse_prm->cur_token;
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+
+        AstNode* init = expression(parse_prm);
+        init = ast_create_node(op_tok, left, init);
+        node = ast_create_link(node, init);
+    }
 
     if (match (parse_prm, TokenSemi)) {
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
@@ -336,7 +351,7 @@ AstNode* assign(ParseParameter* parse_prm) {
         if (AstIdentifier == node->type) {
             node->type = AstLeftVar; // todo: consider better design for Lval & Rval
         } else {
-            MLOG(CLGT,"left operand is not Lvalue\n");
+            MLOG(CLGT,"left operand is not Lvalue at line %d\n", LexGetLine(parse_prm->lex_prm));
             exit(1);
         }
         node = ast_create_node(op_tok, node, node1);
