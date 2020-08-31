@@ -240,6 +240,43 @@ AstNode* stmt_while(ParseParameter* parse_prm)
     return ast_create_node(tok, cond, stmt);
 }
 
+AstNode* stmt_for(ParseParameter* parse_prm)
+{
+    // todo: need fix problem of Assign first.
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    if (!match(parse_prm, TokenLP)){
+        mlog(CLGT,"Missing open parentheses ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        exit(1);
+    }
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+
+    AstNode* pre_exp = stmt_ident(parse_prm); // todo : move to stmt_expr
+
+    AstNode* cond_exp = stmt_expr(parse_prm);
+    if (NULL == cond_exp) {
+        mlog(CLGT,"Not support without condition: %d\n",LexGetLine(parse_prm->lex_prm));
+        exit(1);
+    }
+
+    AstNode* post_exp = expression(parse_prm);
+
+    if (!match(parse_prm, TokenRP)){
+        mlog(CLGT,"Missing close parentheses ) at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        exit(1);
+    }
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+ 
+    AstNode* stmt = NULL;
+    stmt = statements(parse_prm, stmt);
+
+    stmt = ast_create_link(stmt, post_exp);
+
+    Token w_token;
+    w_token.tok = TokenWhile; // handle For as While
+    AstNode* w_stmt = ast_create_node(w_token, cond_exp, stmt);
+    return ast_create_link(pre_exp, w_stmt);
+}
+
 AstNode* stmt_scope(ParseParameter* parse_prm)
 {
     if(!match(parse_prm, TokenLBracket)) {
@@ -300,6 +337,9 @@ AstNode* statements(ParseParameter* parse_prm, AstNode* root)
         break;
     case TokenWhile:
         node = stmt_while(parse_prm);
+        break;
+    case TokenFor:
+        node = stmt_for(parse_prm);
         break;
     case TokenLBracket:
         node = stmt_scope(parse_prm);
