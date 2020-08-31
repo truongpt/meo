@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-#define MLOG(...) do { printf("(%s:%d)",__func__, __LINE__); mlog(__VA_ARGS__);} while(0)
+#define MLOG(...) do { mlog(__VA_ARGS__);} while(0)
 
 enum LogLevel {
     TRACE,
