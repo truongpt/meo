@@ -123,7 +123,7 @@ AstNode* stmt_print(ParseParameter* parse_prm)
     if (match (parse_prm, TokenSemi)) {
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
     } else {
-        mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
     return node;
 }
@@ -136,7 +136,7 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
     node1 = ast_create_leaf(parse_prm->cur_token);
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     if (!match (parse_prm, TokenIdentifier)) {
-        mlog(CLGT,"Expect Identifier but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Expect Identifier but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
     }
 
     // add the identifier to symbol table
@@ -150,7 +150,7 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
     if (match (parse_prm, TokenSemi)) {
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
     } else {
-        mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
 
     return node;
@@ -166,13 +166,13 @@ AstNode* stmt_ident(ParseParameter* parse_prm)
 
     // verify that existence in symbol table
     if (-1 == symtable_find(&(parse_prm->symbol_table), parse_prm->cur_token.id_str)) {
-        mlog(CLGT, "Can not find symbol %s at line: %d\n",parse_prm->cur_token.id_str, LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT, "Can not find symbol %s at line: %d\n",parse_prm->cur_token.id_str, LexGetLine(parse_prm->lex_prm));
         exit(1);
     }
 
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     if (!match (parse_prm, TokenAssign)) {
-        mlog(CLGT,"Expect Equal but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok),LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Expect Equal but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok),LexGetLine(parse_prm->lex_prm));
     }
     op_tok = parse_prm->cur_token;
 
@@ -183,7 +183,7 @@ AstNode* stmt_ident(ParseParameter* parse_prm)
     if (match (parse_prm, TokenSemi)) {
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
     } else {
-        mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
 
     return node;
@@ -192,18 +192,18 @@ AstNode* stmt_ident(ParseParameter* parse_prm)
 AstNode* stmt_if(ParseParameter* parse_prm)
 {
     /* if_statement: if_head
-    *      |        if_head 'else' compound_statement
-    *      ;
-    */
+     *      |        if_head 'else' compound_statement
+     *      ;
+     */
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     if (!match(parse_prm, TokenLP)){
-        mlog(CLGT,"Missing open parentheses ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Missing open parentheses ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
         exit(1);
     }
 
     AstNode* cond = expression(parse_prm);
     if (NULL == cond) {
-        mlog(CLGT,"Error of IF condition at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Error of IF condition at line: %d\n",LexGetLine(parse_prm->lex_prm));
         exit(1);
     }
     AstNode* true_stmt = NULL;
@@ -225,13 +225,13 @@ AstNode* stmt_while(ParseParameter* parse_prm)
     Token tok = parse_prm->cur_token;
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     if (!match(parse_prm, TokenLP)){
-        mlog(CLGT,"Missing open parentheses ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Missing open parentheses ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
         exit(1);
     }
 
     AstNode* cond = expression(parse_prm);
     if (NULL == cond) {
-        mlog(CLGT,"Error of WHILE condition at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Error of WHILE condition at line: %d\n",LexGetLine(parse_prm->lex_prm));
         exit(1);
     }
     AstNode* stmt = NULL;
@@ -245,7 +245,7 @@ AstNode* stmt_for(ParseParameter* parse_prm)
     // todo: need fix problem of Assign first.
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     if (!match(parse_prm, TokenLP)){
-        mlog(CLGT,"Missing open parentheses ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Missing open parentheses ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
         exit(1);
     }
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -254,14 +254,14 @@ AstNode* stmt_for(ParseParameter* parse_prm)
 
     AstNode* cond_exp = stmt_expr(parse_prm);
     if (NULL == cond_exp) {
-        mlog(CLGT,"Not support without condition: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Not support without condition: %d\n",LexGetLine(parse_prm->lex_prm));
         exit(1);
     }
 
     AstNode* post_exp = expression(parse_prm);
 
     if (!match(parse_prm, TokenRP)){
-        mlog(CLGT,"Missing close parentheses ) at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Missing close parentheses ) at line: %d\n",LexGetLine(parse_prm->lex_prm));
         exit(1);
     }
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -280,7 +280,7 @@ AstNode* stmt_for(ParseParameter* parse_prm)
 AstNode* stmt_scope(ParseParameter* parse_prm)
 {
     if(!match(parse_prm, TokenLBracket)) {
-        mlog(CLGT,"Missing open braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Missing open braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
         exit(1);
     }
 
@@ -291,7 +291,7 @@ AstNode* stmt_scope(ParseParameter* parse_prm)
     }
 
     if (match(parse_prm, TokenEoi)) {
-        mlog(CLGT,"Missing close braces } at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Missing close braces } at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
 
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -305,7 +305,7 @@ AstNode* stmt_expr(ParseParameter* parse_prm)
     if (match(parse_prm, TokenSemi)) {
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     } else {
-        mlog(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
 
     return node;
@@ -345,7 +345,7 @@ AstNode* statements(ParseParameter* parse_prm, AstNode* root)
         node = stmt_scope(parse_prm);
         break;
     case TokenRBracket:
-        mlog(CLGT,"Redundancy open braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT,"Redundancy open braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
         // Ignore to next
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         break;
@@ -433,10 +433,10 @@ AstNode* factor(ParseParameter* parse_prm)
         if (match(parse_prm, TokenRP)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else {
-            mlog(CLGT,"Missing close parenthesis at line: %d\n",LexGetLine(parse_prm->lex_prm));
+            MLOG(CLGT,"Missing close parenthesis at line: %d\n",LexGetLine(parse_prm->lex_prm));
         }
     } else {
-        mlog(CLGT, "Number or identifier expected but token: %s at line %d\n", tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
+        MLOG(CLGT, "Number or identifier expected but token: %s at line %d\n", tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
     }
 
     return node;

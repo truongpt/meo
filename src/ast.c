@@ -67,7 +67,7 @@ int32_t tok_2_ast (Token token)
         ast = AstWhile;
         break;
     default:
-        mlog(CLGT,"Can not create AstNode with token: %s\n", tok2str(token.tok));
+        MLOG(CLGT,"Can not create AstNode with token: %s\n", tok2str(token.tok));
     }
 
     return ast;
@@ -90,7 +90,7 @@ static int32_t invert_ast(int32_t ast_type)
     case AstNE:
         return AstEQ;
     }
-    mlog(CLGT, "Invalid input ast type\n");
+    MLOG(CLGT, "Invalid input ast type\n");
     return -1;
 }
 
@@ -137,7 +137,7 @@ AstNode* ast_create_node(
         node->id_str[strlen(token.id_str)] = '\0';
         break;
     default:
-        mlog(TRACE, "AstNode %d\n", ast_type);
+        MLOG(TRACE, "AstNode %d\n", ast_type);
     }
 
     node->type = ast_type;
@@ -231,7 +231,7 @@ char* gen_bin_op(void* gen_prm, char* left, char* right, int type)
     case AstDiv:
         return GenDiv(gen_prm, left, right);
     default:
-        mlog(CLGT,"Invalid type binary operator\n");
+        MLOG(CLGT,"Invalid type binary operator\n");
         return NULL;
     }
 }
@@ -252,7 +252,7 @@ char* gen_relational_op(void* gen_prm, char* left, char* right, int type)
     case AstNE:
         return GenNE(gen_prm, left, right);
     default:
-        mlog(CLGT,"Invalid type relational operator\n");
+        MLOG(CLGT,"Invalid type relational operator\n");
         return NULL;
     }
 }
@@ -275,7 +275,7 @@ char* gen_relational_jump(void* gen_prm, char* left, char* right, char* label, i
     case AstNE:
         return GenNeJump(gen_prm, left, right, label);
     default:
-        mlog(CLGT,"Invalid type relational operator jump\n");
+        MLOG(CLGT,"Invalid type relational operator jump\n");
         return NULL;
     }
 }
@@ -284,7 +284,7 @@ void* ast_compile(void* gen_prm, AstNode* node)
 {
     if (NULL == node) {
         // do nothing
-        mlog(DEBUG,"NULL node \n");
+        MLOG(DEBUG,"NULL node \n");
         return NULL;
     }
 
@@ -338,7 +338,7 @@ void* ast_compile(void* gen_prm, AstNode* node)
     case AstNE:
         return gen_relational_op(gen_prm, left, right, node->type);
     default:
-        mlog(CLGT,"Not yet to support ast type %d\n",node->type);
+        MLOG(CLGT,"Not yet to support ast type %d\n",node->type);
     }
     return NULL;
 }

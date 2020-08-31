@@ -92,7 +92,7 @@ int32_t GenGetLabel(void* gen_prm)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
     if (prm->label_id == INT_MAX) {
-        mlog(CLGT,"Too much label \n");
+        MLOG(CLGT,"Too much label \n");
         exit(1);
     }
     return prm->label_id++;

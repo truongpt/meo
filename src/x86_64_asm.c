@@ -100,7 +100,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
 char* reg_alloc()
 {
     if (cur_reg >= sizeof(reg)/sizeof(*reg)) {
-        mlog(CLGT,"Not availabel register\n");
+        MLOG(CLGT,"Not availabel register\n");
         return NULL;
     }
     return reg[cur_reg++];
@@ -109,7 +109,7 @@ char* reg_alloc()
 void reg_free(char* r)
 {
     if (0 == cur_reg) {
-        mlog(CLGT,"Free register invalid\n");
+        MLOG(CLGT,"Free register invalid\n");
         exit(1);
     }
     reg[--cur_reg] = r;
