@@ -76,7 +76,6 @@ int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm, bool is_interp
     g_parse_prm[i].cur_token.tok = -1;
     // initialize symbol table
     symtable_init(&(g_parse_prm[i].symbol_table));
-    symtable_init(&(g_parse_prm[i].var_table));
 
     *parse_prm = &g_parse_prm[i];
 
@@ -143,8 +142,8 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
     symtable_add(&(parse_prm->symbol_table), parse_prm->cur_token.id_str);
     symtable_set_type(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, SymbolInt);
 
-    parse_prm->cur_token.left_value = true;
     node = ast_create_unary(parse_prm->cur_token, node1);
+    node->type = AstLeftVar; // todo: need consider better design, I don't want directly set.
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
 
     if (match (parse_prm, TokenSemi)) {
@@ -209,7 +208,6 @@ AstNode* stmt_while(ParseParameter* parse_prm)
 
 AstNode* stmt_for(ParseParameter* parse_prm)
 {
-    // todo: need fix problem of Assign first.
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     if (!match(parse_prm, TokenLP)){
         MLOG(CLGT,"Missing open parentheses ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
@@ -335,7 +333,12 @@ AstNode* assign(ParseParameter* parse_prm) {
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         AstNode* node1 = equal(parse_prm);
 
-        node->type = AstLeftVar; // todo: consider better design for Lval & Rval
+        if (AstIdentifier == node->type) {
+            node->type = AstLeftVar; // todo: consider better design for Lval & Rval
+        } else {
+            MLOG(CLGT,"left operand is not Lvalue\n");
+            exit(1);
+        }
         node = ast_create_node(op_tok, node, node1);
     }
     return node;
@@ -401,8 +404,6 @@ AstNode* factor(ParseParameter* parse_prm)
                 MLOG(CLGT, "Can not find symbol %s at line: %d\n",parse_prm->cur_token.id_str, LexGetLine(parse_prm->lex_prm));
                 exit(1);
             }
-            // right value
-            parse_prm->cur_token.left_value = false;
         }
         node = ast_create_leaf(parse_prm->cur_token);
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));

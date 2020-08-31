@@ -58,7 +58,7 @@ int32_t tok_2_ast (Token token)
         ast = AstIntType;
         break;
     case TokenIdentifier:
-        ast = token.left_value ? AstLeftVar : AstRightVar;
+        ast = AstIdentifier;
         break;
     case TokenAssign:
         ast = AstAssign;
@@ -131,7 +131,7 @@ AstNode* ast_create_node(
         node->value = token.value;
         break;
     case AstLeftVar:
-    case AstRightVar:
+    case AstIdentifier:
         node->id_str = (char*)malloc(strlen(token.id_str)+1);
         memcpy(node->id_str, token.id_str, strlen(token.id_str));
         node->id_str[strlen(token.id_str)] = '\0';
@@ -321,7 +321,7 @@ void* ast_compile(void* gen_prm, AstNode* node)
             return GenVar(gen_prm, node->id_str);
         }
         return node->id_str;
-    case AstRightVar:
+    case AstIdentifier:
         return GenLoadVar(gen_prm, node->id_str);
     case AstAssign:
         return GenStore(gen_prm, left, right);

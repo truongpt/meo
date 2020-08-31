@@ -16,9 +16,6 @@ typedef struct ParseParameter{
     void *lex_prm;
     void *gen_prm;
     SymbolTable symbol_table;
-    /* TODO: that is used for interpreter. */
-    /* Just try checking without further consider :-) */
-    SymbolTable var_table;
     Token cur_token;
 } ParseParameter;
 
