@@ -230,7 +230,9 @@ AstNode* stmt_for(ParseParameter* parse_prm)
     }
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
 
-    AstNode* pre_exp = stmt_expr(parse_prm);
+    AstNode* pre_exp = NULL;
+    pre_exp = statements(parse_prm, pre_exp);
+
     AstNode* cond_exp = stmt_expr(parse_prm);
     if (NULL == cond_exp) {
         MLOG(CLGT,"Not support without condition: %d\n",LexGetLine(parse_prm->lex_prm));

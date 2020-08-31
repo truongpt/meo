@@ -12,7 +12,7 @@
 - [x] Support IF statements -> Can compile [if_stmt.c](sample/if_stmt.c)
 - [ ] Support function & function call.
 - [x] Support WHILE statements. -> Can compile [while_stmt.c](sample/while_stmt.c)
-- [ ] Support FOR statements.
+- [x] Support FOR statements. -> Can compile [for_stmt.c](sample/for_stmt.c)
 - [ ] Todo and todo ...
 - [ ] Self compile.
 

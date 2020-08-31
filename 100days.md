@@ -234,3 +234,8 @@ assertions: 107 | 106 passed | 1 failed
 ## Day 41
 - Fix case if (1) {};
 - Support WHILE statement.
+
+## Day 42
+- Support FOR statement.
+- Support initialize when declare variable.
+- Fix issue of Assignment operator.
