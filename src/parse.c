@@ -24,12 +24,12 @@ static AstNode* mul(ParseParameter* parse_prm);
 static AstNode* add(ParseParameter* parse_prm);
 static AstNode* relational(ParseParameter* parse_prm);
 static AstNode* equal(ParseParameter* parse_prm);
+static AstNode* assign(ParseParameter* parse_prm);
 static AstNode* expression(ParseParameter* parse_prm);
 
 static AstNode* statements(ParseParameter* parse_prm, AstNode* root);
 static AstNode* stmt_print(ParseParameter* parse_prm);
 static AstNode* stmt_decl(ParseParameter* parse_prm);
-static AstNode* stmt_ident(ParseParameter* parse_prm);
 static AstNode* stmt_expr(ParseParameter* parse_prm);
 static AstNode* stmt_if(ParseParameter* parse_prm);
 static AstNode* stmt_while(ParseParameter* parse_prm);
@@ -156,39 +156,6 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
     return node;
 }
 
-AstNode* stmt_ident(ParseParameter* parse_prm)
-{
-    AstNode *node, *node1;
-    Token op_tok;
-
-    parse_prm->cur_token.left_value = true;
-    node = ast_create_leaf(parse_prm->cur_token);
-
-    // verify that existence in symbol table
-    if (-1 == symtable_find(&(parse_prm->symbol_table), parse_prm->cur_token.id_str)) {
-        MLOG(CLGT, "Can not find symbol %s at line: %d\n",parse_prm->cur_token.id_str, LexGetLine(parse_prm->lex_prm));
-        exit(1);
-    }
-
-    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-    if (!match (parse_prm, TokenAssign)) {
-        MLOG(CLGT,"Expect Equal but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok),LexGetLine(parse_prm->lex_prm));
-    }
-    op_tok = parse_prm->cur_token;
-
-    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-    node1 = expression(parse_prm);
-    node = ast_create_node(op_tok, node, node1);
-
-    if (match (parse_prm, TokenSemi)) {
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
-    } else {
-        MLOG(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
-    }
-
-    return node;
-}
-
 AstNode* stmt_if(ParseParameter* parse_prm)
 {
     /* if_statement: if_head
@@ -250,8 +217,7 @@ AstNode* stmt_for(ParseParameter* parse_prm)
     }
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
 
-    AstNode* pre_exp = stmt_ident(parse_prm); // todo : move to stmt_expr
-
+    AstNode* pre_exp = stmt_expr(parse_prm);
     AstNode* cond_exp = stmt_expr(parse_prm);
     if (NULL == cond_exp) {
         MLOG(CLGT,"Not support without condition: %d\n",LexGetLine(parse_prm->lex_prm));
@@ -329,9 +295,6 @@ AstNode* statements(ParseParameter* parse_prm, AstNode* root)
     case TokenIntType:
         node = stmt_decl(parse_prm);
         break;
-    case TokenIdentifier:
-        node = stmt_ident(parse_prm);
-        break;
     case TokenIf:
         node = stmt_if(parse_prm);
         break;
@@ -362,7 +325,20 @@ AstNode* statements(ParseParameter* parse_prm, AstNode* root)
 
 AstNode* expression(ParseParameter* parse_prm)
 {
-    return equal(parse_prm);
+    return assign(parse_prm);
+}
+
+AstNode* assign(ParseParameter* parse_prm) {
+    AstNode* node = equal(parse_prm);
+    while (match(parse_prm, TokenAssign)) {
+        Token op_tok = parse_prm->cur_token;
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        AstNode* node1 = equal(parse_prm);
+
+        node->type = AstLeftVar; // todo: consider better design for Lval & Rval
+        node = ast_create_node(op_tok, node, node1);
+    }
+    return node;
 }
 
 AstNode* equal(ParseParameter* parse_prm) {
@@ -418,10 +394,13 @@ AstNode* mul(ParseParameter* parse_prm)
 
 AstNode* factor(ParseParameter* parse_prm)
 {
-    //TODO: confirm start valid token
     AstNode* node = NULL;
     if (match(parse_prm, TokenNumber) || match(parse_prm, TokenIdentifier)) {
         if (match(parse_prm, TokenIdentifier)) {
+            if (-1 == symtable_find(&(parse_prm->symbol_table), parse_prm->cur_token.id_str)) {
+                MLOG(CLGT, "Can not find symbol %s at line: %d\n",parse_prm->cur_token.id_str, LexGetLine(parse_prm->lex_prm));
+                exit(1);
+            }
             // right value
             parse_prm->cur_token.left_value = false;
         }
@@ -434,9 +413,11 @@ AstNode* factor(ParseParameter* parse_prm)
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else {
             MLOG(CLGT,"Missing close parenthesis at line: %d\n",LexGetLine(parse_prm->lex_prm));
+            exit(1);
         }
     } else {
         MLOG(CLGT, "Number or identifier expected but token: %s at line %d\n", tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
+        exit(1);
     }
 
     return node;
