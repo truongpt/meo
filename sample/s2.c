@@ -1,1 +1,4 @@
-print 5+1;
+void main()
+{
+    print 5+1;
+}
