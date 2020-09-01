@@ -118,6 +118,17 @@ AstNode* ast_create_ifnode(
     return node;
 }
 
+AstNode* ast_create_func(
+    AstNode* left,
+    AstNode* right)
+{
+    AstNode* node = (AstNode*) malloc(sizeof(AstNode));
+    node->type = AstFunc;
+    node->left = left;
+    node->right = right;
+    return node;
+}
+
 AstNode* ast_create_node(
     Token token,
     AstNode* left,
@@ -219,6 +230,14 @@ void* ast_compile_while(void* gen_prm, AstNode* node)
     return NULL;
 }
 
+void* ast_compile_func(void* gen_prm, AstNode* node)
+{
+    // gen function lable
+    GenFunc(gen_prm, node->left->id_str);
+    // gen body
+    return ast_compile(gen_prm, node->right);
+}
+
 char* gen_bin_op(void* gen_prm, char* left, char* right, int type)
 {
     switch (type) {
@@ -298,6 +317,8 @@ void* ast_compile(void* gen_prm, AstNode* node)
         return ast_compile_if(gen_prm, node);
     case AstWhile:
         return ast_compile_while(gen_prm, node);
+    case AstFunc:
+        return ast_compile_func(gen_prm, node);
     }
 
     char *left = NULL, *right = NULL;

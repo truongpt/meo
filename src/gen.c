@@ -64,9 +64,6 @@ int32_t GenOpen(void** gen_prm, int32_t arch, char* out_file_name)
         // todo: hardcode
         fprintf(g_gen_prm[i].out_asm_file,"%s\n",".LC0:");
         fprintf(g_gen_prm[i].out_asm_file,"\t.string \"%%d\\n\"\n");
-        fprintf(g_gen_prm[i].out_asm_file,"\t%s\t%s\n",".globl","main");
-        fprintf(g_gen_prm[i].out_asm_file,"\t%s\t%s\n",".type","main, @function");
-        fprintf(g_gen_prm[i].out_asm_file,"%s\n","main:");
         GenLoadX86_64(&(g_gen_prm[i].func));
         break;
     default:
@@ -222,6 +219,12 @@ char* GenLabel(void* gen_prm, char* label)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
     return prm->func.f_label(label, prm->out_asm_file);
+}
+
+char* GenFunc(void* gen_prm, char* name)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_func(name, prm->out_asm_file);
 }
 
 void GenOut(void* gen_prm, char* r)

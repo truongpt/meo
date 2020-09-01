@@ -27,6 +27,7 @@ static AstNode* equal(ParseParameter* parse_prm);
 static AstNode* assign(ParseParameter* parse_prm);
 static AstNode* expression(ParseParameter* parse_prm);
 
+static AstNode* syntax_parse(ParseParameter* parse_prm);
 static AstNode* statements(ParseParameter* parse_prm, AstNode* root);
 static AstNode* stmt_print(ParseParameter* parse_prm);
 static AstNode* stmt_decl(ParseParameter* parse_prm);
@@ -100,13 +101,13 @@ int32_t ParseProc(void* prm)
     }
 
     ParseParameter* parse_prm = (ParseParameter*)prm;
-    AstNode* node = NULL;
+
     while (!match(parse_prm, TokenEoi)) {
-        node = statements(parse_prm, node);
+        AstNode* node = syntax_parse(parse_prm);
+        // gen code
+        ast_gen(parse_prm, node);
     }
 
-    // gen code
-    ast_gen(parse_prm, node);
     return Success;
 }
 
@@ -290,6 +291,51 @@ AstNode* stmt_expr(ParseParameter* parse_prm)
     }
 
     return node;
+}
+
+AstNode* syntax_parse(ParseParameter* parse_prm)
+{
+    /* TODO: start with support void function without input param
+     * void main()
+     * {
+     *     // function body
+     * }
+     */
+
+    // At first data type
+    if (!match(parse_prm, TokenVoidType) && !match(parse_prm, TokenIntType)) {
+        MLOG(ERROR, "The version only support void main function : %s\n",parse_prm->cur_token.id_str);
+        exit(1);
+    }
+
+    // Identifier -> function name
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    AstNode* ident = ast_create_leaf(parse_prm->cur_token);
+
+    // open parenthesis
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    if (match(parse_prm, TokenLP)) {
+        // TODO: parse input parameter of the function
+        // close parenthesis
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        if (!match(parse_prm, TokenRP)) {
+            MLOG(ERROR, "Expect (\n");
+            exit(1);
+        }
+
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        if (!match(parse_prm, TokenLBracket)) {
+            MLOG(ERROR, "Expect {\n");
+        }
+
+        AstNode* body = stmt_scope(parse_prm);
+
+        // create function tree.
+        return ast_create_func(ident, body);
+    } else {
+        MLOG(ERROR, "This version does not support global variable\n");
+        exit(1);
+    }
 }
 
 AstNode* statements(ParseParameter* parse_prm, AstNode* root)
