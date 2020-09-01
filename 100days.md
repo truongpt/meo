@@ -239,3 +239,6 @@ assertions: 107 | 106 passed | 1 failed
 - Support FOR statement.
 - Support initialize when declare variable.
 - Fix issue of Assignment operator.
+
+## Day 43
+- Support compile function step 1.
