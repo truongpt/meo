@@ -25,7 +25,9 @@ TEST_CASE("parse test get single resource")
 {
     create_folder("data");
     std::ofstream outfile ("data/testp0");
+
     outfile << "0" << std::endl;
+
     outfile.close();
 
     void* lex_prm = NULL;
@@ -97,16 +99,24 @@ TEST_CASE("parse test plus token: (1+2);")
 
     int32_t mock_lex_prm;
 
-    MockLexCreate(vector<Token> {
-            {TokenPrint, -1},
-            {TokenLP,    -1},
-            {TokenNumber, 1},
-            {TokenPlus,  -1},
-            {TokenNumber, 2},
-            {TokenRP,    -1},
-            {TokenSemi,  -1},
-            {TokenEoi,   -1}
-        });
+    vector<Token> token_test = {
+            {TokenVoidType,   -1},
+            {TokenIdentifier, -1},
+            {TokenLP,         -1},
+            {TokenRP,         -1},
+            {TokenLBracket,   -1},
+            {TokenPrint,      -1},
+            {TokenLP,         -1},
+            {TokenNumber,      1},
+            {TokenPlus,       -1},
+            {TokenNumber,      2},
+            {TokenRP,         -1},
+            {TokenSemi,       -1},
+            {TokenRBracket,   -1},
+            {TokenEoi,        -1}
+    };
+    token_test[1].id_str = strdup("main");
+    MockLexCreate(token_test);
 
     void* gen_prm = NULL;
     REQUIRE(Success == GenCreate());
@@ -129,17 +139,24 @@ TEST_CASE("parse test plus token: (2*3);")
 {
 
     int32_t mock_lex_prm;
-
-    MockLexCreate(vector<Token> {
-            {TokenPrint, -1},
-            {TokenLP,    -1},
-            {TokenNumber, 2},
-            {TokenMul,   -1},
-            {TokenNumber, 3},
-            {TokenRP,    -1},
-            {TokenSemi,  -1},
-            {TokenEoi,   -1}
-        });
+    vector<Token> token_test = {
+            {TokenVoidType,   -1},
+            {TokenIdentifier, -1},
+            {TokenLP,         -1},
+            {TokenRP,         -1},
+            {TokenLBracket,   -1},
+            {TokenPrint,      -1},
+            {TokenLP,         -1},
+            {TokenNumber,      2},
+            {TokenMul,        -1},
+            {TokenNumber,      3},
+            {TokenRP,         -1},
+            {TokenSemi,       -1},
+            {TokenRBracket,   -1},
+            {TokenEoi,        -1}
+    };
+    token_test[1].id_str = strdup("main");
+    MockLexCreate(token_test);
 
     void* gen_prm = NULL;
     REQUIRE(Success == GenCreate());
@@ -159,26 +176,32 @@ TEST_CASE("parse test plus token: (2*3);")
     MockLexDestroy();
 }
 
-
 TEST_CASE("parse test plus token: (1+2*3+4);")
 {
 
     int32_t mock_lex_prm;
-
-    MockLexCreate(vector<Token> {
-            {TokenPrint, -1},
-            {TokenLP,    -1},
-            {TokenNumber, 1},
-            {TokenPlus,  -1},
-            {TokenNumber, 2},
-            {TokenMul,   -1},
-            {TokenNumber, 3},
-            {TokenPlus,  -1},
-            {TokenNumber, 4},
-            {TokenRP,    -1},
-            {TokenSemi,  -1},
-            {TokenEoi,   -1}
-        });
+    vector<Token> token_test = {
+            {TokenVoidType,   -1},
+            {TokenIdentifier, -1},
+            {TokenLP,         -1},
+            {TokenRP,         -1},
+            {TokenLBracket,   -1},
+            {TokenPrint,      -1},
+            {TokenLP,         -1},
+            {TokenNumber,      1},
+            {TokenPlus,       -1},
+            {TokenNumber,      2},
+            {TokenMul,        -1},
+            {TokenNumber,      3},
+            {TokenPlus,       -1},
+            {TokenNumber,      4},
+            {TokenRP,         -1},
+            {TokenSemi,       -1},
+            {TokenRBracket,   -1},
+            {TokenEoi,        -1}
+    };
+    token_test[1].id_str = strdup("main");
+    MockLexCreate(token_test);
 
     void* gen_prm = NULL;
     REQUIRE(Success == GenCreate());
@@ -203,22 +226,30 @@ TEST_CASE("parse test plus token: (1+2)*(3+4);")
 
     int32_t mock_lex_prm;
 
-    MockLexCreate(vector<Token> {
-            {TokenPrint, -1},
-            {TokenLP,    -1},
-            {TokenNumber, 1},
-            {TokenPlus,  -1},
-            {TokenNumber, 2},
-            {TokenRP,    -1},
-            {TokenMul,   -1},
-            {TokenLP,    -1},
-            {TokenNumber, 3},
-            {TokenPlus,  -1},
-            {TokenNumber, 4},
-            {TokenRP,    -1},
-            {TokenSemi,  -1},
-            {TokenEoi,   -1}
-        });
+    vector<Token> token_test = {
+            {TokenVoidType,   -1},
+            {TokenIdentifier, -1},
+            {TokenLP,         -1},
+            {TokenRP,         -1},
+            {TokenLBracket,   -1},
+            {TokenPrint,      -1},
+            {TokenLP,         -1},
+            {TokenNumber,      1},
+            {TokenPlus,       -1},
+            {TokenNumber,      2},
+            {TokenRP,         -1},
+            {TokenMul,        -1},
+            {TokenLP,         -1},
+            {TokenNumber,      3},
+            {TokenPlus,       -1},
+            {TokenNumber,      4},
+            {TokenRP,         -1},
+            {TokenSemi,       -1},
+            {TokenRBracket,   -1},
+            {TokenEoi,        -1}
+    };
+    token_test[1].id_str = strdup("main");
+    MockLexCreate(token_test);
 
     void* gen_prm = NULL;
     REQUIRE(Success == GenCreate());
@@ -242,14 +273,23 @@ TEST_CASE("parse test pattern: int xyz;")
     int32_t mock_lex_prm;
 
     vector<Token> token_test = {
-        {TokenIntType,   -1},
-        {TokenIdentifier,-1},
-        {TokenSemi,      -1},
-        {TokenEoi,       -1}
+            {TokenVoidType,   -1},
+            {TokenIdentifier, -1},
+            {TokenLP,         -1},
+            {TokenRP,         -1},
+            {TokenLBracket,   -1},
+            {TokenIntType,    -1},
+            {TokenIdentifier, -1},
+            {TokenSemi,       -1},
+            {TokenRBracket,   -1},
+            {TokenEoi,        -1}
     };
-    token_test[1].id_str = strdup("xyz");
+
+    token_test[1].id_str = strdup("main");
+    token_test[6].id_str = strdup("xyz");
 
     MockLexCreate(token_test);
+
     void* gen_prm = NULL;
     REQUIRE(Success == GenCreate());
     REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out5"));
@@ -271,17 +311,26 @@ TEST_CASE("parse test pattern: int xyz;")
 TEST_CASE("parse test print token: print (1+2);")
 {
     int32_t mock_lex_prm;
+    vector<Token> token_test = {
+            {TokenVoidType,   -1},
+            {TokenIdentifier, -1},
+            {TokenLP,         -1},
+            {TokenRP,         -1},
+            {TokenLBracket,   -1},
+            {TokenPrint,      -1},
+            {TokenLP,         -1},
+            {TokenNumber,      1},
+            {TokenPlus,       -1},
+            {TokenNumber,      2},
+            {TokenRP,         -1},
+            {TokenSemi,       -1},
+            {TokenRBracket,   -1},
+            {TokenEoi,        -1}
+    };
 
-    MockLexCreate(vector<Token> {
-            {TokenPrint, -1},
-            {TokenLP,    -1},
-            {TokenNumber, 1},
-            {TokenPlus,  -1},
-            {TokenNumber, 2},
-            {TokenRP,    -1},
-            {TokenSemi,  -1},
-            {TokenEoi,   -1}
-        });
+    token_test[1].id_str = strdup("main");
+
+    MockLexCreate(token_test);
 
     void* gen_prm = NULL;
     REQUIRE(Success == GenCreate());
@@ -306,22 +355,28 @@ TEST_CASE("parse test pattern: int a; a = 10; print a;")
     int32_t mock_lex_prm;
 
     vector<Token> token_test = {
-        {TokenIntType,   -1},
-        {TokenIdentifier,-1},
-        {TokenSemi,      -1},
-        {TokenIdentifier,-1},
-        {TokenAssign,    -1},
-        {TokenNumber,    10},
-        {TokenSemi,      -1},
-        {TokenPrint,     -1},
-        {TokenIdentifier,-1},
-        {TokenSemi,      -1},
-        {TokenEoi,       -1}
+        {TokenVoidType,   -1},
+        {TokenIdentifier, -1},
+        {TokenLP,         -1},
+        {TokenRP,         -1},
+        {TokenLBracket,   -1},
+        {TokenIntType,    -1},
+        {TokenIdentifier, -1},
+        {TokenSemi,       -1},
+        {TokenIdentifier, -1},
+        {TokenAssign,     -1},
+        {TokenNumber,     10},
+        {TokenSemi,       -1},
+        {TokenPrint,      -1},
+        {TokenIdentifier, -1},
+        {TokenSemi,       -1},
+        {TokenRBracket,   -1},
+        {TokenEoi,        -1}
     };
-
-    token_test[1].id_str = strdup("abc");
-    token_test[3].id_str = strdup("abc");
+    token_test[1].id_str = strdup("main");
+    token_test[6].id_str = strdup("abc");
     token_test[8].id_str = strdup("abc");
+    token_test[13].id_str = strdup("abc");
 
     MockLexCreate(token_test);
     void* gen_prm = NULL;
@@ -341,11 +396,15 @@ TEST_CASE("parse test pattern: int a; a = 10; print a;")
     MockLexDestroy();
 }
 
-
 TEST_CASE("parse test pattern: a+b;")
 {
     int32_t mock_lex_prm;
     vector<Token> token_test = {
+        {TokenVoidType,  -1},
+        {TokenIdentifier,-1},
+        {TokenLP,        -1},
+        {TokenRP,        -1},
+        {TokenLBracket,  -1},
         {TokenIntType,   -1},
         {TokenIdentifier,-1}, //1
         {TokenSemi,      -1}, // int a;
@@ -365,15 +424,17 @@ TEST_CASE("parse test pattern: a+b;")
         {TokenPlus,      -1},
         {TokenIdentifier,-1}, // 17 b
         {TokenSemi,      -1},
+        {TokenRBracket,  -1},
         {TokenEoi,       -1}
     };
 
-    token_test[1].id_str = strdup("a");
-    token_test[4].id_str = strdup("b");
-    token_test[6].id_str = strdup("a");
-    token_test[10].id_str = strdup("b");
-    token_test[15].id_str = strdup("a");
-    token_test[17].id_str = strdup("b");
+    token_test[1].id_str = strdup("main");
+    token_test[5+1].id_str = strdup("a");
+    token_test[5+4].id_str = strdup("b");
+    token_test[5+6].id_str = strdup("a");
+    token_test[5+10].id_str = strdup("b");
+    token_test[5+15].id_str = strdup("a");
+    token_test[5+17].id_str = strdup("b");
 
     MockLexCreate(token_test);
     void* gen_prm = NULL;
@@ -392,4 +453,3 @@ TEST_CASE("parse test pattern: a+b;")
 
     MockLexDestroy();
 }
-

@@ -32,6 +32,7 @@ static char* mock_ne_j(char* r1, char* r2, char* l, FILE* out_file);
 static char* mock_jump(char* l, FILE* out_file);
 static char* mock_zero_j(char* r, char* l, FILE* out_file);
 static char* mock_label(char* l, FILE* out_file);
+static char* mock_func(char* name, FILE* out_file);
 
 static char* mock_var(char* var, FILE* out_file);
 static char* mock_store(char* r, char* var, FILE* out_file);
@@ -71,6 +72,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_jump  = &mock_jump;
     func->f_zero_j  = &mock_zero_j;
     func->f_label = &mock_label;
+    func->f_func = &mock_func;
 
     func->f_store    = &mock_store;
     func->f_load_var = &mock_load_var;
@@ -291,6 +293,12 @@ static char* mock_label(char* l, FILE* out_file)
 {
     fprintf(out_file,"[LBEL]:\t %s: <- label\n",l);
     return l;
+}
+
+static char* mock_func(char* name, FILE* out_file)
+{
+    fprintf(out_file,"[FUNC]:\t %s:\n",name);
+    return name;
 }
 
 static char* mock_var(char* var, FILE* out_file)

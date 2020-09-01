@@ -23,7 +23,9 @@ TEST_CASE("basic arithmetic op parttern:print 1+2;")
 {
     create_folder("data");
     std::ofstream outfile ("data/test1");
+    outfile << "void main() {" << std::endl;
     outfile << "print 1+2;" << std::endl;
+    outfile << "}" << std::endl;
     outfile.close();
 
     void* lex_prm = NULL;
@@ -55,6 +57,7 @@ TEST_CASE("basic arithmetic op parttern:print 1+2;")
 TEST_CASE("basic variable parttern: int a; int b;")
 {
     std::ofstream outfile ("data/test2");
+    outfile << "void main() {" << std::endl;
     outfile << "int a;" << std::endl;
     outfile << "int b;" << std::endl;
     outfile << "a = 2;" << std::endl;
@@ -63,6 +66,7 @@ TEST_CASE("basic variable parttern: int a; int b;")
     outfile << "a = a*b;" << std::endl;
     outfile << "print a;" << std::endl;
     outfile << "print a*b;" << std::endl;
+    outfile << "}" << std::endl;
     outfile.close();
 
     void* lex_prm = NULL;
@@ -96,6 +100,7 @@ TEST_CASE("basic variable parttern: int a; int b;")
 TEST_CASE("basic variable parttern: hw reg resource manager test")
 {
     std::ofstream outfile ("data/test3");
+    outfile << "void main() {" << std::endl;
     outfile << "int a1;" << std::endl;
     outfile << "int a2;" << std::endl;
     outfile << "int a3;" << std::endl;
@@ -110,6 +115,7 @@ TEST_CASE("basic variable parttern: hw reg resource manager test")
     outfile << "a5 = 5;" << std::endl;
     outfile << "a6 = 6;" << std::endl;
     outfile << "print a1+a2+a3+a4+a5+a6;" << std::endl;
+    outfile << "}" << std::endl;
     outfile.close();
 
     void* lex_prm = NULL;
@@ -142,10 +148,12 @@ TEST_CASE("basic variable parttern: hw reg resource manager test")
 TEST_CASE("relational basic pattern")
 {
     std::ofstream outfile ("data/test4");
+    outfile << "void main() {" << std::endl;
     outfile << "print 1 < 2;" << std::endl;
     outfile << "print 1 <= 1;" << std::endl;
     outfile << "print 1 > 2;" << std::endl;
     outfile << "print 2 >= 2;" << std::endl;
+    outfile << "}" << std::endl;
     outfile.close();
 
     void* lex_prm = NULL;
@@ -179,12 +187,14 @@ TEST_CASE("relational basic pattern")
 TEST_CASE("relational basic pattern with variable")
 {
     std::ofstream outfile ("data/test5");
+    outfile << "void main() {" << std::endl;
     outfile << "int a1;" << std::endl;
     outfile << "int a2;" << std::endl;
     outfile << "a1 = 1;" << std::endl;
     outfile << "a2 = 2;" << std::endl;
     outfile << "print a1 > a2;" << std::endl;
     outfile << "print a1 < a2;" << std::endl;
+    outfile << "}" << std::endl;
     outfile.close();
 
     void* lex_prm = NULL;
@@ -217,12 +227,14 @@ TEST_CASE("relational basic pattern with variable")
 TEST_CASE("equal basic pattern with variable")
 {
     std::ofstream outfile ("data/test6");
+    outfile << "void main() {" << std::endl;
     outfile << "int a1;" << std::endl;
     outfile << "int a2;" << std::endl;
     outfile << "a1 = 2;" << std::endl;
     outfile << "a2 = 2;" << std::endl;
     outfile << "print a1 == a2;" << std::endl;
     outfile << "print a1 != a2;" << std::endl;
+    outfile << "}" << std::endl;
     outfile.close();
 
     void* lex_prm = NULL;
@@ -255,12 +267,14 @@ TEST_CASE("equal basic pattern with variable")
 TEST_CASE("basic parttern with {}")
 {
     std::ofstream outfile ("data/test7");
+    outfile << "void main() {" << std::endl;
     outfile << "int a1;" << std::endl;
     outfile << "int a2;" << std::endl;
     outfile << "{a1 = 1;}" << std::endl;
     outfile << "a2 = 2;" << std::endl;
     outfile << "{print a1;}" << std::endl;
     outfile << "{{{{print a2;}}}}" << std::endl;
+    outfile << "}" << std::endl;
     outfile.close();
 
     void* lex_prm = NULL;
@@ -293,6 +307,7 @@ TEST_CASE("basic parttern with {}")
 TEST_CASE("basic if-else pattern")
 {
     std::ofstream outfile ("data/test8");
+    outfile << "void main() {" << std::endl;
     outfile << "int a1;" << std::endl;
     outfile << "int a2;" << std::endl;
     outfile << "a1 = 1;" << std::endl;
@@ -301,6 +316,7 @@ TEST_CASE("basic if-else pattern")
     outfile << "{print a1;}" << std::endl;
     outfile << "else" << std::endl;
     outfile << "{ print a2;}" << std::endl;
+    outfile << "}" << std::endl;
     outfile.close();
 
     void* lex_prm = NULL;
@@ -329,3 +345,4 @@ TEST_CASE("basic if-else pattern")
     REQUIRE(Success == LexDestroy());
 
 }
+
