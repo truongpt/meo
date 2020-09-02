@@ -242,3 +242,8 @@ assertions: 107 | 106 passed | 1 failed
 
 ## Day 43
 - Support compile function step 1.
+
+## Day 44
+- Study how to return, how to pass parameter to function.
+- prototype to confirm return executing.
+
