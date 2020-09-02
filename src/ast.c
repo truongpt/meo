@@ -66,6 +66,9 @@ int32_t tok_2_ast (Token token)
     case TokenWhile:
         ast = AstWhile;
         break;
+    case TokenReturn:
+        ast = AstReturn;
+        break;
     default:
         MLOG(CLGT,"Can not create AstNode with token: %s\n", tok2str(token.tok));
     }
@@ -344,6 +347,8 @@ void* ast_compile(void* gen_prm, AstNode* node)
         return node->id_str;
     case AstIdentifier:
         return GenLoadVar(gen_prm, node->id_str);
+    case AstReturn:
+        return GenReturn(gen_prm, left);
     case AstAssign:
         return GenStore(gen_prm, left, right);
     case AstPlus:

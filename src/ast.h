@@ -48,6 +48,7 @@ enum AstType {
     AstIf,
     AstWhile,
     AstFunc,
+    AstReturn,
     // Link statements
     AstLink
 };

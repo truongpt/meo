@@ -40,6 +40,7 @@ typedef struct GenFuncTable {
     char* (*f_func)(char* name, FILE*);
     char* (*f_store)(char* var, char* r, FILE*);
     char* (*f_load_var)(char* var, FILE*);
+    char* (*f_return)(char* r, FILE*);
 } GenFuncTable;
 
 int32_t GenLoadX86_64(GenFuncTable *func);

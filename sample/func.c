@@ -1,8 +1,11 @@
-void main()
+int main()
 {
-    int a = 1;
-    for (a =2 ; a < 10; a=a+1) {
-
+    int a = 3;
+    int b = 2;
+    if ( a > b) {
+        return b;
+    } else {
+        return 10;
     }
-    print a;
+    return a;
 }

@@ -37,6 +37,7 @@ static char* x86_64_func(char* name, FILE* out_file);
 
 static char* x86_64_store(char* r, char* var, FILE* out_file);
 static char* x86_64_load_var(char* var, FILE* out_file);
+static char* x86_64_return(char* r, FILE* out_file);
 
 typedef struct RegMap {
     char* reg64;
@@ -95,6 +96,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_func   = &x86_64_func;
     func->f_store  = &x86_64_store;
     func->f_load_var = &x86_64_load_var;
+    func->f_return = &x86_64_return;
     cur_reg = 0;
     return Success;
 }
@@ -345,5 +347,13 @@ char* x86_64_load_var(char* var, FILE* out_file)
 {
     char* r = reg_alloc();
     fprintf(out_file, "\tmovq %s(\%%rip), %s\n", var, r);
+    return r;
+}
+
+static char* x86_64_return(char* r, FILE* out_file)
+{
+    fprintf(out_file, "\tmovq %s, %%rax\n", r);
+    fprintf(out_file, "\tpopq %%rbp\n");
+    fprintf(out_file, "\tret\n");
     return r;
 }

@@ -56,6 +56,7 @@ char* GenPrint(void* gen_prm, char* r);
 char* GenVar(void* gen_prm, char* var);
 char* GenStore(void* gen_prm, char* var, char* r);
 char* GenLoadVar(void* gen_prm, char* var);
+char* GenReturn(void* gen_prm, char* r);
 
 #ifdef __cplusplus
 }

@@ -34,6 +34,7 @@ static AstNode* stmt_decl(ParseParameter* parse_prm);
 static AstNode* stmt_expr(ParseParameter* parse_prm);
 static AstNode* stmt_if(ParseParameter* parse_prm);
 static AstNode* stmt_while(ParseParameter* parse_prm);
+static AstNode* stmt_return(ParseParameter* parse_prm);
 static AstNode* stmt_scope(ParseParameter* parse_prm);
 static bool match(ParseParameter* parse_prm, int32_t tok_type);
 
@@ -259,6 +260,14 @@ AstNode* stmt_for(ParseParameter* parse_prm)
     return ast_create_link(pre_exp, w_stmt);
 }
 
+AstNode* stmt_return(ParseParameter* parse_prm)
+{
+    Token op_tok = parse_prm->cur_token;
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    AstNode* node = stmt_expr(parse_prm);
+    return ast_create_unary(op_tok, node);
+}
+
 AstNode* stmt_scope(ParseParameter* parse_prm)
 {
     if(!match(parse_prm, TokenLBracket)) {
@@ -372,6 +381,9 @@ AstNode* statements(ParseParameter* parse_prm, AstNode* root)
         MLOG(CLGT,"Redundancy open braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
         // Ignore to next
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        break;
+    case TokenReturn:
+        node = stmt_return(parse_prm);
         break;
     default:
         node = stmt_expr(parse_prm);

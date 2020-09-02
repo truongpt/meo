@@ -257,3 +257,9 @@ char* GenLoadVar(void* gen_prm, char* var)
     GenParameter* prm = (GenParameter*)gen_prm;
     return prm->func.f_load_var(var, prm->out_asm_file);
 }
+
+char* GenReturn(void* gen_prm, char* r)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_return(r, prm->out_asm_file);
+}
