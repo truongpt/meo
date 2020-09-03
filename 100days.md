@@ -247,3 +247,6 @@ assertions: 107 | 106 passed | 1 failed
 - Study how to return, how to pass parameter to function.
 - prototype to confirm return executing.
 
+## Day 45
+- Update test case to compliane with C syntax.
+

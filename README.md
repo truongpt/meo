@@ -4,17 +4,10 @@
 - **meo** is :cat: in Vietnamese, but now  it is subset c compliler
 - The project is mainly used to study compiler.
 - I use [100DaysOfCode](https://github.com/kallaway/100-days-of-code) strategy, that will make [small step](100days.md) everyday by [rule](https://github.com/kallaway/100-days-of-code/blob/master/rules.md)
-- I start by following to [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf) and refer [A Compiler Writing Journey](https://github.com/DoctorWkt/acwj)
-
-## Milestone
-- [x] Run basic math operator +,-,*,/ on X86_64 GNU/Linux -> [v0.1](https://github.com/truongpt/meo/releases/tag/v0.1)
-- [x] Compile [clgt.c](sample/clgt.c)
-- [x] Support IF statements -> Can compile [if_stmt.c](sample/if_stmt.c)
-- [ ] Support function & function call.
-- [x] Support WHILE statements. -> Can compile [while_stmt.c](sample/while_stmt.c)
-- [x] Support FOR statements. -> Can compile [for_stmt.c](sample/for_stmt.c)
-- [ ] Todo and todo ...
-- [ ] Self compile.
+- I study base on following.
+  - Reading [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf)
+  - Reading [Dragon book](https://www.amazon.com/Compilers-Principles-Techniques-Tools-2nd/dp/0321486811)
+  - Reference [A Compiler Writing Journey](https://github.com/DoctorWkt/acwj)
 
 ## Design
 - Using design as [four-pass compiler](system_struct.png), which is refered from [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf)
@@ -25,3 +18,15 @@
 - Using back end of GCC to generate executed code.
 - Using TDD with [catch2](https://github.com/catchorg/Catch2).
 - Using [Google coding convention](https://google.github.io/styleguide/cppguide.html).
+
+## Todo list
+- [x] Run basic math operator +,-,*,/ on X86_64 GNU/Linux -> [v0.1](https://github.com/truongpt/meo/releases/tag/v0.1)
+- [x] Compile [clgt.c](sample/clgt.c)
+- [x] Support IF statements -> Can compile [if_stmt.c](sample/if_stmt.c)
+- [x] Support WHILE statements. -> Can compile [while_stmt.c](sample/while_stmt.c)
+- [x] Support FOR statements. -> Can compile [for_stmt.c](sample/for_stmt.c)
+- [ ] Support function & function call.
+- [ ] Global variable & local variable.
+- [ ] Structure type.
+- [ ] Full operator (&& & || | ^ !).
+- [ ] Self compile.
