@@ -1,4 +1,4 @@
-void main()
+int main()
 {
     int i;
     int j;
@@ -10,8 +10,6 @@ void main()
     int a;
     a = i > j;
     i = j == j;
-    print k;
-    print a;
-    print i;
+    return i+k+j;
 }
 

@@ -291,16 +291,16 @@ TEST_CASE("basic parttern with {}")
 TEST_CASE("basic if-else pattern")
 {
     std::ofstream outfile ("data/test8");
-    outfile << "int main() {" << std::endl;
-    outfile << "int a1;" << std::endl;
-    outfile << "int a2;" << std::endl;
-    outfile << "a1 = 1;" << std::endl;
-    outfile << "a2 = 2;" << std::endl;
-    outfile << "if (a1 > a2)" << std::endl;
-    outfile << "{return a1;}" << std::endl;
-    outfile << "else" << std::endl;
-    outfile << "{return a2;}" << std::endl;
-    outfile << "}" << std::endl;
+    outfile << "int main() {     " << std::endl;
+    outfile << "    int a1;      " << std::endl;
+    outfile << "    int a2;      " << std::endl;
+    outfile << "    a1 = 1;      " << std::endl;
+    outfile << "    a2 = 2;      " << std::endl;
+    outfile << "    if (a1 > a2) " << std::endl;
+    outfile << "    {return a1;} " << std::endl;
+    outfile << "    else         " << std::endl;
+    outfile << "    {return a2;} " << std::endl;
+    outfile << "}                " << std::endl;
     outfile.close();
 
     void* lex_prm = NULL;

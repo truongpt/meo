@@ -1,4 +1,4 @@
-void main()
+int main()
 {
-    print 5+1;
+    return 5+1;
 }

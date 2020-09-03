@@ -1,4 +1,4 @@
-void main()
+int main()
 {
     int a;
     int b;
@@ -7,8 +7,5 @@ void main()
     int c;
     c = a+b-3;
     a=a+b*a-b;
-    print a;
-    print b;
-    print c;
-    print a+b*a-b;
+    return a+b*a-b;
 }

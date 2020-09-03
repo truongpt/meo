@@ -1,4 +1,4 @@
-void main()
+int main()
 {
-    6/2;
+   return 6/2;
 }
