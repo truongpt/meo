@@ -19,7 +19,7 @@
 using namespace std;
 int32_t MockLexCreate(vector<Token> tok_array);
 int32_t MockLexDestroy();
-int32_t MockGetPrintValue();
+int32_t MockGetReturnValue();
 
 TEST_CASE("parse test get single resource")
 {
@@ -100,12 +100,12 @@ TEST_CASE("parse test plus token: (1+2);")
     int32_t mock_lex_prm;
 
     vector<Token> token_test = {
-            {TokenVoidType,   -1},
+            {TokenIntType,   -1},
             {TokenIdentifier, -1},
             {TokenLP,         -1},
             {TokenRP,         -1},
             {TokenLBracket,   -1},
-            {TokenPrint,      -1},
+            {TokenReturn,     -1},
             {TokenLP,         -1},
             {TokenNumber,      1},
             {TokenPlus,       -1},
@@ -127,7 +127,7 @@ TEST_CASE("parse test plus token: (1+2);")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
     
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetPrintValue() == (1+2));
+    REQUIRE(MockGetReturnValue() == (1+2));
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -140,12 +140,12 @@ TEST_CASE("parse test plus token: (2*3);")
 
     int32_t mock_lex_prm;
     vector<Token> token_test = {
-            {TokenVoidType,   -1},
+            {TokenIntType,   -1},
             {TokenIdentifier, -1},
             {TokenLP,         -1},
             {TokenRP,         -1},
             {TokenLBracket,   -1},
-            {TokenPrint,      -1},
+            {TokenReturn,     -1},
             {TokenLP,         -1},
             {TokenNumber,      2},
             {TokenMul,        -1},
@@ -168,7 +168,7 @@ TEST_CASE("parse test plus token: (2*3);")
 
     REQUIRE(Success == ParseProc(parse_prm));
 
-    REQUIRE(MockGetPrintValue() == (2*3));
+    REQUIRE(MockGetReturnValue() == (2*3));
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -181,12 +181,12 @@ TEST_CASE("parse test plus token: (1+2*3+4);")
 
     int32_t mock_lex_prm;
     vector<Token> token_test = {
-            {TokenVoidType,   -1},
+            {TokenIntType,   -1},
             {TokenIdentifier, -1},
             {TokenLP,         -1},
             {TokenRP,         -1},
             {TokenLBracket,   -1},
-            {TokenPrint,      -1},
+            {TokenReturn,     -1},
             {TokenLP,         -1},
             {TokenNumber,      1},
             {TokenPlus,       -1},
@@ -213,7 +213,7 @@ TEST_CASE("parse test plus token: (1+2*3+4);")
 
     REQUIRE(Success == ParseProc(parse_prm));
 
-    REQUIRE(MockGetPrintValue() == (1+2*3+4));
+    REQUIRE(MockGetReturnValue() == (1+2*3+4));
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -227,12 +227,12 @@ TEST_CASE("parse test plus token: (1+2)*(3+4);")
     int32_t mock_lex_prm;
 
     vector<Token> token_test = {
-            {TokenVoidType,   -1},
+            {TokenIntType,   -1},
             {TokenIdentifier, -1},
             {TokenLP,         -1},
             {TokenRP,         -1},
             {TokenLBracket,   -1},
-            {TokenPrint,      -1},
+            {TokenReturn,     -1},
             {TokenLP,         -1},
             {TokenNumber,      1},
             {TokenPlus,       -1},
@@ -260,7 +260,7 @@ TEST_CASE("parse test plus token: (1+2)*(3+4);")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetPrintValue() == ((1+2)*(3+4)));
+    REQUIRE(MockGetReturnValue() == ((1+2)*(3+4)));
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -273,7 +273,7 @@ TEST_CASE("parse test pattern: int xyz;")
     int32_t mock_lex_prm;
 
     vector<Token> token_test = {
-            {TokenVoidType,   -1},
+            {TokenIntType,   -1},
             {TokenIdentifier, -1},
             {TokenLP,         -1},
             {TokenRP,         -1},
@@ -308,16 +308,16 @@ TEST_CASE("parse test pattern: int xyz;")
 }
 
 
-TEST_CASE("parse test print token: print (1+2);")
+TEST_CASE("parse test return token: return (1+2);")
 {
     int32_t mock_lex_prm;
     vector<Token> token_test = {
-            {TokenVoidType,   -1},
+            {TokenIntType,   -1},
             {TokenIdentifier, -1},
             {TokenLP,         -1},
             {TokenRP,         -1},
             {TokenLBracket,   -1},
-            {TokenPrint,      -1},
+            {TokenReturn,     -1},
             {TokenLP,         -1},
             {TokenNumber,      1},
             {TokenPlus,       -1},
@@ -350,12 +350,12 @@ TEST_CASE("parse test print token: print (1+2);")
 }
 
 
-TEST_CASE("parse test pattern: int a; a = 10; print a;")
+TEST_CASE("parse test pattern: int a; a = 10; return a;")
 {
     int32_t mock_lex_prm;
 
     vector<Token> token_test = {
-        {TokenVoidType,   -1},
+        {TokenIntType,   -1},
         {TokenIdentifier, -1},
         {TokenLP,         -1},
         {TokenRP,         -1},
@@ -367,7 +367,7 @@ TEST_CASE("parse test pattern: int a; a = 10; print a;")
         {TokenAssign,     -1},
         {TokenNumber,     10},
         {TokenSemi,       -1},
-        {TokenPrint,      -1},
+        {TokenReturn,     -1},
         {TokenIdentifier, -1},
         {TokenSemi,       -1},
         {TokenRBracket,   -1},
@@ -388,7 +388,7 @@ TEST_CASE("parse test pattern: int a; a = 10; print a;")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetPrintValue() == 10);
+    REQUIRE(MockGetReturnValue() == 10);
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -400,7 +400,7 @@ TEST_CASE("parse test pattern: a+b;")
 {
     int32_t mock_lex_prm;
     vector<Token> token_test = {
-        {TokenVoidType,  -1},
+        {TokenIntType,   -1},
         {TokenIdentifier,-1},
         {TokenLP,        -1},
         {TokenRP,        -1},
@@ -419,7 +419,7 @@ TEST_CASE("parse test pattern: a+b;")
         {TokenAssign,    -1},
         {TokenNumber,     2},
         {TokenSemi,      -1},
-        {TokenPrint,     -1}, // print a+b;
+        {TokenReturn,    -1}, // return a+b;
         {TokenIdentifier,-1}, //15 a
         {TokenPlus,      -1},
         {TokenIdentifier,-1}, // 17 b
@@ -446,7 +446,7 @@ TEST_CASE("parse test pattern: a+b;")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetPrintValue() == (1+2));
+    REQUIRE(MockGetReturnValue() == (1+2));
 
     ParseClose(parse_prm);
     ParseDestroy();

@@ -33,6 +33,7 @@ static char* mock_jump(char* l, FILE* out_file);
 static char* mock_zero_j(char* r, char* l, FILE* out_file);
 static char* mock_label(char* l, FILE* out_file);
 static char* mock_func(char* name, FILE* out_file);
+static char* mock_return(char* r, FILE* out_file);
 
 static char* mock_var(char* var, FILE* out_file);
 static char* mock_store(char* r, char* var, FILE* out_file);
@@ -44,7 +45,7 @@ unordered_map<string, int32_t> g_variable;
 unordered_map<char*, int32_t> mem;
 
 int cur = 0;
-vector<int> print_out = {};
+vector<int> return_value = {};
 int p_index = 0;
 
 int32_t GenLoadX86_64(GenFuncTable *func)
@@ -70,9 +71,10 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_eq_j  = &mock_eq_j;
     func->f_ne_j  = &mock_ne_j;
     func->f_jump  = &mock_jump;
-    func->f_zero_j  = &mock_zero_j;
-    func->f_label = &mock_label;
-    func->f_func = &mock_func;
+    func->f_zero_j = &mock_zero_j;
+    func->f_label  = &mock_label;
+    func->f_func   = &mock_func;
+    func->f_return = &mock_return;
 
     func->f_store    = &mock_store;
     func->f_load_var = &mock_load_var;
@@ -83,18 +85,18 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     cur = 0;
     p_index = 0;
     g_variable.clear();
-    print_out.clear();
+    return_value.clear();
     
     return Success;
 }
 
-int32_t MockGetPrintValue()
+int32_t MockGetReturnValue()
 {
-    if (p_index > print_out.size()) {
+    if (p_index > return_value.size()) {
         cout << "Not having print out data" << endl;
         return -1;
     };
-    return print_out[p_index++];
+    return return_value[p_index++];
 }
 
 char* reg_alloc() {
@@ -132,7 +134,7 @@ static char* mock_out(char* r, FILE* out_file)
 
 static char* mock_print(char* r, FILE* out_file)
 {
-    print_out.push_back(mem[r]);
+    return_value.push_back(mem[r]);
     reg_free(r);
     fprintf(out_file,"[PRIN]:\t %s\n",r);
     return r;
@@ -301,6 +303,12 @@ static char* mock_func(char* name, FILE* out_file)
     return name;
 }
 
+static char* mock_return(char* r, FILE* out_file)
+{
+    return_value.push_back(mem[r]);
+    reg_free(r);
+    fprintf(out_file,"[RET ]:\t %s\n",r);
+}
 static char* mock_var(char* var, FILE* out_file)
 {
     // just allocate buffer for var
