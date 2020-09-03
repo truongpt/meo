@@ -17,14 +17,14 @@
 #include "catch.hh"
 
 using namespace std;
-int32_t MockGetPrintValue();
+int32_t MockGetReturnValue();
 
-TEST_CASE("basic arithmetic op parttern:print 1+2;")
+TEST_CASE("basic arithmetic op parttern : return 1+2;")
 {
     create_folder("data");
     std::ofstream outfile ("data/test1");
-    outfile << "void main() {" << std::endl;
-    outfile << "print 1+2;" << std::endl;
+    outfile << "int main() {" << std::endl;
+    outfile << "return 1+2;" << std::endl;
     outfile << "}" << std::endl;
     outfile.close();
 
@@ -41,7 +41,7 @@ TEST_CASE("basic arithmetic op parttern:print 1+2;")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
     
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetPrintValue() == (1+2));
+    REQUIRE(MockGetReturnValue() == (1+2));
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -57,16 +57,14 @@ TEST_CASE("basic arithmetic op parttern:print 1+2;")
 TEST_CASE("basic variable parttern: int a; int b;")
 {
     std::ofstream outfile ("data/test2");
-    outfile << "void main() {" << std::endl;
-    outfile << "int a;" << std::endl;
-    outfile << "int b;" << std::endl;
-    outfile << "a = 2;" << std::endl;
-    outfile << "b = 5;" << std::endl;
-    outfile << "print a+b;" << std::endl;
-    outfile << "a = a*b;" << std::endl;
-    outfile << "print a;" << std::endl;
-    outfile << "print a*b;" << std::endl;
-    outfile << "}" << std::endl;
+    outfile << "int main() {   " << std::endl;
+    outfile << "    int a;     " << std::endl;
+    outfile << "    int b;     " << std::endl;
+    outfile << "    a = 2;     " << std::endl;
+    outfile << "    b = 5;     " << std::endl;
+    outfile << "    a = a*b;   " << std::endl;
+    outfile << "    return a*b;" << std::endl;
+    outfile << "}              " << std::endl;
     outfile.close();
 
     void* lex_prm = NULL;
@@ -82,9 +80,7 @@ TEST_CASE("basic variable parttern: int a; int b;")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
     
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetPrintValue() == (2+5));
-    REQUIRE(MockGetPrintValue() == (2*5));
-    REQUIRE(MockGetPrintValue() == (2*5*5));
+    REQUIRE(MockGetReturnValue() == (2*5*5));
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -100,7 +96,7 @@ TEST_CASE("basic variable parttern: int a; int b;")
 TEST_CASE("basic variable parttern: hw reg resource manager test")
 {
     std::ofstream outfile ("data/test3");
-    outfile << "void main() {" << std::endl;
+    outfile << "int main() {" << std::endl;
     outfile << "int a1;" << std::endl;
     outfile << "int a2;" << std::endl;
     outfile << "int a3;" << std::endl;
@@ -114,7 +110,7 @@ TEST_CASE("basic variable parttern: hw reg resource manager test")
     outfile << "a4 = 4;" << std::endl;
     outfile << "a5 = 5;" << std::endl;
     outfile << "a6 = 6;" << std::endl;
-    outfile << "print a1+a2+a3+a4+a5+a6;" << std::endl;
+    outfile << "return a1+a2+a3+a4+a5+a6;" << std::endl;
     outfile << "}" << std::endl;
     outfile.close();
 
@@ -131,7 +127,7 @@ TEST_CASE("basic variable parttern: hw reg resource manager test")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
     
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetPrintValue() == (1+2+3+4+5+6));
+    REQUIRE(MockGetReturnValue() == (1+2+3+4+5+6));
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -148,11 +144,8 @@ TEST_CASE("basic variable parttern: hw reg resource manager test")
 TEST_CASE("relational basic pattern")
 {
     std::ofstream outfile ("data/test4");
-    outfile << "void main() {" << std::endl;
-    outfile << "print 1 < 2;" << std::endl;
-    outfile << "print 1 <= 1;" << std::endl;
-    outfile << "print 1 > 2;" << std::endl;
-    outfile << "print 2 >= 2;" << std::endl;
+    outfile << "int main() {" << std::endl;
+    outfile << "return 1 < 2;" << std::endl;
     outfile << "}" << std::endl;
     outfile.close();
 
@@ -169,10 +162,7 @@ TEST_CASE("relational basic pattern")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetPrintValue() == 1);
-    REQUIRE(MockGetPrintValue() == 1);
-    REQUIRE(MockGetPrintValue() == 0);
-    REQUIRE(MockGetPrintValue() == 1);
+    REQUIRE(MockGetReturnValue() == 1);
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -192,8 +182,7 @@ TEST_CASE("relational basic pattern with variable")
     outfile << "int a2;" << std::endl;
     outfile << "a1 = 1;" << std::endl;
     outfile << "a2 = 2;" << std::endl;
-    outfile << "print a1 > a2;" << std::endl;
-    outfile << "print a1 < a2;" << std::endl;
+    outfile << "return a1 > a2;" << std::endl;
     outfile << "}" << std::endl;
     outfile.close();
 
@@ -210,8 +199,7 @@ TEST_CASE("relational basic pattern with variable")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetPrintValue() == 0);
-    REQUIRE(MockGetPrintValue() == 1);
+    REQUIRE(MockGetReturnValue() == 0);
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -227,13 +215,12 @@ TEST_CASE("relational basic pattern with variable")
 TEST_CASE("equal basic pattern with variable")
 {
     std::ofstream outfile ("data/test6");
-    outfile << "void main() {" << std::endl;
+    outfile << "int main() {" << std::endl;
     outfile << "int a1;" << std::endl;
     outfile << "int a2;" << std::endl;
     outfile << "a1 = 2;" << std::endl;
     outfile << "a2 = 2;" << std::endl;
-    outfile << "print a1 == a2;" << std::endl;
-    outfile << "print a1 != a2;" << std::endl;
+    outfile << "return a1 == a2;" << std::endl;
     outfile << "}" << std::endl;
     outfile.close();
 
@@ -250,8 +237,7 @@ TEST_CASE("equal basic pattern with variable")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetPrintValue() == 1);
-    REQUIRE(MockGetPrintValue() == 0);
+    REQUIRE(MockGetReturnValue() == 1);
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -272,8 +258,7 @@ TEST_CASE("basic parttern with {}")
     outfile << "int a2;" << std::endl;
     outfile << "{a1 = 1;}" << std::endl;
     outfile << "a2 = 2;" << std::endl;
-    outfile << "{print a1;}" << std::endl;
-    outfile << "{{{{print a2;}}}}" << std::endl;
+    outfile << "{{{{return a2;}}}}" << std::endl;
     outfile << "}" << std::endl;
     outfile.close();
 
@@ -290,8 +275,7 @@ TEST_CASE("basic parttern with {}")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetPrintValue() == 1);
-    REQUIRE(MockGetPrintValue() == 2);
+    REQUIRE(MockGetReturnValue() == 2);
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -307,15 +291,15 @@ TEST_CASE("basic parttern with {}")
 TEST_CASE("basic if-else pattern")
 {
     std::ofstream outfile ("data/test8");
-    outfile << "void main() {" << std::endl;
+    outfile << "int main() {" << std::endl;
     outfile << "int a1;" << std::endl;
     outfile << "int a2;" << std::endl;
     outfile << "a1 = 1;" << std::endl;
     outfile << "a2 = 2;" << std::endl;
     outfile << "if (a1 > a2)" << std::endl;
-    outfile << "{print a1;}" << std::endl;
+    outfile << "{return a1;}" << std::endl;
     outfile << "else" << std::endl;
-    outfile << "{ print a2;}" << std::endl;
+    outfile << "{return a2;}" << std::endl;
     outfile << "}" << std::endl;
     outfile.close();
 
@@ -333,7 +317,7 @@ TEST_CASE("basic if-else pattern")
 
     REQUIRE(Success == ParseProc(parse_prm));
     // todo: consider how to verify result
-    // REQUIRE(MockGetPrintValue() == 2);
+    // REQUIRE(MockGetReturnValue() == 2);
 
     ParseClose(parse_prm);
     ParseDestroy();
