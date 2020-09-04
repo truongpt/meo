@@ -38,7 +38,16 @@ enum TokenType{
     TokenGT,
     TokenGE,
 
-    // 
+    // Bitwise
+    TokenBitAnd,
+    TokenBitOr,
+    TokenBitXor,
+
+    // Logical
+    TokenAnd,
+    TokenOr,
+
+    // loop
     TokenIf,
     TokenElse,
     TokenWhile,

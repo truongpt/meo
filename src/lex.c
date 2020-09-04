@@ -159,6 +159,27 @@ int32_t LexProc(void* prm, Token *t)
             push_back(lex_prm, c);
         }
         break;
+    case '&':
+        c = get_char(lex_prm);
+        if (c == '&') {
+            t->tok = TokenAnd;
+        } else {
+            t->tok = TokenBitAnd;
+            push_back(lex_prm, c);
+        }
+        break;
+    case '|':
+        c = get_char(lex_prm);
+        if (c == '|') {
+            t->tok = TokenOr;
+        } else {
+            t->tok = TokenBitOr;
+            push_back(lex_prm, c);
+        }
+        break;
+    case '^':
+        t->tok = TokenBitXor;
+        break;
     case '0' ... '9':
         read_number(lex_prm, c, t);
         break;

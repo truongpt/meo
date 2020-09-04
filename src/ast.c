@@ -48,6 +48,21 @@ int32_t tok_2_ast (Token token)
     case TokenNE:
         ast = AstNE;
         break;
+    case TokenOr:
+        ast = AstOr;
+        break;
+    case TokenAnd:
+        ast = AstAnd;
+        break;
+    case TokenBitOr:
+        ast = AstBitOr;
+        break;
+    case TokenBitXor:
+        ast = AstBitXor;
+        break;
+    case TokenBitAnd:
+        ast = AstBitAnd;
+        break;
     case TokenNumber:
         ast = AstNumber;
         break;

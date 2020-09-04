@@ -433,3 +433,44 @@ TEST_CASE("lex test if-then- operator: == <= >= !=")
     REQUIRE(Success == LexClose(prm));
     REQUIRE(Success == LexDestroy());
 }
+
+TEST_CASE("lex test  operator: == <= >= !=")
+{
+    std::ofstream outfile ("data/test10");
+    outfile << "& && | || ^"<< std::endl;
+    outfile.close();
+    vector<Token> expect = vector<Token>{
+        {TokenBitAnd,-1},
+        {TokenAnd,   -1},
+        {TokenBitOr, -1},
+        {TokenOr,     2},
+        {TokenBitXor,-1},
+        {TokenEoi   ,-1}
+    };
+
+    void* prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&prm, (char*)"data/test10"));
+
+    Token T;
+    int i = 0;
+    while(Success == LexProc(prm, &T)) {
+        Token t = expect[i];
+        if (T.tok != t.tok) {
+            mlog(ERROR,"%s == %s\n",tok2str(T.tok), tok2str(t.tok));
+            mlog(ERROR, "error index %d\n",i);
+            REQUIRE(T.tok == t.tok);
+        }
+        if (TokenNumber == t.tok) {
+            REQUIRE(T.value == t.value);
+        }
+        i++;
+        if (TokenEoi == T.tok) {
+            break;
+        }
+    }
+
+    REQUIRE(i == expect.size());
+    REQUIRE(Success == LexClose(prm));
+    REQUIRE(Success == LexDestroy());
+}

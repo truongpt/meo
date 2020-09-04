@@ -45,6 +45,13 @@ enum AstType {
     AstLeftVar,
     AstRightVar,
     AstAssign,
+
+    AstBitAnd,
+    AstBitOr,
+    AstBitXor,
+    AstAnd,
+    AstOr,
+
     AstIf,
     AstWhile,
     AstFunc,
