@@ -385,6 +385,10 @@ AstNode* statements(ParseParameter* parse_prm, AstNode* root)
     case TokenReturn:
         node = stmt_return(parse_prm);
         break;
+    case TokenSemi:
+        MLOG(TRACE,"Just ; so sothing to do :-) \n");
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        break;
     default:
         node = stmt_expr(parse_prm);
     }
