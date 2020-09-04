@@ -27,7 +27,6 @@ int32_t symtable_add(SymbolTable* st, char* symbol)
 
     st->cur_pos++;
     int size_sym = strlen(symbol);
-    st->data[st->cur_pos].name = (char*)malloc(size_sym+1);
     memcpy(st->data[st->cur_pos].name , symbol, size_sym);
     st->data[st->cur_pos].name[size_sym] = '\0';
 

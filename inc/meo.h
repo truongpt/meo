@@ -10,12 +10,14 @@
 #ifndef _MEO_H_
 #define _MEO_H_
 
+#define MAX_IDENT_LEN 32
+
 typedef struct Token {
     int32_t tok;
     union {
         int32_t value;
         struct {
-            char* id_str;
+            char id_str[MAX_IDENT_LEN];
             bool left_value;
         };
     };

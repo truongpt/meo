@@ -102,6 +102,8 @@ AstNode* ast_create_link(
     AstNode* right)
 {
     AstNode* node = (AstNode*) malloc(sizeof(AstNode));
+    memset(node, 0x00, sizeof(AstNode));
+
     node->type = AstLink;
     node->left = left;
     node->right = right;
@@ -114,6 +116,8 @@ AstNode* ast_create_ifnode(
     AstNode* right)
 {
     AstNode* node = (AstNode*) malloc(sizeof(AstNode));
+    memset(node, 0x00, sizeof(AstNode));
+
     node->type = AstIf;
     node->left = left;
     node->mid = mid;
@@ -126,6 +130,8 @@ AstNode* ast_create_func(
     AstNode* right)
 {
     AstNode* node = (AstNode*) malloc(sizeof(AstNode));
+    memset(node, 0x00, sizeof(AstNode));
+
     node->type = AstFunc;
     node->left = left;
     node->right = right;
@@ -138,6 +144,8 @@ AstNode* ast_create_node(
     AstNode* right)
 {
     AstNode* node = (AstNode*) malloc(sizeof(AstNode));
+    memset(node, 0x00, sizeof(AstNode));
+
     int32_t ast_type = tok_2_ast(token);
     switch (ast_type)
     {
@@ -146,7 +154,6 @@ AstNode* ast_create_node(
         break;
     case AstLeftVar:
     case AstIdentifier:
-        node->id_str = (char*)malloc(strlen(token.id_str)+1);
         memcpy(node->id_str, token.id_str, strlen(token.id_str));
         node->id_str[strlen(token.id_str)] = '\0';
         break;
@@ -158,7 +165,6 @@ AstNode* ast_create_node(
     node->left = left;
     node->right = right;
 
-    // TODO: Add free memory of TOKEN
     return node;
 }
 
@@ -382,5 +388,11 @@ void ast_gen(ParseParameter* parse_prm, AstNode* node)
 
 void ast_tree_free(AstNode* node)
 {
-    // TODO: support later
+    if (NULL == node) {
+        return;
+    }
+    ast_tree_free(node->left);
+    ast_tree_free(node->mid);
+    ast_tree_free(node->right);
+    free(node);
 }

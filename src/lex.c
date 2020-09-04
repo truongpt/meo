@@ -220,7 +220,6 @@ static void read_identifier(LexParameter* lex_prm, char c, Token* t)
         t->tok = TokenFor;
     } else {
         t->tok = TokenIdentifier;
-        t->id_str = (char*)malloc(i+1);
         memcpy(t->id_str, id, i);
         t->id_str[i] = '\0';
     }

@@ -286,7 +286,8 @@ TEST_CASE("lex test token: int type, assign, identifier")
         {TokenEoi        ,-1}
     };
 
-    expect[1].id_str = strdup("cnt1234");
+    memcpy(expect[1].id_str,"cnt1234", strlen("cnt1234"));
+
     void* prm = NULL;
     REQUIRE(Success == LexCreate());
     REQUIRE(Success == LexOpen(&prm, (char*)"data/test7"));

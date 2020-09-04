@@ -8,12 +8,13 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include "meo.h"
 #include "error_code.h"
 
 #define NSYMBOLS    1024
 
 typedef struct SymbolData {
-    char *name;
+    char name[MAX_IDENT_LEN];
     int32_t type;
     union {
         int32_t int_value;

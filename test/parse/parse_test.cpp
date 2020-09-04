@@ -115,7 +115,9 @@ TEST_CASE("parse test plus token: (1+2);")
             {TokenRBracket,   -1},
             {TokenEoi,        -1}
     };
-    token_test[1].id_str = strdup("main");
+
+    memcpy(token_test[1].id_str,"main", strlen("main"));
+
     MockLexCreate(token_test);
 
     void* gen_prm = NULL;
@@ -155,7 +157,9 @@ TEST_CASE("parse test plus token: (2*3);")
             {TokenRBracket,   -1},
             {TokenEoi,        -1}
     };
-    token_test[1].id_str = strdup("main");
+
+    memcpy(token_test[1].id_str,"main", strlen("main"));
+
     MockLexCreate(token_test);
 
     void* gen_prm = NULL;
@@ -200,7 +204,8 @@ TEST_CASE("parse test plus token: (1+2*3+4);")
             {TokenRBracket,   -1},
             {TokenEoi,        -1}
     };
-    token_test[1].id_str = strdup("main");
+
+    memcpy(token_test[1].id_str,"main", strlen("main"));
     MockLexCreate(token_test);
 
     void* gen_prm = NULL;
@@ -248,7 +253,8 @@ TEST_CASE("parse test plus token: (1+2)*(3+4);")
             {TokenRBracket,   -1},
             {TokenEoi,        -1}
     };
-    token_test[1].id_str = strdup("main");
+
+    memcpy(token_test[1].id_str,"main", strlen("main"));
     MockLexCreate(token_test);
 
     void* gen_prm = NULL;
@@ -285,8 +291,8 @@ TEST_CASE("parse test pattern: int xyz;")
             {TokenEoi,        -1}
     };
 
-    token_test[1].id_str = strdup("main");
-    token_test[6].id_str = strdup("xyz");
+    memcpy(token_test[1].id_str,"main", strlen("main"));
+    memcpy(token_test[6].id_str,"xyz", strlen("xyz"));
 
     MockLexCreate(token_test);
 
@@ -328,7 +334,7 @@ TEST_CASE("parse test return token: return (1+2);")
             {TokenEoi,        -1}
     };
 
-    token_test[1].id_str = strdup("main");
+    memcpy(token_test[1].id_str,"main", strlen("main"));
 
     MockLexCreate(token_test);
 
@@ -373,11 +379,11 @@ TEST_CASE("parse test pattern: int a; a = 10; return a;")
         {TokenRBracket,   -1},
         {TokenEoi,        -1}
     };
-    token_test[1].id_str = strdup("main");
-    token_test[6].id_str = strdup("abc");
-    token_test[8].id_str = strdup("abc");
-    token_test[13].id_str = strdup("abc");
 
+    memcpy(token_test[1].id_str,"main", strlen("main"));
+    memcpy(token_test[6].id_str,"abc", strlen("abc"));
+    memcpy(token_test[8].id_str,"abc", strlen("abc"));
+    memcpy(token_test[13].id_str,"abc", strlen("abc"));
     MockLexCreate(token_test);
     void* gen_prm = NULL;
     REQUIRE(Success == GenCreate());
@@ -428,13 +434,14 @@ TEST_CASE("parse test pattern: a+b;")
         {TokenEoi,       -1}
     };
 
-    token_test[1].id_str = strdup("main");
-    token_test[5+1].id_str = strdup("a");
-    token_test[5+4].id_str = strdup("b");
-    token_test[5+6].id_str = strdup("a");
-    token_test[5+10].id_str = strdup("b");
-    token_test[5+15].id_str = strdup("a");
-    token_test[5+17].id_str = strdup("b");
+    memcpy(token_test[1].id_str,"main", strlen("main"));
+
+    memcpy(token_test[6].id_str,"a", strlen("a"));
+    memcpy(token_test[9].id_str,"b", strlen("b"));
+    memcpy(token_test[11].id_str,"a", strlen("a"));
+    memcpy(token_test[15].id_str,"b", strlen("b"));
+    memcpy(token_test[20].id_str,"a", strlen("a"));
+    memcpy(token_test[22].id_str,"b", strlen("b"));
 
     MockLexCreate(token_test);
     void* gen_prm = NULL;
