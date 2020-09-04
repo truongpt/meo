@@ -146,7 +146,7 @@ char* reg64_to_8(char* r)
 char* x86_64_load(int32_t value, FILE* out_file)
 {
     char* r = reg_alloc();
-    fprintf(out_file,"\tmovq $%d, %s\n",value,r);
+    fprintf(out_file,"\tmovq\t $%d, %s\n",value,r);
     return r;
 }
 
@@ -158,7 +158,7 @@ char* x86_64_free(char* r, FILE* out_file)
 
 char* x86_64_out(char* r, FILE* out_file)
 {
-    fprintf(out_file,"\tmovq %s, %s\n",r,"%rax");
+    fprintf(out_file,"\tmovq\t %s, %s\n",r,"%rax");
     fprintf(out_file,"\tret\n");
     reg_free(r);
     return r;
@@ -166,101 +166,101 @@ char* x86_64_out(char* r, FILE* out_file)
 
 char* x86_64_print(char* r, FILE* out_file)
 {
-    fprintf(out_file,"\tmovq %s, %%rsi\n",r);
-    fprintf(out_file,"\tmovq $.LC0, %%rdi\n");
-    fprintf(out_file,"\tmovq $0, %%rax\n");
-    fprintf(out_file,"\tcall printf\n");
+    fprintf(out_file,"\tmovq\t %s, %%rsi\n",r);
+    fprintf(out_file,"\tmovq\t $.LC0, %%rdi\n");
+    fprintf(out_file,"\tmovq\t $0, %%rax\n");
+    fprintf(out_file,"\tcall\t printf\n");
     reg_free(r);
     return r;
 }
 
 char* x86_64_var(char* var, FILE* out_file)
 {
-    fprintf(out_file,"\t.comm\t%s,8,8\n",var);
+    fprintf(out_file,"\t.comm\t %s,8,8\n",var);
     return var;
 }
 
 char* x86_64_add(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file,"\taddq %s, %s\n",r1,r2);
+    fprintf(out_file,"\taddq\t %s, %s\n",r1,r2);
     reg_free(r1);
     return r2;
 }
 
 char* x86_64_sub(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file,"\tsubq %s, %s\n",r2,r1);
+    fprintf(out_file,"\tsubq\t %s, %s\n",r2,r1);
     reg_free(r2);
     return r1;
 }
 
 char* x86_64_mul(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file,"\timulq %s, %s\n",r1,r2);
+    fprintf(out_file,"\timulq\t %s, %s\n",r1,r2);
     reg_free(r1);
     return r2;
 }
 
 char* x86_64_div(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file,"\tmovq %s, %s\n",r1,"%rax");
+    fprintf(out_file,"\tmovq\t %s, %s\n",r1,"%rax");
     fprintf(out_file, "\tcqo\n");
-    fprintf(out_file,"\tidivq %s\n",r2);
-    fprintf(out_file,"\tmovq %s, %s\n","%rax",r2);
+    fprintf(out_file,"\tidivq\t %s\n",r2);
+    fprintf(out_file,"\tmovq\t %s, %s\n","%rax",r2);
     reg_free(r1);
     return r2;
 }
 
 char* x86_64_lt(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tsetl %s\n", reg64_to_8(r2));
-    fprintf(out_file, "\tandq $255,%s\n", r2);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tsetl\t %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq\t $255,%s\n", r2);
     reg_free(r1);
     return r2;
 }
 
 char* x86_64_le(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tsetle %s\n", reg64_to_8(r2));
-    fprintf(out_file, "\tandq $255,%s\n", r2);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tsetle\t %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq\t $255,%s\n", r2);
     reg_free(r1);
     return r2;
 }
 
 char* x86_64_gt(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tsetg %s\n", reg64_to_8(r2));
-    fprintf(out_file, "\tandq $255,%s\n", r2);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tsetg\t %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq\t $255,%s\n", r2);
     reg_free(r1);
     return r2;
 }
 
 char* x86_64_ge(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tsetge %s\n", reg64_to_8(r2));
-    fprintf(out_file, "\tandq $255,%s\n", r2);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tsetge\t %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq\t $255,%s\n", r2);
     reg_free(r1);
     return r2;
 }
 
 char* x86_64_eq(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tsete %s\n", reg64_to_8(r2));
-    fprintf(out_file, "\tandq $255,%s\n", r2);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tsete\t %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq\t $255,%s\n", r2);
     reg_free(r1);
     return r2;
 }
 
 char* x86_64_ne(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tsetne %s\n", reg64_to_8(r2));
-    fprintf(out_file, "\tandq $255,%s\n", r2);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tsetne\t %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq\t $255,%s\n", r2);
     reg_free(r1);
     return r2;
 }
@@ -270,17 +270,17 @@ static char* x86_64_or(char* r1, char* r2, FILE* out_file)
     // todo: how to execute? need investigate
     // tentative workarround throuth bitwise op
     char* r = reg_alloc();
-    fprintf(out_file,"\tmovq $0, %s\n",r);
+    fprintf(out_file,"\tmovq\t $0, %s\n",r);
 
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r);
-    fprintf(out_file, "\tsetne %s\n", reg64_to_8(r2));
-    fprintf(out_file, "\tandq $255,%s\n", r2);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r);
+    fprintf(out_file, "\tsetne\t %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq\t $255,%s\n", r2);
 
-    fprintf(out_file, "\tcmpq %s, %s\n", r1, r);
-    fprintf(out_file, "\tsetne %s\n", reg64_to_8(r1));
-    fprintf(out_file, "\tandq $255,%s\n", r1);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r1, r);
+    fprintf(out_file, "\tsetne\t %s\n", reg64_to_8(r1));
+    fprintf(out_file, "\tandq\t $255,%s\n", r1);
 
-    fprintf(out_file,"\tor %s, %s\n",r1,r2);
+    fprintf(out_file,"\tor\t %s, %s\n",r1,r2);
     reg_free(r1);
     reg_free(r);
     return r2;
@@ -292,46 +292,46 @@ static char* x86_64_and(char* r1, char* r2, FILE* out_file)
     // tentative workarround throuth bitwise op
 
     char* r = reg_alloc();
-    fprintf(out_file,"\tmovq $0, %s\n",r);
+    fprintf(out_file,"\tmovq\t $0, %s\n",r);
 
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r);
-    fprintf(out_file, "\tsetne %s\n", reg64_to_8(r2));
-    fprintf(out_file, "\tandq $255,%s\n", r2);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r);
+    fprintf(out_file, "\tsetne\t %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq\t $255,%s\n", r2);
 
-    fprintf(out_file, "\tcmpq %s, %s\n", r1, r);
-    fprintf(out_file, "\tsetne %s\n", reg64_to_8(r1));
-    fprintf(out_file, "\tandq $255,%s\n", r1);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r1, r);
+    fprintf(out_file, "\tsetne\t %s\n", reg64_to_8(r1));
+    fprintf(out_file, "\tandq\t $255,%s\n", r1);
 
-    fprintf(out_file,"\tand %s, %s\n",r1,r2);
+    fprintf(out_file,"\tand\t %s, %s\n",r1,r2);
     reg_free(r1);
     return r2;
 }
 
 static char* x86_64_b_or(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file,"\tor %s, %s\n",r1,r2);
+    fprintf(out_file,"\tor\t %s, %s\n",r1,r2);
     reg_free(r1);
     return r2;
 }
 
 static char* x86_64_b_xor(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file,"\txor %s, %s\n",r1,r2);
+    fprintf(out_file,"\txor\t %s, %s\n",r1,r2);
     reg_free(r1);
     return r2;
 }
 
 static char* x86_64_b_and(char* r1, char* r2, FILE* out_file)
 {
-    fprintf(out_file,"\tand %s, %s\n",r1,r2);
+    fprintf(out_file,"\tand\t %s, %s\n",r1,r2);
     reg_free(r1);
     return r2;
 }
 
 char* x86_64_lt_j(char* r1, char* r2, char* label, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tjl %s\n", label);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tjl\t %s\n", label);
     reg_free(r1);
     reg_free(r2);
     return label;
@@ -339,8 +339,8 @@ char* x86_64_lt_j(char* r1, char* r2, char* label, FILE* out_file)
 
 char* x86_64_le_j(char* r1, char* r2, char* label, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tjle %s\n", label);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tjle\t %s\n", label);
     reg_free(r1);
     reg_free(r2);
     return label;
@@ -348,8 +348,8 @@ char* x86_64_le_j(char* r1, char* r2, char* label, FILE* out_file)
 
 char* x86_64_gt_j(char* r1, char* r2, char* label, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tjg %s\n", label);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tjg\t %s\n", label);
     reg_free(r1);
     reg_free(r2);
     return label;
@@ -357,8 +357,8 @@ char* x86_64_gt_j(char* r1, char* r2, char* label, FILE* out_file)
 
 char* x86_64_ge_j(char* r1, char* r2, char* label, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tjge %s\n", label);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tjge\t %s\n", label);
     reg_free(r1);
     reg_free(r2);
     return label;
@@ -366,8 +366,8 @@ char* x86_64_ge_j(char* r1, char* r2, char* label, FILE* out_file)
 
 char* x86_64_eq_j(char* r1, char* r2, char* label, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tje %s\n", label);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tje\t %s\n", label);
     reg_free(r1);
     reg_free(r2);
     return label;
@@ -375,8 +375,8 @@ char* x86_64_eq_j(char* r1, char* r2, char* label, FILE* out_file)
 
 char* x86_64_ne_j(char* r1, char* r2, char* label, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
-    fprintf(out_file, "\tjne %s\n", label);
+    fprintf(out_file, "\tcmpq\t %s, %s\n", r2, r1);
+    fprintf(out_file, "\tjne\t %s\n", label);
     reg_free(r1);
     reg_free(r2);
     return label;
@@ -384,14 +384,14 @@ char* x86_64_ne_j(char* r1, char* r2, char* label, FILE* out_file)
 
 char* x86_64_jump(char* label, FILE* out_file)
 {
-    fprintf(out_file, "\tjmp %s\n", label);
+    fprintf(out_file, "\tjmp\t %s\n", label);
     return label;
 }
 
 char* x86_64_zero_j(char* r, char* label, FILE* out_file)
 {
-    fprintf(out_file, "\tcmpq $0, %s\n", r);
-    fprintf(out_file, "\tje %s\n", label);
+    fprintf(out_file, "\tcmpq\t $0, %s\n", r);
+    fprintf(out_file, "\tje\t %s\n", label);
     reg_free(r);
     return label;
 }
@@ -405,17 +405,17 @@ char* x86_64_label(char* label, FILE* out_file)
 char* x86_64_func(char* name, FILE* out_file)
 {
     fprintf(out_file, "\t.text\n");
-    fprintf(out_file, "\t.globl\t%s\n", name);
-    fprintf(out_file, "\t.type\t%s, @function\n", name);
+    fprintf(out_file, "\t.globl\t %s\n", name);
+    fprintf(out_file, "\t.type\t %s, @function\n", name);
     fprintf(out_file, "%s:\n", name);
-    fprintf(out_file, "\tpushq\t%%rbp\n");
-    fprintf(out_file, "\tmovq\t%%rsp, %%rbp\n");
+    fprintf(out_file, "\tpushq\t %%rbp\n");
+    fprintf(out_file, "\tmovq\t %%rsp, %%rbp\n");
     return name;
 }
 
 char* x86_64_store(char* var, char* r, FILE* out_file)
 {
-    fprintf(out_file, "\tmovq %s, %s(\%%rip)\n", r, var);
+    fprintf(out_file, "\tmovq\t %s, %s(\%%rip)\n", r, var);
     reg_free(r);
     return var;
 }
@@ -423,14 +423,14 @@ char* x86_64_store(char* var, char* r, FILE* out_file)
 char* x86_64_load_var(char* var, FILE* out_file)
 {
     char* r = reg_alloc();
-    fprintf(out_file, "\tmovq %s(\%%rip), %s\n", var, r);
+    fprintf(out_file, "\tmovq\t %s(\%%rip), %s\n", var, r);
     return r;
 }
 
 static char* x86_64_return(char* r, FILE* out_file)
 {
-    fprintf(out_file, "\tmovq %s, %%rax\n", r);
-    fprintf(out_file, "\tpopq %%rbp\n");
+    fprintf(out_file, "\tmovq\t %s, %%rax\n", r);
+    fprintf(out_file, "\tpopq\t %%rbp\n");
     fprintf(out_file, "\tret\n");
     return r;
 }
