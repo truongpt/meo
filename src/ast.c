@@ -273,8 +273,27 @@ char* gen_bin_op(void* gen_prm, char* left, char* right, int type)
         return GenMul(gen_prm, left, right);
     case AstDiv:
         return GenDiv(gen_prm, left, right);
+    case AstBitOr:
+        return GenBitOr(gen_prm, left, right);
+    case AstBitXor:
+        return GenBitXor(gen_prm, left, right);
+    case AstBitAnd:
+        return GenBitAnd(gen_prm, left, right);
     default:
         MLOG(CLGT,"Invalid type binary operator\n");
+        return NULL;
+    }
+}
+
+char* gen_logical_op(void* gen_prm, char* left, char* right, int type)
+{
+    switch (type) {
+    case AstOr:
+        return GenOr(gen_prm, left, right);
+    case AstAnd:
+        return GenAnd(gen_prm, left, right);
+    default:
+        MLOG(CLGT,"Invalid type logical operator\n");
         return NULL;
     }
 }
@@ -376,7 +395,13 @@ void* ast_compile(void* gen_prm, AstNode* node)
     case AstMinus:
     case AstMul:
     case AstDiv:
+    case AstBitOr:
+    case AstBitXor:
+    case AstBitAnd:
         return gen_bin_op(gen_prm, left, right, node->type);
+    case AstOr:
+    case AstAnd:
+        return gen_logical_op(gen_prm, left, right, node->type);
     case AstLT:
     case AstLE:
     case AstGT:

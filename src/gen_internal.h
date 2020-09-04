@@ -28,6 +28,13 @@ typedef struct GenFuncTable {
     char* (*f_ge)(char* r1, char* r2, FILE*);
     char* (*f_eq)(char* r1, char* r2, FILE*);
     char* (*f_ne)(char* r1, char* r2, FILE*);
+
+    char* (*f_or)(char* r1, char* r2, FILE*);
+    char* (*f_and)(char* r1, char* r2, FILE*);
+    char* (*f_b_or)(char* r1, char* r2, FILE*);
+    char* (*f_b_xor)(char* r1, char* r2, FILE*);
+    char* (*f_b_and)(char* r1, char* r2, FILE*);
+
     char* (*f_lt_j)(char* r1, char* r2, char* label, FILE*);
     char* (*f_le_j)(char* r1, char* r2, char* label, FILE*);
     char* (*f_gt_j)(char* r1, char* r2, char* label, FILE*);

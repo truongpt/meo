@@ -40,6 +40,12 @@ char* GenGT(void* gen_prm, char* r1, char* r2);
 char* GenEQ(void* gen_prm, char* r1, char* r2);
 char* GenNE(void* gen_prm, char* r1, char* r2);
 
+char* GenOr(void* gen_prm, char* r1, char* r2);
+char* GenAnd(void* gen_prm, char* r1, char* r2);
+char* GenBitOr(void* gen_prm, char* r1, char* r2);
+char* GenBitXor(void* gen_prm, char* r1, char* r2);
+char* GenBitAnd(void* gen_prm, char* r1, char* r2);
+
 char* GenLtJump(void* gen_prm, char* r1, char* r2, char* label);
 char* GenLeJump(void* gen_prm, char* r1, char* r2, char* label);
 char* GenGeJump(void* gen_prm, char* r1, char* r2, char* label);

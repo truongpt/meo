@@ -6,25 +6,25 @@ void main()
     b = 2;
     if (a >= b)
     {
-        print 1;
+        a = 3;
     } else {
-        print 2;
+        b = 4;
     }
 
     if (a <= b)
-        print 3;
+        a = 5;
     else
-        print 4;
+        b = 6;
 
     if (a > b)
     {
-        print 5;
+        a = 7;
     } else if (a == b) {
-        print 6;
+        a = 8;
     } else if (a <= b) {
-        print 7;
+        a = 9;
     } else {
-        print 8;
+        a = 10;
     }
-
+    return a;
 }

@@ -167,6 +167,36 @@ char* GenNE(void* gen_prm, char* r1, char* r2)
     return prm->func.f_ne(r1, r2, prm->out_asm_file);
 }
 
+char* GenOr(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_or(r1, r2, prm->out_asm_file);
+}
+
+char* GenAnd(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_and(r1, r2, prm->out_asm_file);
+}
+
+char* GenBitOr(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_b_or(r1, r2, prm->out_asm_file);
+}
+
+char* GenBitXor(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_b_xor(r1, r2, prm->out_asm_file);
+}
+
+char* GenBitAnd(void* gen_prm, char* r1, char* r2)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_b_and(r1, r2, prm->out_asm_file);
+}
+
 char* GenLtJump(void* gen_prm, char* r1, char* r2, char* label)
 {
     GenParameter* prm = (GenParameter*)gen_prm;

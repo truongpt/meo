@@ -24,6 +24,13 @@ static char* x86_64_gt(char* r1, char* r2, FILE* out_file);
 static char* x86_64_ge(char* r1, char* r2, FILE* out_file);
 static char* x86_64_eq(char* r1, char* r2, FILE* out_file);
 static char* x86_64_ne(char* r1, char* r2, FILE* out_file);
+
+static char* x86_64_or(char* r1, char* r2, FILE* out_file);
+static char* x86_64_and(char* r1, char* r2, FILE* out_file);
+static char* x86_64_b_or(char* r1, char* r2, FILE* out_file);
+static char* x86_64_b_xor(char* r1, char* r2, FILE* out_file);
+static char* x86_64_b_and(char* r1, char* r2, FILE* out_file);
+
 static char* x86_64_lt_j(char* r1, char* r2, char* label, FILE* out_file);
 static char* x86_64_le_j(char* r1, char* r2, char* label, FILE* out_file);
 static char* x86_64_gt_j(char* r1, char* r2, char* label, FILE* out_file);
@@ -84,6 +91,13 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_ge     = &x86_64_ge;
     func->f_eq     = &x86_64_eq;
     func->f_ne     = &x86_64_ne;
+
+    func->f_or     = &x86_64_or;
+    func->f_and    = &x86_64_and;
+    func->f_b_or   = &x86_64_b_or;
+    func->f_b_xor  = &x86_64_b_xor;
+    func->f_b_and  = &x86_64_b_and;
+
     func->f_lt_j   = &x86_64_lt_j;
     func->f_le_j   = &x86_64_le_j;
     func->f_gt_j   = &x86_64_gt_j;
@@ -247,6 +261,69 @@ char* x86_64_ne(char* r1, char* r2, FILE* out_file)
     fprintf(out_file, "\tcmpq %s, %s\n", r2, r1);
     fprintf(out_file, "\tsetne %s\n", reg64_to_8(r2));
     fprintf(out_file, "\tandq $255,%s\n", r2);
+    reg_free(r1);
+    return r2;
+}
+
+static char* x86_64_or(char* r1, char* r2, FILE* out_file)
+{
+    // todo: how to execute? need investigate
+    // tentative workarround throuth bitwise op
+    char* r = reg_alloc();
+    fprintf(out_file,"\tmovq $0, %s\n",r);
+
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r);
+    fprintf(out_file, "\tsetne %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq $255,%s\n", r2);
+
+    fprintf(out_file, "\tcmpq %s, %s\n", r1, r);
+    fprintf(out_file, "\tsetne %s\n", reg64_to_8(r1));
+    fprintf(out_file, "\tandq $255,%s\n", r1);
+
+    fprintf(out_file,"\tor %s, %s\n",r1,r2);
+    reg_free(r1);
+    reg_free(r);
+    return r2;
+}
+
+static char* x86_64_and(char* r1, char* r2, FILE* out_file)
+{
+    // todo: how to execute? need investigate
+    // tentative workarround throuth bitwise op
+
+    char* r = reg_alloc();
+    fprintf(out_file,"\tmovq $0, %s\n",r);
+
+    fprintf(out_file, "\tcmpq %s, %s\n", r2, r);
+    fprintf(out_file, "\tsetne %s\n", reg64_to_8(r2));
+    fprintf(out_file, "\tandq $255,%s\n", r2);
+
+    fprintf(out_file, "\tcmpq %s, %s\n", r1, r);
+    fprintf(out_file, "\tsetne %s\n", reg64_to_8(r1));
+    fprintf(out_file, "\tandq $255,%s\n", r1);
+
+    fprintf(out_file,"\tand %s, %s\n",r1,r2);
+    reg_free(r1);
+    return r2;
+}
+
+static char* x86_64_b_or(char* r1, char* r2, FILE* out_file)
+{
+    fprintf(out_file,"\tor %s, %s\n",r1,r2);
+    reg_free(r1);
+    return r2;
+}
+
+static char* x86_64_b_xor(char* r1, char* r2, FILE* out_file)
+{
+    fprintf(out_file,"\txor %s, %s\n",r1,r2);
+    reg_free(r1);
+    return r2;
+}
+
+static char* x86_64_b_and(char* r1, char* r2, FILE* out_file)
+{
+    fprintf(out_file,"\tand %s, %s\n",r1,r2);
     reg_free(r1);
     return r2;
 }
