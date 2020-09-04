@@ -250,3 +250,8 @@ assertions: 107 | 106 passed | 1 failed
 ## Day 45
 - Update test case to compliane with C syntax.
 
+## Day 46
+- Fix memory leak -> pass valgrind test.
+- Token analizer + Parser for bitwise + logic operator.
+
+
