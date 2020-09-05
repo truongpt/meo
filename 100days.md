@@ -254,4 +254,8 @@ assertions: 107 | 106 passed | 1 failed
 - Fix memory leak -> pass valgrind test.
 - Token analizer + Parser for bitwise + logic operator.
 
+## Day 47
+- Gen asm for bitwise + logic operator.
+- Token analizer for string -> prepare for calling printf :D
+
 
