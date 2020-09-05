@@ -330,3 +330,43 @@ TEST_CASE("basic if-else pattern")
 
 }
 
+TEST_CASE("basic & && | || ^ pattern")
+{
+    std::ofstream outfile ("data/test9");
+    outfile << "int main() {     " << std::endl;
+    outfile << "    int a1;      " << std::endl;
+    outfile << "    int a2;      " << std::endl;
+    outfile << "    a1 = 1;      " << std::endl;
+    outfile << "    a2 = 2;      " << std::endl;
+    outfile << "    return (a1 && a2) + (a1 & a2) + (a1 || a2) + (a1 | a2) + (a1 ^ a2); " << std::endl;
+    outfile << "}                " << std::endl;
+    outfile.close();
+
+    void* lex_prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/test9"));
+
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out9"));
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+
+    int a1 = 1, a2 = 2;
+    REQUIRE(MockGetReturnValue() == (a1 && a2) + (a1 & a2) + (a1 || a2) + (a1 | a2) + (a1 ^ a2));
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    REQUIRE(Success == GenClose(gen_prm));
+    REQUIRE(Success == GenDestroy());
+
+    REQUIRE(Success == LexClose(lex_prm));
+    REQUIRE(Success == LexDestroy());
+
+}
+

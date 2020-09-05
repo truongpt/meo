@@ -23,6 +23,12 @@ static char* mock_ge(char* r1, char* r2, FILE* out_file);
 static char* mock_eq(char* r1, char* r2, FILE* out_file);
 static char* mock_ne(char* r1, char* r2, FILE* out_file);
 
+static char* mock_or(char* r1, char* r2, FILE* out_file);
+static char* mock_and(char* r1, char* r2, FILE* out_file);
+static char* mock_b_or(char* r1, char* r2, FILE* out_file);
+static char* mock_b_xor(char* r1, char* r2, FILE* out_file);
+static char* mock_b_and(char* r1, char* r2, FILE* out_file);
+
 static char* mock_lt_j(char* r1, char* r2, char* l, FILE* out_file);
 static char* mock_le_j(char* r1, char* r2, char* l, FILE* out_file);
 static char* mock_gt_j(char* r1, char* r2, char* l, FILE* out_file);
@@ -64,6 +70,13 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_ge    = &mock_ge;
     func->f_eq    = &mock_eq;
     func->f_ne    = &mock_ne;
+
+    func->f_or     = &mock_or;
+    func->f_and    = &mock_and;
+    func->f_b_or   = &mock_b_or;
+    func->f_b_xor  = &mock_b_xor;
+    func->f_b_and  = &mock_b_and;
+
     func->f_lt_j  = &mock_lt_j;
     func->f_le_j  = &mock_le_j;
     func->f_gt_j  = &mock_gt_j;
@@ -227,6 +240,51 @@ static char* mock_ne(char* r1, char* r2, FILE* out_file)
     mem[r2] = 0;
     reg_free(r2);
     fprintf(out_file,"[NE  ]:\t %s = %s != %s\n",r1,r1,r2);
+    return r1;
+}
+
+static char* mock_or(char* r1, char* r2, FILE* out_file)
+{
+    mem[r1] = mem[r1] || mem[r2];
+    mem[r2] = 0;
+    reg_free(r2);
+    fprintf(out_file,"[OR  ]:\t %s = %s || %s\n",r1,r1,r2);
+    return r1;
+}
+
+static char* mock_and(char* r1, char* r2, FILE* out_file)
+{
+    mem[r1] = mem[r1] && mem[r2];
+    mem[r2] = 0;
+    reg_free(r2);
+    fprintf(out_file,"[AND ]:\t %s = %s && %s\n",r1,r1,r2);
+    return r1;
+}
+
+static char* mock_b_or(char* r1, char* r2, FILE* out_file)
+{
+    mem[r1] = mem[r1] | mem[r2];
+    mem[r2] = 0;
+    reg_free(r2);
+    fprintf(out_file,"[BOR ]:\t %s = %s | %s\n",r1,r1,r2);
+    return r1;
+}
+
+static char* mock_b_xor(char* r1, char* r2, FILE* out_file)
+{
+    mem[r1] = mem[r1] ^ mem[r2];
+    mem[r2] = 0;
+    reg_free(r2);
+    fprintf(out_file,"[BXOR]:\t %s = %s ^ %s\n",r1,r1,r2);
+    return r1;
+}
+
+static char* mock_b_and(char* r1, char* r2, FILE* out_file)
+{
+    mem[r1] = mem[r1] & mem[r2];
+    mem[r2] = 0;
+    reg_free(r2);
+    fprintf(out_file,"[BAND]:\t %s = %s & %s\n",r1,r1,r2);
     return r1;
 }
 
