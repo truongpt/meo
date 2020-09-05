@@ -60,6 +60,7 @@ static char* g_token_str[] = {
     "TokenIntType",
     "TokenVoidType",
     "TokenLongType",
+    "TokenString",
     "TokenNumber",
     "TokenLP",
     "TokenRP",

@@ -2,12 +2,10 @@ CPP = g++ -std=c++11
 CC = gcc
 LD = g++ -std=c++11
 LDFLAGS  += 
-CPPFLAGS := -g -O0 -fpermissive -Wnarrowing
-
-#-fpermissive -Wnarrowing
+CPPFLAGS := -g -O0 -fpermissive -Wnarrowing -Wno-write-strings
 
 TARGET = lex_test
-TOP_SRC = ../../
+TOP_SRC = ../..
 TOP_TEST = ../../test
 
 

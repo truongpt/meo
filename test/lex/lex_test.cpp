@@ -474,3 +474,40 @@ TEST_CASE("lex test  operator: == <= >= !=")
     REQUIRE(Success == LexClose(prm));
     REQUIRE(Success == LexDestroy());
 }
+
+TEST_CASE("lex test string")
+{
+    std::ofstream outfile ("data/test11");
+    outfile << " \"conchocon\" " << std::endl;
+    outfile.close();
+
+    vector<Token> expect = vector<Token>{
+        {TokenString ,-1},
+        {TokenEoi    ,-1}
+    };
+
+    memcpy(expect[0].str,"conchocon", strlen("conchocon"));
+
+    void* prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&prm, (char*)"data/test11"));
+
+    Token T;
+    int i = 0;
+    while(Success == LexProc(prm, &T)) {
+        Token t = expect[i];
+        REQUIRE(T.tok == t.tok);
+        i++;
+        if (TokenNumber == T.tok) {
+            REQUIRE(T.value == t.value);
+        } else if (TokenString == T.tok) {
+            REQUIRE(0 == strncmp(T.str, t.str, strlen(t.str)));
+        } else if (TokenEoi == T.tok) {
+            break;
+        }
+    }
+
+    REQUIRE(i == expect.size());
+    REQUIRE(Success == LexClose(prm));
+    REQUIRE(Success == LexDestroy());
+}

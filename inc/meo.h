@@ -11,6 +11,7 @@
 #define _MEO_H_
 
 #define MAX_IDENT_LEN 32
+#define MAX_STR_LEN 100 // todo: need dynamic
 
 typedef struct Token {
     int32_t tok;
@@ -20,6 +21,7 @@ typedef struct Token {
             char id_str[MAX_IDENT_LEN];
             bool left_value;
         };
+        char str[MAX_STR_LEN];
     };
 } Token;
 
@@ -58,6 +60,8 @@ enum TokenType{
     TokenIntType,
     TokenVoidType,
     TokenLongType,
+
+    TokenString,
 
     TokenNumber,
     TokenLP,

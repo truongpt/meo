@@ -28,6 +28,7 @@ static char get_next(LexParameter *prm);
 static void push_back(LexParameter *prm, char c);
 static void read_number(LexParameter* lex_prm, char c, Token* t);
 static void read_identifier(LexParameter* lex_prm, char c, Token* t);
+static void read_string(LexParameter* lex_prm, char c, Token* t);
 
 int32_t LexCreate(void)
 {
@@ -180,6 +181,9 @@ int32_t LexProc(void* prm, Token *t)
     case '^':
         t->tok = TokenBitXor;
         break;
+    case '"':
+        read_string(lex_prm, c, t);
+        break;
     case '0' ... '9':
         read_number(lex_prm, c, t);
         break;
@@ -246,6 +250,25 @@ static void read_identifier(LexParameter* lex_prm, char c, Token* t)
     }
     push_back(lex_prm, c);
 }
+
+static void read_string(LexParameter* lex_prm, char c, Token* t)
+{
+    char id[100] = "";
+    int i = 0;
+    c = get_char(lex_prm);
+    while (c != '"') {
+        if (i >= 100) {
+            mlog(CLGT, "wft string too long\n");
+            exit(1);
+        }
+        id[i++] = c;
+        c = get_char(lex_prm);
+    }
+    t->tok = TokenString;
+    memcpy(t->str, id, i);
+    t->id_str[i] = '\0';
+}
+
 
 void read_number(LexParameter* lex_prm, char c, Token* t)
 {
