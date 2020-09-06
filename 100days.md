@@ -258,4 +258,6 @@ assertions: 107 | 106 passed | 1 failed
 - Gen asm for bitwise + logic operator.
 - Token analizer for string -> prepare for calling printf :D
 
+## Day 48
+- Consider how to implement function call.
 
