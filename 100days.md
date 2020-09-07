@@ -261,3 +261,7 @@ assertions: 107 | 106 passed | 1 failed
 ## Day 48
 - Consider how to implement function call.
 
+## Day 49
+- Parse function call.
+- TODO: gen ASM of function call.
+
