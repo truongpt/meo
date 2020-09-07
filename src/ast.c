@@ -72,6 +72,9 @@ int32_t tok_2_ast (Token token)
     case TokenIntType:
         ast = AstIntType;
         break;
+    case TokenString:
+        ast = AstString;
+        break;
     case TokenIdentifier:
         ast = AstIdentifier;
         break;
@@ -150,6 +153,16 @@ AstNode* ast_create_func(
     node->type = AstFunc;
     node->left = left;
     node->right = right;
+    return node;
+}
+
+AstNode* ast_create_func_call(void)
+{
+    AstNode* node = (AstNode*) malloc(sizeof(AstNode));
+    memset(node, 0x00, sizeof(AstNode));
+    node->type = AstFuncCall;
+    node->left = NULL;
+    node->right = NULL;
     return node;
 }
 
@@ -262,6 +275,19 @@ void* ast_compile_func(void* gen_prm, AstNode* node)
     return ast_compile(gen_prm, node->right);
 }
 
+void* ast_compile_func_call(void* gen_prm, AstNode* node)
+{
+    /* TODO: gen argument */
+    /* scan all left by DFS */
+    /* call ast_compile to get return loaded regiter. */
+    /* push for order 6 register to pass to function call. */
+    /* if case string : - consider how to gen previous */
+    /*                  - how to mapping the label with the string.  */
+
+    GenFuncCall(gen_prm, node->right->id_str);
+    return NULL;
+}
+
 char* gen_bin_op(void* gen_prm, char* left, char* right, int type)
 {
     switch (type) {
@@ -362,6 +388,8 @@ void* ast_compile(void* gen_prm, AstNode* node)
         return ast_compile_while(gen_prm, node);
     case AstFunc:
         return ast_compile_func(gen_prm, node);
+    case AstFuncCall:
+        return ast_compile_func_call(gen_prm, node);
     }
 
     char *left = NULL, *right = NULL;

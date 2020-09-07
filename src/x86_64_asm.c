@@ -41,6 +41,7 @@ static char* x86_64_jump(char* label, FILE* out_file);
 static char* x86_64_zero_j(char* r, char* label, FILE* out_file);
 static char* x86_64_label(char* label, FILE* out_file);
 static char* x86_64_func(char* name, FILE* out_file);
+static char* x86_64_func_call(char* name, FILE* out_file);
 
 static char* x86_64_store(char* r, char* var, FILE* out_file);
 static char* x86_64_load_var(char* var, FILE* out_file);
@@ -108,6 +109,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_zero_j = &x86_64_zero_j;
     func->f_label  = &x86_64_label;
     func->f_func   = &x86_64_func;
+    func->f_func_call = &x86_64_func_call;
     func->f_store  = &x86_64_store;
     func->f_load_var = &x86_64_load_var;
     func->f_return = &x86_64_return;
@@ -410,6 +412,12 @@ char* x86_64_func(char* name, FILE* out_file)
     fprintf(out_file, "%s:\n", name);
     fprintf(out_file, "\tpushq\t %%rbp\n");
     fprintf(out_file, "\tmovq\t %%rsp, %%rbp\n");
+    return name;
+}
+
+char* x86_64_func_call(char* name, FILE* out_file)
+{
+    fprintf(out_file, "\tcall\t %s\n", name);
     return name;
 }
 

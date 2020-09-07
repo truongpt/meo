@@ -19,6 +19,7 @@
 
 ParseParameter g_parse_prm[MAX_PARSE_RSC];
 
+static AstNode* function_call(ParseParameter* parse_prm, Token tok);
 static AstNode* factor(ParseParameter* parse_prm);
 static AstNode* mul(ParseParameter* parse_prm);
 static AstNode* add(ParseParameter* parse_prm);
@@ -537,15 +538,23 @@ AstNode* mul(ParseParameter* parse_prm)
 AstNode* factor(ParseParameter* parse_prm)
 {
     AstNode* node = NULL;
-    if (match(parse_prm, TokenNumber) || match(parse_prm, TokenIdentifier)) {
-        if (match(parse_prm, TokenIdentifier)) {
-            if (-1 == symtable_find(&(parse_prm->symbol_table), parse_prm->cur_token.id_str)) {
-                MLOG(CLGT, "Can not find symbol %s at line: %d\n",parse_prm->cur_token.id_str, LexGetLine(parse_prm->lex_prm));
-                exit(1);
-            }
-        }
+    if (match(parse_prm, TokenNumber)) {
         node = ast_create_leaf(parse_prm->cur_token);
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    } else if (match(parse_prm, TokenIdentifier)) {
+        Token op_tok = parse_prm->cur_token;
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        if (match(parse_prm, TokenLP)) {
+            // todo: need check the function is declared or not.
+            node = function_call(parse_prm, op_tok);
+        } else {
+            if (-1 == symtable_find(&(parse_prm->symbol_table), op_tok.id_str)) {
+                MLOG(CLGT, "Can not find symbol %s at line: %d\n",op_tok.id_str, LexGetLine(parse_prm->lex_prm));
+                exit(1);
+            }
+            node = ast_create_leaf(op_tok);
+        }
+
     } else if (match(parse_prm, TokenLP)) {
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         node = expression(parse_prm);
@@ -560,6 +569,30 @@ AstNode* factor(ParseParameter* parse_prm)
         exit(1);
     }
 
+    return node;
+}
+
+AstNode* function_call(ParseParameter* parse_prm, Token tok)
+{
+    // create function call node.
+    AstNode* node = ast_create_func_call();
+    node->right = ast_create_leaf(tok); // function name
+
+    AstNode* arg = node;
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    while (!match(parse_prm, TokenRP)) {
+        arg->left = ast_create_leaf(parse_prm->cur_token);
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        arg = arg->left;
+        if (match(parse_prm, TokenComma)) {
+            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        } else if (match(parse_prm, TokenRP)) {
+            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+            break;
+        } else {
+            MLOG(CLGT,"Missing close parenthesis or comma at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        }
+    }
     return node;
 }
 

@@ -68,6 +68,7 @@ enum TokenType{
     TokenRP,
     TokenLBracket,
     TokenRBracket,
+    TokenComma,
     TokenAssign,
 
     TokenPrint,

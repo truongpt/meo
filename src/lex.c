@@ -184,6 +184,9 @@ int32_t LexProc(void* prm, Token *t)
     case '"':
         read_string(lex_prm, c, t);
         break;
+    case ',':
+        t->tok = TokenComma;
+        break;
     case '0' ... '9':
         read_number(lex_prm, c, t);
         break;

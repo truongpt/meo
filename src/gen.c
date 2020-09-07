@@ -257,6 +257,12 @@ char* GenFunc(void* gen_prm, char* name)
     return prm->func.f_func(name, prm->out_asm_file);
 }
 
+char* GenFuncCall(void* gen_prm, char* name)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_func_call(name, prm->out_asm_file);
+}
+
 void GenOut(void* gen_prm, char* r)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
