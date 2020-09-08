@@ -71,7 +71,6 @@ enum TokenType{
     TokenComma,
     TokenAssign,
 
-    TokenPrint,
     TokenReturn,
     TokenEoi,
     TokenSemi,

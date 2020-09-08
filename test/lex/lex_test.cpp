@@ -382,9 +382,9 @@ TEST_CASE("lex test if-then- operator: == <= >= !=")
 {
     std::ofstream outfile ("data/test9");
     outfile << "if (1 == 2)"<< std::endl;
-    outfile << "{ print 1;}"<< std::endl;
+    outfile << "{1; }"<< std::endl;
     outfile << "else       "<< std::endl;
-    outfile << "{ print 2;}" << std::endl;
+    outfile << "{2; }" << std::endl;
     outfile.close();
     vector<Token> expect = vector<Token>{
         {TokenIf,      -1},
@@ -394,13 +394,11 @@ TEST_CASE("lex test if-then- operator: == <= >= !=")
         {TokenNumber,   2},
         {TokenRP,      -1},
         {TokenLBracket,-1},
-        {TokenPrint,   -1},
         {TokenNumber,   1},
         {TokenSemi,    -1},
         {TokenRBracket,-1},
         {TokenElse,    -1},
         {TokenLBracket,-1},
-        {TokenPrint,   -1},
         {TokenNumber,   2},
         {TokenSemi,    -1},
         {TokenRBracket,-1},

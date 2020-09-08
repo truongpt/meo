@@ -40,7 +40,6 @@ enum AstType {
     AstEQ,
     AstNE,
     AstNumber,
-    AstPrint,
     AstIntType,
     AstString,
     AstIdentifier,

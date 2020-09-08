@@ -2,7 +2,7 @@ int main()
 {
     int pre = 1;
     int cur = 1;
-    int n = 10;
+    int n = 15;
 
     for (int i = 2; i < n; i=i+1) {
         int t = cur;

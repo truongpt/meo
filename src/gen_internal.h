@@ -17,7 +17,7 @@ typedef struct GenFuncTable {
     char* (*f_free)(char* r, FILE*);
     char* (*f_out)(char* r, FILE*);
     char* (*f_var)(char* var, FILE*);
-    char* (*f_print)(char* r, FILE*);
+
     char* (*f_add)(char* r1, char* r2, FILE*);
     char* (*f_sub)(char* r1, char* r2, FILE*);
     char* (*f_mul)(char* r1, char* r2, FILE*);

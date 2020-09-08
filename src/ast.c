@@ -69,9 +69,6 @@ int32_t tok_2_ast (Token token)
     case TokenNumber:
         ast = AstNumber;
         break;
-    case TokenPrint:
-        ast = AstPrint;
-        break;
     case TokenIntType:
         ast = AstIntType;
         break;
@@ -450,8 +447,6 @@ void* ast_compile_node(void* gen_prm, AstNode* node, char* left, char* right )
     switch (node->type) {
     case AstNumber:
         return GenLoad(gen_prm,node->value);
-    case AstPrint:
-        return GenPrint(gen_prm, left);
     case AstIntType:
         return node;
     case AstLeftVar:

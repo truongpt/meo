@@ -13,7 +13,6 @@ static bool is_op_reg(char* arg);
 static char* x86_64_load(int32_t value, FILE* out_file);
 static char* x86_64_free(char* r, FILE* out_file);
 static char* x86_64_out(char* value, FILE* out_file);
-static char* x86_64_print(char* r, FILE* out_file);
 static char* x86_64_var(char* var, FILE* out_file);
 static char* x86_64_add(char* r1, char* r2, FILE* out_file);
 static char* x86_64_sub(char* r1, char* r2, FILE* out_file);
@@ -90,7 +89,6 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_free   = &x86_64_free;
     func->f_out    = &x86_64_out;
     func->f_var    = &x86_64_var;
-    func->f_print  = &x86_64_print;
     func->f_add    = &x86_64_add;
     func->f_sub    = &x86_64_sub;
     func->f_mul    = &x86_64_mul;
@@ -185,16 +183,6 @@ char* x86_64_out(char* r, FILE* out_file)
 {
     fprintf(out_file,"\tmovq\t %s, %s\n",r,"%rax");
     fprintf(out_file,"\tret\n");
-    reg_free(r);
-    return r;
-}
-
-char* x86_64_print(char* r, FILE* out_file)
-{
-    fprintf(out_file,"\tmovq\t %s, %%rsi\n",r);
-    fprintf(out_file,"\tmovq\t $.LC0, %%rdi\n");
-    fprintf(out_file,"\tmovq\t $0, %%rax\n");
-    fprintf(out_file,"\tcall\t printf\n");
     reg_free(r);
     return r;
 }

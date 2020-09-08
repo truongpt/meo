@@ -234,8 +234,6 @@ static void read_identifier(LexParameter* lex_prm, char c, Token* t)
         t->tok = TokenVoidType;
     } else if (!strncmp(id, "return", sizeof("return"))) {
         t->tok = TokenReturn;
-    } else if (!strncmp(id, "print", sizeof("print"))) {
-        t->tok = TokenPrint;
     } else if (!strncmp(id, "if", sizeof("if"))) {
         t->tok = TokenIf;
     } else if (!strncmp(id, "else", sizeof("else"))) {

@@ -35,7 +35,6 @@ static AstNode* expression(ParseParameter* parse_prm);
 
 static AstNode* syntax_parse(ParseParameter* parse_prm);
 static AstNode* statements(ParseParameter* parse_prm, AstNode* root);
-static AstNode* stmt_print(ParseParameter* parse_prm);
 static AstNode* stmt_decl(ParseParameter* parse_prm);
 static AstNode* stmt_expr(ParseParameter* parse_prm);
 static AstNode* stmt_if(ParseParameter* parse_prm);
@@ -116,23 +115,6 @@ int32_t ParseProc(void* prm)
     }
 
     return Success;
-}
-
-AstNode* stmt_print(ParseParameter* parse_prm)
-{
-    AstNode *node, *node1;
-    Token op_tok;
-    op_tok = parse_prm->cur_token;
-    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-    node1 = expression(parse_prm);
-    node = ast_create_unary(op_tok, node1);
-
-    if (match (parse_prm, TokenSemi)) {
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));   
-    } else {
-        MLOG(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
-    }
-    return node;
 }
 
 AstNode* stmt_decl(ParseParameter* parse_prm)
@@ -357,7 +339,6 @@ AstNode* statements(ParseParameter* parse_prm, AstNode* root)
 {
     /* statements -> expression SEMI
      *            -> expression SEMI statements
-     *            -> 'print' expression   SEMI statements
      *            -> 'int'   identifier   SEMI statements
      *            ->  identifier '=' expression  SEMI statements
      *            ->  if_statement
@@ -365,9 +346,6 @@ AstNode* statements(ParseParameter* parse_prm, AstNode* root)
     AstNode* node = NULL;
     switch(parse_prm->cur_token.tok)
     {
-    case TokenPrint:
-        node = stmt_print(parse_prm);
-        break;
     case TokenIntType:
         node = stmt_decl(parse_prm);
         break;
