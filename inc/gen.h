@@ -55,8 +55,11 @@ char* GenNeJump(void* gen_prm, char* r1, char* r2, char* label);
 char* GenJump(void* gen_prm, char* label);
 char* GenZeroJump(void* gen_prm, char* r, char* label);
 char* GenLabel(void* gen_prm, char* label);
+char* GenStrLabel(void* gen_prm, char* label, char* str);
 char* GenFunc(void* gen_prm, char* name);
+
 char* GenFuncCall(void* gen_prm, char* name);
+char* GenArg(void* gen_prm, char* arg, int idx);
 
 void GenOut(void* gen_prm, char* r);
 char* GenPrint(void* gen_prm, char* r);

@@ -251,6 +251,12 @@ char* GenLabel(void* gen_prm, char* label)
     return prm->func.f_label(label, prm->out_asm_file);
 }
 
+char* GenStrLabel(void* gen_prm, char* label, char* str)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_str_label(label, str, prm->out_asm_file);
+}
+
 char* GenFunc(void* gen_prm, char* name)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
@@ -261,6 +267,12 @@ char* GenFuncCall(void* gen_prm, char* name)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
     return prm->func.f_func_call(name, prm->out_asm_file);
+}
+
+char* GenArg(void* gen_prm, char* arg, int idx)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_arg(arg, idx, prm->out_asm_file);
 }
 
 void GenOut(void* gen_prm, char* r)

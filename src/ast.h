@@ -19,6 +19,7 @@ typedef struct AstNode {
     union {
         int32_t value;
         char id_str[MAX_IDENT_LEN];
+        char str[MAX_STR_LEN];
     };
     // if statement: if (left) {mid} else {right};
     // function: left -> function name, right -> function body

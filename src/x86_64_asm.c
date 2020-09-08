@@ -9,6 +9,7 @@
 #include "gen_internal.h"
 #include "error_code.h"
 
+static bool is_op_reg(char* arg);
 static char* x86_64_load(int32_t value, FILE* out_file);
 static char* x86_64_free(char* r, FILE* out_file);
 static char* x86_64_out(char* value, FILE* out_file);
@@ -40,8 +41,11 @@ static char* x86_64_ne_j(char* r1, char* r2, char* label, FILE* out_file);
 static char* x86_64_jump(char* label, FILE* out_file);
 static char* x86_64_zero_j(char* r, char* label, FILE* out_file);
 static char* x86_64_label(char* label, FILE* out_file);
+static char* x86_64_str_label(char* label, char* str, FILE* out_file);
 static char* x86_64_func(char* name, FILE* out_file);
+
 static char* x86_64_func_call(char* name, FILE* out_file);
+static char* x86_64_arg(char* arg, int idx, FILE* out_file);
 
 static char* x86_64_store(char* r, char* var, FILE* out_file);
 static char* x86_64_load_var(char* var, FILE* out_file);
@@ -53,8 +57,6 @@ typedef struct RegMap {
 } RegMap;
 
 static char* reg[] = {
-    "%r8",
-    "%r9",
     "%r10",
     "%r11",
     "%r12",
@@ -63,8 +65,6 @@ static char* reg[] = {
     "%r15"};
 
 static RegMap reg_map[] = {
-    {"%r8",  "%r8b"},
-    {"%r9",  "%r9b"},
     {"%r10", "%r10b"},
     {"%r11", "%r11b"},
     {"%r12", "%r12b"},
@@ -72,6 +72,15 @@ static RegMap reg_map[] = {
     {"%r14", "%r14b"},
     {"%r15", "%r15b"}
 };
+
+static char* arg_reg[] = {
+    "%rdi",
+    "%rsi",
+    "%rdx",
+    "%rcx",
+    "%r8",
+    "%r9"};
+
 
 static int cur_reg = 0;
 
@@ -107,14 +116,28 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_ne_j   = &x86_64_ne_j;
     func->f_jump   = &x86_64_jump;
     func->f_zero_j = &x86_64_zero_j;
-    func->f_label  = &x86_64_label;
-    func->f_func   = &x86_64_func;
-    func->f_func_call = &x86_64_func_call;
-    func->f_store  = &x86_64_store;
-    func->f_load_var = &x86_64_load_var;
-    func->f_return = &x86_64_return;
+
+    func->f_label      = &x86_64_label;
+    func->f_str_label  = &x86_64_str_label;
+    func->f_func       = &x86_64_func;
+    func->f_func_call  = &x86_64_func_call;
+    func->f_arg        = &x86_64_arg;
+    func->f_store      = &x86_64_store;
+    func->f_load_var   = &x86_64_load_var;
+    func->f_return     = &x86_64_return;
+
     cur_reg = 0;
     return Success;
+}
+
+static bool is_op_reg(char* arg)
+{
+    for (int i = 0; i < sizeof(reg)/sizeof(*reg); i++) {
+        if (!strncmp(arg, reg[i], sizeof(*reg))) {
+            return true;
+        }
+    }
+    return false;
 }
 
 char* reg_alloc()
@@ -404,6 +427,13 @@ char* x86_64_label(char* label, FILE* out_file)
     return label;
 }
 
+char* x86_64_str_label(char* label, char* str, FILE* out_file)
+{
+    fprintf(out_file, "%s:\n", label);
+    fprintf(out_file, "\t.string \"%s\"\n", str);
+    return label;
+}
+
 char* x86_64_func(char* name, FILE* out_file)
 {
     fprintf(out_file, "\t.text\n");
@@ -420,6 +450,23 @@ char* x86_64_func_call(char* name, FILE* out_file)
     fprintf(out_file, "\tcall\t %s\n", name);
     return name;
 }
+
+char* x86_64_arg(char* arg, int idx, FILE* out_file)
+{
+    if (idx > 5) {
+        MLOG(ERROR, "Now, only support until 6 input parameter\n");
+        return NULL;
+    }
+
+    // release if register
+    if (is_op_reg(arg)) {
+        reg_free(arg);
+    }
+
+    fprintf(out_file, "\tmovq\t %s, %s\n", arg, arg_reg[idx]);
+    return arg;
+}
+
 
 char* x86_64_store(char* var, char* r, FILE* out_file)
 {

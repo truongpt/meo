@@ -13,6 +13,9 @@
 static int32_t tok_2_ast(Token token);
 static void ast_tree_free(AstNode* node);
 static int32_t invert_ast(int32_t ast_type);
+static void* ast_compile_node(void* gen_prm, AstNode* node, char* left, char* right);
+
+static void ast_compile_string(void* gen_prm, AstNode* node);
 
 int32_t tok_2_ast (Token token)
 {
@@ -185,6 +188,10 @@ AstNode* ast_create_node(
         memcpy(node->id_str, token.id_str, strlen(token.id_str));
         node->id_str[strlen(token.id_str)] = '\0';
         break;
+    case AstString:
+        memcpy(node->str, token.str, strlen(token.str));
+        node->str[strlen(token.str)] = '\0';
+        break;
     default:
         MLOG(TRACE, "AstNode %d\n", ast_type);
     }
@@ -267,25 +274,60 @@ void* ast_compile_while(void* gen_prm, AstNode* node)
     return NULL;
 }
 
+void ast_compile_string(void* gen_prm, AstNode* node)
+{
+    if (NULL == node) {
+        return;
+    }
+
+    if (AstString == node->type) {
+        char label_str[10];
+        memset(label_str, 0x00, sizeof(label_str));
+        sprintf(label_str,".LS%d",GenGetLabel(gen_prm));
+        GenStrLabel(gen_prm, label_str, node->str);
+
+        // change string -> label str
+        memset(node->str, 0x00, sizeof(node->str));
+        sprintf(node->str,"$%s",label_str);
+    }
+
+    ast_compile_string(gen_prm, node->left);
+    ast_compile_string(gen_prm, node->right);
+}
+
 void* ast_compile_func(void* gen_prm, AstNode* node)
 {
+    // gen string before
+    ast_compile_string(gen_prm, node);
+
     // gen function lable
     GenFunc(gen_prm, node->left->id_str);
+
     // gen body
     return ast_compile(gen_prm, node->right);
 }
 
+void ast_compile_arg(void* gen_prm, AstNode* node, int idx)
+{
+    if (NULL == node) {
+        return;
+    }
+
+    // gen arg
+    char* arg = ast_compile_node(gen_prm, node, NULL, NULL);
+    GenArg(gen_prm, arg, idx);
+
+    // gen next arg
+    ast_compile_arg(gen_prm, node->left, ++idx);
+}
+
 void* ast_compile_func_call(void* gen_prm, AstNode* node)
 {
-    /* TODO: gen argument */
-    /* scan all left by DFS */
-    /* call ast_compile to get return loaded regiter. */
-    /* push for order 6 register to pass to function call. */
-    /* if case string : - consider how to gen previous */
-    /*                  - how to mapping the label with the string.  */
+    //gen and pass input parameter.
+    ast_compile_arg(gen_prm, node->left, 0);
 
-    GenFuncCall(gen_prm, node->right->id_str);
-    return NULL;
+    // call function
+    return GenFuncCall(gen_prm, node->right->id_str);
 }
 
 char* gen_bin_op(void* gen_prm, char* left, char* right, int type)
@@ -400,6 +442,11 @@ void* ast_compile(void* gen_prm, AstNode* node)
         right = (char*)ast_compile(gen_prm, node->right);
     }
 
+    return ast_compile_node(gen_prm, node, left, right);
+}
+
+void* ast_compile_node(void* gen_prm, AstNode* node, char* left, char* right )
+{
     switch (node->type) {
     case AstNumber:
         return GenLoad(gen_prm,node->value);
@@ -437,6 +484,8 @@ void* ast_compile(void* gen_prm, AstNode* node)
     case AstEQ:
     case AstNE:
         return gen_relational_op(gen_prm, left, right, node->type);
+    case AstString:
+        return node->str;
     default:
         MLOG(CLGT,"Not yet to support ast type %d\n",node->type);
     }
