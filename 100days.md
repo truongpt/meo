@@ -265,3 +265,7 @@ assertions: 107 | 106 passed | 1 failed
 - Parse function call.
 - TODO: gen ASM of function call.
 
+## Day 50
+- Support simple version function call, support max 6 input parameters.
+- Remove tentative print statement, because now it can be link libc to call printf function.
+

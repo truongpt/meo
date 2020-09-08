@@ -12,6 +12,7 @@
 ## Design
 - Using design as [four-pass compiler](system_struct.png), which is refered from [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf)
 - Each module lexical analyzer, parser, code generation are designed as independent module, it can be easy to replace without any effect other part.
+- Each module is designed as multi instance, I plan supporting paralell compiler to increase performance.
 
 ## Implementation
 - First step: only supporting X86-64 + pass 2 (lexical analyzer, parser, code generation).
@@ -19,14 +20,16 @@
 - Using TDD with [catch2](https://github.com/catchorg/Catch2).
 - Using [Google coding convention](https://google.github.io/styleguide/cppguide.html).
 
+## Current status.
+- Can compile all files in [sample](sample), ex [fibonacci.c](sample/fibonacci.c)
+
 ## Todo list
-- [x] Run basic math operator +,-,*,/ on X86_64 GNU/Linux -> [v0.1](https://github.com/truongpt/meo/releases/tag/v0.1)
-- [x] Compile [clgt.c](sample/clgt.c)
-- [x] Support IF statements -> Can compile [if_stmt.c](sample/if_stmt.c)
-- [x] Support WHILE statements. -> Can compile [while_stmt.c](sample/while_stmt.c)
-- [x] Support FOR statements. -> Can compile [for_stmt.c](sample/for_stmt.c)
-- [ ] Support function & function call.
+- [ ] Support function
+- [ ] Function call. (finished simple version)
 - [ ] Global variable & local variable.
 - [ ] Structure type.
-- [ ] Full operator (&& & || | ^ !).
+- [ ] Pointer.
+- [ ] Function pointer.
+- [ ] All [operator](https://en.cppreference.com/w/c/language/operator_precedence).
+- [ ] v..v...
 - [ ] Self compile.

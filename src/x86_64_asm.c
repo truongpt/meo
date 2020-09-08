@@ -55,6 +55,7 @@ typedef struct RegMap {
     char* reg8;
 } RegMap;
 
+//TODO: move all global to gen structure.
 static char* reg[] = {
     "%r10",
     "%r11",
