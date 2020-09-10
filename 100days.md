@@ -271,3 +271,9 @@ assertions: 107 | 106 passed | 1 failed
 
 ## Day 51
 - Study how to support local variable.
+
+### Day 52
+- Reading "2.7 Symbol Tables" p.85 Dragon book.
+- How to manage local variable and global variable? need multi symbol table?
+- How to manage local variable following to scope.
+- How to generate asm code for local variable ?
