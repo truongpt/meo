@@ -72,6 +72,9 @@ int32_t tok_2_ast (Token token)
     case TokenIntType:
         ast = AstIntType;
         break;
+    case TokenVoidType:
+        ast = AstVoidType;
+        break;
     case TokenString:
         ast = AstString;
         break;

@@ -41,6 +41,7 @@ enum AstType {
     AstNE,
     AstNumber,
     AstIntType,
+    AstVoidType,
     AstString,
     AstIdentifier,
     AstLeftVar,
