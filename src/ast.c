@@ -455,7 +455,13 @@ void* ast_compile_node(void* gen_prm, AstNode* node, char* left, char* right )
     case AstLeftVar:
         if (NULL != left && AstIntType == ((AstNode*)left)->type) {
             // declare variable
-            return GenVar(gen_prm, node->id_str);
+            if (AstVarGlobal == ((AstNode*)left)->var_type) {
+                return GenGlobalVar(gen_prm, node->id_str);
+            } else if (AstVarLocal == ((AstNode*)left)->var_type) {
+                return GenLocalVar(gen_prm, node->id_str);
+            } else {
+                MLOG(CLGT,"Unknow variable type %d\n",((AstNode*)left)->var_type);
+            }
         }
         return node->id_str;
     case AstIdentifier:

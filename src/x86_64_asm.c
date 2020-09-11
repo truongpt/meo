@@ -191,6 +191,7 @@ char* x86_64_out(char* r, FILE* out_file)
 char* x86_64_var(char* var, FILE* out_file)
 {
     fprintf(out_file,"\t.comm\t %s,8,8\n",var);
+
     return var;
 }
 

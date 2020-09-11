@@ -21,12 +21,19 @@ typedef struct AstNode {
         char id_str[MAX_IDENT_LEN];
         char str[MAX_STR_LEN];
     };
+    int32_t var_type;
+
     // if statement: if (left) {mid} else {right};
     // function: left -> function name, right -> function body
     struct AstNode* left;
     struct AstNode* mid;
     struct AstNode* right;
 } AstNode;
+
+enum AstVarType{
+    AstVarGlobal,
+    AstVarLocal
+};
 
 enum AstType {
     AstPlus,

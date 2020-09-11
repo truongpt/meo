@@ -134,6 +134,7 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
 
     node = ast_create_unary(parse_prm->cur_token, node1);
     node->type = AstLeftVar; // TODO: need consider better design, I don't want directly set.
+    node->var_type = AstVarLocal;
 
     Token var_tok = parse_prm->cur_token;
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -340,6 +341,7 @@ AstNode* syntax_parse(ParseParameter* parse_prm)
         // create global variable tree with type
         AstNode* global_var = ast_create_unary(ident_tok, type);
         global_var->type = AstLeftVar;
+        global_var->var_type = AstVarGlobal;
 
         if (match (parse_prm, TokenSemi)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
