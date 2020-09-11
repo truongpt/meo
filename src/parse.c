@@ -304,10 +304,12 @@ AstNode* syntax_parse(ParseParameter* parse_prm)
         MLOG(ERROR, "The version only support void main function : %s\n",parse_prm->cur_token.id_str);
         exit(1);
     }
+    AstNode* type = ast_create_leaf(parse_prm->cur_token);
 
-    // Identifier -> function name
+    // Identifier -> function name.
+    // Identifier -> global variable.
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-    AstNode* ident = ast_create_leaf(parse_prm->cur_token);
+    Token ident_tok = parse_prm->cur_token;
 
     // open parenthesis
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -316,22 +318,35 @@ AstNode* syntax_parse(ParseParameter* parse_prm)
         // close parenthesis
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         if (!match(parse_prm, TokenRP)) {
-            MLOG(ERROR, "Expect (\n");
+            MLOG(ERROR, "Expect ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
             exit(1);
         }
 
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         if (!match(parse_prm, TokenLBracket)) {
-            MLOG(ERROR, "Expect {\n");
+            MLOG(ERROR, "Expect { at line: %d\n",LexGetLine(parse_prm->lex_prm));
         }
 
+        AstNode* ident = ast_create_leaf(ident_tok);
         AstNode* body = stmt_scope(parse_prm);
 
         // create function tree.
         return ast_create_func(ident, body);
     } else {
-        MLOG(ERROR, "This version does not support global variable\n");
-        exit(1);
+        // add the global variable to symbol table
+        symtable_add(&(parse_prm->symbol_table), ident_tok.id_str);
+        symtable_set_type(&(parse_prm->symbol_table), ident_tok.id_str, SymbolInt);
+
+        // create global variable tree with type
+        AstNode* global_var = ast_create_unary(ident_tok, type);
+        global_var->type = AstLeftVar;
+
+        if (match (parse_prm, TokenSemi)) {
+            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        } else {
+            MLOG(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        }
+        return global_var;
     }
 }
 
