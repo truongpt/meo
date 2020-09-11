@@ -39,15 +39,16 @@ extern "C" {
 #endif
 
 int32_t symtable_init(SymbolTable* st);
-int32_t symtable_add(SymbolTable* st, char* symbol);
+int32_t symtable_add(SymbolTable* st, char* symbol, int level);
 int32_t symtable_remove(SymbolTable* st, char* symbol);
-int32_t symtable_find(SymbolTable* st, char* symbol);
-int32_t symtable_get_value(SymbolTable* st, char* symbol);
-int32_t symtable_set_type(SymbolTable* st, char* symbol, int32_t type);
-int32_t symtable_set_level(SymbolTable* st, char* symbol, int32_t type);
-int32_t symtable_set_label(SymbolTable* st, char* symbol, char* lable);
-char* symtable_get_label(SymbolTable* st, char* symbol);
-int32_t symtable_set_value(SymbolTable* st, char* symbol, int32_t value);
+int32_t symtable_find(SymbolTable* st, char* symbol, int level);
+int32_t symtable_find_valid(SymbolTable* st, char* symbol, int level);
+int32_t symtable_get_value(SymbolTable* st, char* symbol, int level);
+int32_t symtable_set_type(SymbolTable* st, char* symbol, int level, int32_t type);
+int32_t symtable_set_label(SymbolTable* st, char* symbol, int level, char* lable);
+char* symtable_get_label(SymbolTable* st, char* symbol, int level);
+int32_t symtable_set_value(SymbolTable* st, char* symbol, int level, int32_t value);
+int32_t symtable_clear_level(SymbolTable* st, int32_t level);
 
 #ifdef __cplusplus
 }

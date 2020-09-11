@@ -279,15 +279,30 @@ assertions: 107 | 106 passed | 1 failed
 - How to generate asm code for local variable ?
 
 ### Day 53
-- DONE
+- **Done**
   - Global variable: + slightly update, meo supported global variable.
   - Local variable: need alot of work.
     - Add member of AstNode to separate global & local variable.
     - Update symbol table.
       - Manage local variable following to specific scope.
       - Mapping variable name with symbol from asm code.
-- TODO:
+- **Todo**
   - Consider how to calculate necessary stack size of function.
   - Support local variable.
   - Initialize global variable.
 
+### Day 54
+- **Done**
+  - Add level for symbol table to manage specific scope.
+
+- **Todo**
+  - How to manage local variable at gen code? need more mapping table or shared currently symbol table? good design?
+  - Consider how to calculate necessary stack size of function.
+  - Support local variable.
+  - Initialize global variable.
+
+- **Note**
+  - Support complete input parameter, now only input variable but not checking it is invalid or not?
+  - What is good design?
+  - Parkinson law? only 2x25 minutes/day for meo
+  

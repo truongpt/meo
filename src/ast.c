@@ -463,13 +463,13 @@ void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, cha
 
                 char* label = GenGlobalVar(gen_prm, node->id_str);
                 // symbol table manage id -> label
-                symtable_set_label(&(parse_prm->symbol_table), node->id_str, label);
+                /* symtable_set_label(&(parse_prm->symbol_table), node->id_str, node->var_level, label); */
                 return label;
             } else if (AstVarLocal == ((AstNode*)left)->var_type) {
 
                 char* label =  GenLocalVar(gen_prm, node->id_str);
                 // symbol table manage id -> label
-                symtable_set_label(&(parse_prm->symbol_table), node->id_str, label);
+                /* symtable_set_label(&(parse_prm->symbol_table), node->id_str, node->var_level, label); */
                 return label;
             } else {
                 MLOG(CLGT,"Unknow variable type %d\n",((AstNode*)left)->var_type);

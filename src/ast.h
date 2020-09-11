@@ -22,6 +22,7 @@ typedef struct AstNode {
         char str[MAX_STR_LEN];
     };
     int32_t var_type;
+    int32_t var_level;
 
     // if statement: if (left) {mid} else {right};
     // function: left -> function name, right -> function body

@@ -81,6 +81,7 @@ int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm, bool is_interp
     g_parse_prm[i].gen_prm = gen_prm;
     g_parse_prm[i].is_interpret = is_interpret;
     g_parse_prm[i].cur_token.tok = -1;
+    g_parse_prm[i].var_level = 0;
     // initialize symbol table
     symtable_init(&(g_parse_prm[i].symbol_table));
 
@@ -129,8 +130,11 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
     }
 
     // add the identifier to symbol table
-    symtable_add(&(parse_prm->symbol_table), parse_prm->cur_token.id_str);
-    symtable_set_type(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, SymbolInt);
+    if (Success != symtable_add(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level)) {
+        MLOG(CLGT, "Duplicated declare variable: %s\n",parse_prm->cur_token.id_str);
+        exit(1);
+    }
+    symtable_set_type(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level, SymbolInt);
 
     node = ast_create_unary(parse_prm->cur_token, node1);
     node->type = AstLeftVar; // TODO: need consider better design, I don't want directly set.
@@ -259,6 +263,9 @@ AstNode* stmt_return(ParseParameter* parse_prm)
 
 AstNode* stmt_scope(ParseParameter* parse_prm)
 {
+    // increase variable level at scope in
+    parse_prm->var_level++;
+
     if(!match(parse_prm, TokenLBracket)) {
         MLOG(CLGT,"Missing open braces { at line: %d\n",LexGetLine(parse_prm->lex_prm));
         exit(1);
@@ -272,7 +279,13 @@ AstNode* stmt_scope(ParseParameter* parse_prm)
 
     if (match(parse_prm, TokenEoi)) {
         MLOG(CLGT,"Missing close braces } at line: %d\n",LexGetLine(parse_prm->lex_prm));
+        exit(1);
     }
+
+    // clear all local variable at scope
+    symtable_clear_level(&(parse_prm->symbol_table), parse_prm->var_level);
+    // decrease variable level at scope out
+    parse_prm->var_level--;
 
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     return node;
@@ -335,8 +348,12 @@ AstNode* syntax_parse(ParseParameter* parse_prm)
         return ast_create_func(ident, body);
     } else {
         // add the global variable to symbol table
-        symtable_add(&(parse_prm->symbol_table), ident_tok.id_str);
-        symtable_set_type(&(parse_prm->symbol_table), ident_tok.id_str, SymbolInt);
+        if (Success != symtable_add(&(parse_prm->symbol_table), ident_tok.id_str, parse_prm->var_level)) {
+            MLOG(CLGT,"Duplicated declare variable : %s\n",ident_tok.id_str);
+            exit(1);
+        }
+
+        symtable_set_type(&(parse_prm->symbol_table), ident_tok.id_str, parse_prm->var_level, SymbolInt);
 
         // create global variable tree with type
         AstNode* global_var = ast_create_unary(ident_tok, type);
@@ -543,7 +560,7 @@ AstNode* factor(ParseParameter* parse_prm)
             // todo: need check the function is declared or not.
             node = function_call(parse_prm, op_tok);
         } else {
-            if (-1 == symtable_find(&(parse_prm->symbol_table), op_tok.id_str)) {
+            if (-1 == symtable_find_valid(&(parse_prm->symbol_table), op_tok.id_str, parse_prm->var_level)) {
                 MLOG(CLGT, "Can not find symbol %s at line: %d\n",op_tok.id_str, LexGetLine(parse_prm->lex_prm));
                 exit(1);
             }

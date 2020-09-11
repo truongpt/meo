@@ -14,6 +14,7 @@ enum ErrorCode {
     TokenError,
     SymbolNotFound,
     SymbolTableOver,
+    VariableDeclared,
     LexLimitResource,
     ParseLimitResource,
     GenLimitResource

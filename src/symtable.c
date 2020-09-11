@@ -19,15 +19,20 @@ int32_t symtable_init(SymbolTable* st)
     return Success;
 }
 
-int32_t symtable_add(SymbolTable* st, char* symbol)
+int32_t symtable_add(SymbolTable* st, char* symbol, int level)
 {
     if (st->cur_pos >= NSYMBOLS-1) {
         return SymbolTableOver;
     }
 
+    if (-1 != symtable_find(st, symbol, level)) {
+        return VariableDeclared;
+    }
+
     st->cur_pos++;
     int size_sym = strlen(symbol);
     memcpy(st->data[st->cur_pos].name , symbol, size_sym);
+    st->data[st->cur_pos].level = level;
     st->data[st->cur_pos].name[size_sym] = '\0';
 
     return Success;
@@ -39,7 +44,7 @@ int32_t symtable_remove(SymbolTable* st, char* symbol)
     return Success;
 }
 
-int32_t symtable_find(SymbolTable* st, char* symbol)
+int32_t symtable_find(SymbolTable* st, char* symbol, int level)
 {
     if (NULL == symbol) {
         return -1;
@@ -48,7 +53,8 @@ int32_t symtable_find(SymbolTable* st, char* symbol)
     for (int i = 0; i <= st->cur_pos; i++) {
         if (*(st->data[i].name) == *symbol &&
             strlen(st->data[i].name) == strlen(symbol) &&
-            !strncmp(st->data[i].name, symbol, strlen(symbol))) {
+            !strncmp(st->data[i].name, symbol, strlen(symbol)) &&
+            st->data[i].level == level) {
             return i;
         }
     }
@@ -56,9 +62,19 @@ int32_t symtable_find(SymbolTable* st, char* symbol)
     return -1;
 }
 
-int32_t symtable_get_value(SymbolTable* st, char* symbol)
+int32_t symtable_find_valid(SymbolTable* st, char* symbol, int level)
 {
-    int32_t idx = symtable_find(st, symbol);
+    for (int i = 0; i <= level; i++) {
+        if (-1 != symtable_find(st, symbol, i)) {
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int32_t symtable_get_value(SymbolTable* st, char* symbol, int level)
+{
+    int32_t idx = symtable_find(st, symbol, level);
     if (-1 == idx) {
         MLOG(CLGT,"Not found the symbol %s\n", symbol);
         return -1;
@@ -72,9 +88,9 @@ int32_t symtable_get_value(SymbolTable* st, char* symbol)
     return -1;
 }
 
-int32_t symtable_set_type(SymbolTable* st, char* symbol, int32_t type)
+int32_t symtable_set_type(SymbolTable* st, char* symbol, int level, int32_t type)
 {
-    int32_t idx = symtable_find(st, symbol);
+    int32_t idx = symtable_find(st, symbol, level);
     if (-1 == idx) {
         MLOG(CLGT,"Not found the symbol %s\n", symbol);
         return -1;
@@ -83,20 +99,27 @@ int32_t symtable_set_type(SymbolTable* st, char* symbol, int32_t type)
     return 0;
 }
 
-int32_t symtable_set_level(SymbolTable* st, char* symbol, int32_t level)
+int32_t symtable_clear_level(SymbolTable* st, int32_t level)
 {
-    int32_t idx = symtable_find(st, symbol);
-    if (-1 == idx) {
-        MLOG(CLGT,"Not found the symbol %s\n", symbol);
-        return -1;
+    int cnt = 0;
+    for (int i = 0; i <= st->cur_pos; i++) {
+        if (st->data[i].level == level) {
+            cnt++;
+            st->data[i].level = -1;
+            memset(st->data[i].name, 0x00, sizeof(st->data[i].name));
+        }
     }
-    st->data[idx].level = level;
-    return 0;
+
+    if (0 == cnt) {
+        MLOG(TRACE,"Not found any variable level %d to clear\n", level);
+    }
+
+    return cnt;
 }
 
-int32_t symtable_set_label(SymbolTable* st, char* symbol, char* label)
+int32_t symtable_set_label(SymbolTable* st, char* symbol, int level, char* label)
 {
-    int32_t idx = symtable_find(st, symbol);
+    int32_t idx = symtable_find(st, symbol, level);
     if (-1 == idx) {
         MLOG(CLGT,"Not found the symbol %s\n", symbol);
         return -1;
@@ -105,9 +128,9 @@ int32_t symtable_set_label(SymbolTable* st, char* symbol, char* label)
     return 0;
 }
 
-char* symtable_get_label(SymbolTable* st, char* symbol)
+char* symtable_get_label(SymbolTable* st, char* symbol, int level)
 {
-    int32_t idx = symtable_find(st, symbol);
+    int32_t idx = symtable_find(st, symbol, level);
     if (-1 == idx) {
         MLOG(CLGT,"Not found the symbol %s\n", symbol);
         return NULL;
@@ -115,9 +138,9 @@ char* symtable_get_label(SymbolTable* st, char* symbol)
     return st->data[idx].label;
 }
 
-int32_t symtable_set_value(SymbolTable* st, char* symbol, int32_t value)
+int32_t symtable_set_value(SymbolTable* st, char* symbol, int level, int32_t value)
 {
-    int32_t idx = symtable_find(st, symbol);
+    int32_t idx = symtable_find(st, symbol, level);
     if (-1 == idx) {
         MLOG(CLGT,"Not found the symbol %s\n", symbol);
         return -1;

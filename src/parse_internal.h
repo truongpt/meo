@@ -17,6 +17,7 @@ typedef struct ParseParameter{
     void *gen_prm;
     SymbolTable symbol_table;
     Token cur_token;
+    int var_level;
 } ParseParameter;
 
 #endif
