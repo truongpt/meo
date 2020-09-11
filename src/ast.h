@@ -78,7 +78,7 @@ AstNode* ast_create_ifnode(AstNode* left, AstNode* mid, AstNode* right);
 AstNode* ast_create_func(AstNode* left, AstNode* right);
 AstNode* ast_create_func_call(void);
 AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node);
-void* ast_compile(void* gen_prm, AstNode* node);
+void* ast_compile(ParseParameter* parse_prm, AstNode* node);
 void ast_gen(ParseParameter* parse_prm, AstNode* node);
 
 #ifdef __cplusplus

@@ -16,6 +16,8 @@
 typedef struct SymbolData {
     char name[MAX_IDENT_LEN];
     int32_t type;
+    int32_t level;
+    char* label;
     union {
         int32_t int_value;
         float float_value;
@@ -42,6 +44,9 @@ int32_t symtable_remove(SymbolTable* st, char* symbol);
 int32_t symtable_find(SymbolTable* st, char* symbol);
 int32_t symtable_get_value(SymbolTable* st, char* symbol);
 int32_t symtable_set_type(SymbolTable* st, char* symbol, int32_t type);
+int32_t symtable_set_level(SymbolTable* st, char* symbol, int32_t type);
+int32_t symtable_set_label(SymbolTable* st, char* symbol, char* lable);
+char* symtable_get_label(SymbolTable* st, char* symbol);
 int32_t symtable_set_value(SymbolTable* st, char* symbol, int32_t value);
 
 #ifdef __cplusplus

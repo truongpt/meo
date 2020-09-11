@@ -277,3 +277,17 @@ assertions: 107 | 106 passed | 1 failed
 - How to manage local variable and global variable? need multi symbol table?
 - How to manage local variable following to scope.
 - How to generate asm code for local variable ?
+
+### Day 53
+- DONE
+  - Global variable: + slightly update, meo supported global variable.
+  - Local variable: need alot of work.
+    - Add member of AstNode to separate global & local variable.
+    - Update symbol table.
+      - Manage local variable following to specific scope.
+      - Mapping variable name with symbol from asm code.
+- TODO:
+  - Consider how to calculate necessary stack size of function.
+  - Support local variable.
+  - Initialize global variable.
+

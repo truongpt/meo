@@ -13,7 +13,7 @@
 static int32_t tok_2_ast(Token token);
 static void ast_tree_free(AstNode* node);
 static int32_t invert_ast(int32_t ast_type);
-static void* ast_compile_node(void* gen_prm, AstNode* node, char* left, char* right);
+static void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, char* right);
 
 static void ast_compile_string(void* gen_prm, AstNode* node);
 
@@ -213,8 +213,9 @@ AstNode* ast_create_unary(Token token, AstNode* left)
     return ast_create_node(token, left, NULL);
 }
 
-void* ast_compile_if(void* gen_prm, AstNode* node)
+void* ast_compile_if(ParseParameter* parse_prm, AstNode* node)
 {
+    void* gen_prm = parse_prm->gen_prm;
     char label_false[10];
     char label_end[10];
     memset(label_false, 0x00, sizeof(label_false));
@@ -226,11 +227,11 @@ void* ast_compile_if(void* gen_prm, AstNode* node)
     }
 
     // Generate condition IF
-    void* cond_value = ast_compile(gen_prm, node->left);
+    void* cond_value = ast_compile(parse_prm, node->left);
     GenZeroJump(gen_prm, cond_value, label_false);
 
     // Generation TRUE statements
-    ast_compile(gen_prm, node->mid);
+    ast_compile(parse_prm, node->mid);
 
     // Jump to end if having FALSE statements
     if (node->right) {
@@ -240,14 +241,15 @@ void* ast_compile_if(void* gen_prm, AstNode* node)
     GenLabel(gen_prm, label_false);
     if (node->right) {
         // Generation FALSE statements
-        ast_compile(gen_prm, node->right);
+        ast_compile(parse_prm, node->right);
         GenLabel(gen_prm, label_end);
     }
     return NULL;
 }
 
-void* ast_compile_while(void* gen_prm, AstNode* node)
+void* ast_compile_while(ParseParameter* parse_prm, AstNode* node)
 {
+    void* gen_prm = parse_prm->gen_prm;
     char label_start[10];
     char label_end[10];
     memset(label_start, 0x00, sizeof(label_start));
@@ -259,11 +261,11 @@ void* ast_compile_while(void* gen_prm, AstNode* node)
     GenLabel(gen_prm, label_start);
 
     // Generate condition WHILE
-    void* cond_value = ast_compile(gen_prm, node->left);
+    void* cond_value = ast_compile(parse_prm, node->left);
     GenZeroJump(gen_prm, cond_value, label_end);
 
     // Generation statements
-    ast_compile(gen_prm, node->right);
+    ast_compile(parse_prm, node->right);
 
     // Jump to start for continue loop
     GenJump(gen_prm, label_start);
@@ -295,8 +297,9 @@ void ast_compile_string(void* gen_prm, AstNode* node)
     ast_compile_string(gen_prm, node->right);
 }
 
-void* ast_compile_func(void* gen_prm, AstNode* node)
+void* ast_compile_func(ParseParameter* parse_prm, AstNode* node)
 {
+    void* gen_prm = parse_prm->gen_prm;
     // gen string before
     ast_compile_string(gen_prm, node);
 
@@ -304,30 +307,30 @@ void* ast_compile_func(void* gen_prm, AstNode* node)
     GenFunc(gen_prm, node->left->id_str);
 
     // gen body
-    return ast_compile(gen_prm, node->right);
+    return ast_compile(parse_prm, node->right);
 }
 
-void ast_compile_arg(void* gen_prm, AstNode* node, int idx)
+void ast_compile_arg(ParseParameter* parse_prm, AstNode* node, int idx)
 {
     if (NULL == node) {
         return;
     }
 
     // gen arg
-    char* arg = ast_compile_node(gen_prm, node, NULL, NULL);
-    GenArg(gen_prm, arg, idx);
+    char* arg = ast_compile_node(parse_prm, node, NULL, NULL);
+    GenArg(parse_prm->gen_prm, arg, idx);
 
     // gen next arg
-    ast_compile_arg(gen_prm, node->left, ++idx);
+    ast_compile_arg(parse_prm, node->left, ++idx);
 }
 
-void* ast_compile_func_call(void* gen_prm, AstNode* node)
+void* ast_compile_func_call(ParseParameter* parse_prm, AstNode* node)
 {
     //gen and pass input parameter.
-    ast_compile_arg(gen_prm, node->left, 0);
+    ast_compile_arg(parse_prm, node->left, 0);
 
     // call function
-    return GenFuncCall(gen_prm, node->right->id_str);
+    return GenFuncCall(parse_prm->gen_prm, node->right->id_str);
 }
 
 char* gen_bin_op(void* gen_prm, char* left, char* right, int type)
@@ -410,7 +413,7 @@ char* gen_relational_jump(void* gen_prm, char* left, char* right, char* label, i
     }
 }
 
-void* ast_compile(void* gen_prm, AstNode* node)
+void* ast_compile(ParseParameter* parse_prm, AstNode* node)
 {
     if (NULL == node) {
         // do nothing
@@ -421,32 +424,33 @@ void* ast_compile(void* gen_prm, AstNode* node)
     switch (node->type)
     {
     case AstLink:
-        ast_compile(gen_prm, node->left);
-        ast_compile(gen_prm, node->right);
+        ast_compile(parse_prm, node->left);
+        ast_compile(parse_prm, node->right);
         return NULL;
     case AstIf:
-        return ast_compile_if(gen_prm, node);
+        return ast_compile_if(parse_prm, node);
     case AstWhile:
-        return ast_compile_while(gen_prm, node);
+        return ast_compile_while(parse_prm, node);
     case AstFunc:
-        return ast_compile_func(gen_prm, node);
+        return ast_compile_func(parse_prm, node);
     case AstFuncCall:
-        return ast_compile_func_call(gen_prm, node);
+        return ast_compile_func_call(parse_prm, node);
     }
 
     char *left = NULL, *right = NULL;
     if (NULL != node->left) {
-        left = (char*)ast_compile(gen_prm, node->left);
+        left = (char*)ast_compile(parse_prm, node->left);
     }
     if (NULL != node->right) {
-        right = (char*)ast_compile(gen_prm, node->right);
+        right = (char*)ast_compile(parse_prm, node->right);
     }
 
-    return ast_compile_node(gen_prm, node, left, right);
+    return ast_compile_node(parse_prm, node, left, right);
 }
 
-void* ast_compile_node(void* gen_prm, AstNode* node, char* left, char* right )
+void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, char* right )
 {
+    void* gen_prm = parse_prm->gen_prm;
     switch (node->type) {
     case AstNumber:
         return GenLoad(gen_prm,node->value);
@@ -456,9 +460,17 @@ void* ast_compile_node(void* gen_prm, AstNode* node, char* left, char* right )
         if (NULL != left && AstIntType == ((AstNode*)left)->type) {
             // declare variable
             if (AstVarGlobal == ((AstNode*)left)->var_type) {
-                return GenGlobalVar(gen_prm, node->id_str);
+
+                char* label = GenGlobalVar(gen_prm, node->id_str);
+                // symbol table manage id -> label
+                symtable_set_label(&(parse_prm->symbol_table), node->id_str, label);
+                return label;
             } else if (AstVarLocal == ((AstNode*)left)->var_type) {
-                return GenLocalVar(gen_prm, node->id_str);
+
+                char* label =  GenLocalVar(gen_prm, node->id_str);
+                // symbol table manage id -> label
+                symtable_set_label(&(parse_prm->symbol_table), node->id_str, label);
+                return label;
             } else {
                 MLOG(CLGT,"Unknow variable type %d\n",((AstNode*)left)->var_type);
             }
@@ -502,7 +514,7 @@ void ast_gen(ParseParameter* parse_prm, AstNode* node)
         // todo:
         // ast_interpret(parse_prm, node);
     } else {
-        ast_compile(parse_prm->gen_prm, node);
+        ast_compile(parse_prm, node);
         ast_tree_free(node);
     }
 }

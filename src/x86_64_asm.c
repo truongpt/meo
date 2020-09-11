@@ -192,7 +192,11 @@ char* x86_64_var(char* var, FILE* out_file)
 {
     fprintf(out_file,"\t.comm\t %s,8,8\n",var);
 
-    return var;
+    int s = sizeof(var) + sizeof("(%rip)");
+    char* label = malloc(s*sizeof(char)+1);
+    sprintf(label,"%s(%%rip)",var);
+
+    return label;
 }
 
 char* x86_64_add(char* r1, char* r2, FILE* out_file)
