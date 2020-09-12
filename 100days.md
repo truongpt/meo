@@ -294,12 +294,16 @@ assertions: 107 | 106 passed | 1 failed
 ### Day 54
 - **Done**
   - Add level for symbol table to manage specific scope.
+  - Generate asm code for symbol variable.
+    - error -> debugging.
 
 - **Todo**
   - How to manage local variable at gen code? need more mapping table or shared currently symbol table? good design?
+    - Don't use symbol table, because target is difference.
   - Consider how to calculate necessary stack size of function.
   - Support local variable.
   - Initialize global variable.
+  - Maintain test? don't following to TDD :/
 
 - **Note**
   - Support complete input parameter, now only input variable but not checking it is invalid or not?
