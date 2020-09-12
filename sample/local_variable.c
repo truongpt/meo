@@ -1,20 +1,31 @@
 int a;
 int main()
 {
-    int a;
-    a = 1;
-    printf("local-1 a: %d\n",a);
+    int b;
+    b = 1;
+    printf("local-1 b: %d\n",b);
     {
-        int a;
-        a = 2;
-        printf("local-2 a: %d\n",a);
+        int c;
+        c = 2;
+        printf("local-2 c: %d\n",c);
         {
-            a = 3;
-            int b;
+            c = c+1;
+            printf("local-3 c: %d\n",c);
         }
-        printf("local-2 a: %d\n",a);
+
         {
-            int b = 2;
+            {
+                c = c+1;
+                printf("local-4 c: %d\n",c);
+
+            }
         }
+
     }
+    {
+        a = a+1;
+        printf("local-5 a: %d\n",a);
+
+    }
+
 }

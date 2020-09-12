@@ -82,6 +82,7 @@ int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm, bool is_interp
     g_parse_prm[i].is_interpret = is_interpret;
     g_parse_prm[i].cur_token.tok = -1;
     g_parse_prm[i].var_level = 0;
+    g_parse_prm[i].var_map_pos = 0;
     // initialize symbol table
     symtable_init(&(g_parse_prm[i].symbol_table));
 

@@ -24,3 +24,19 @@ TEST_CASE("symtable add - find work")
     REQUIRE(Success == symtable_add(&st, s3, 0));
     REQUIRE(-1 != symtable_find(&st, s3, 0));
 }
+
+TEST_CASE("symtable add - find valid work")
+{
+    SymbolTable st;
+    char* s1 = "a";
+    char* s2 = "b";
+    char* s3 = "c";
+    REQUIRE(Success == symtable_init(&st));
+    REQUIRE(Success == symtable_add(&st, s1, 0));
+    REQUIRE(Success == symtable_add(&st, s2, 1));
+    REQUIRE(Success == symtable_add(&st, s3, 2));
+
+    REQUIRE(-1 != symtable_find_valid(&st, s1, 100));
+    REQUIRE(-1 != symtable_find_valid(&st, s2, 100));
+    REQUIRE(-1 != symtable_find_valid(&st, s3, 100));
+}

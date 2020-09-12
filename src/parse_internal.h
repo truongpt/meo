@@ -10,6 +10,11 @@
 #ifndef _PARSE_INTERNAL_H_
 #define _PARSE_INTERNAL_H_
 
+typedef struct StringMap {
+    char id[MAX_IDENT_LEN];
+    char* label;
+} StringMap;
+
 typedef struct ParseParameter{
     bool avail;
     bool is_interpret;
@@ -18,6 +23,9 @@ typedef struct ParseParameter{
     SymbolTable symbol_table;
     Token cur_token;
     int var_level;
+
+    StringMap var_map[MAX_IDENT_CNT];
+    int var_map_pos;
 } ParseParameter;
 
 #endif

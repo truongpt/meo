@@ -14,7 +14,8 @@ static int32_t tok_2_ast(Token token);
 static void ast_tree_free(AstNode* node);
 static int32_t invert_ast(int32_t ast_type);
 static void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, char* right);
-
+static void ast_map_set_label(ParseParameter* parse_prm, char* id_str,char* label);
+static char* ast_map_get_label(ParseParameter* parse_prm, char* id_str);
 static void ast_compile_string(void* gen_prm, AstNode* node);
 
 int32_t tok_2_ast (Token token)
@@ -459,25 +460,30 @@ void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, cha
     case AstLeftVar:
         if (NULL != left && AstIntType == ((AstNode*)left)->type) {
             // declare variable
+            char* label = NULL;
             if (AstVarGlobal == ((AstNode*)left)->var_type) {
-
-                char* label = GenGlobalVar(gen_prm, node->id_str);
-                // symbol table manage id -> label
-                /* symtable_set_label(&(parse_prm->symbol_table), node->id_str, node->var_level, label); */
-                return label;
+                label = GenGlobalVar(gen_prm, node->id_str);
             } else if (AstVarLocal == ((AstNode*)left)->var_type) {
-
-                char* label =  GenLocalVar(gen_prm, node->id_str);
-                // symbol table manage id -> label
-                /* symtable_set_label(&(parse_prm->symbol_table), node->id_str, node->var_level, label); */
-                return label;
+                label =  GenLocalVar(gen_prm, node->id_str);
             } else {
                 MLOG(CLGT,"Unknow variable type %d\n",((AstNode*)left)->var_type);
             }
+
+            /* TODO: Consider how to support variable of each scope can be same name. */
+            /* I considered use node->var_level, that is passed from parse processing, but it need more consider. */
+            /* At the moment, meo only supports variable name distint */
+            // mapping ID -> label
+            ast_map_set_label(parse_prm, node->id_str, label);
+            return label;
         }
-        return node->id_str;
+        return ast_map_get_label(parse_prm, node->id_str);
+
     case AstIdentifier:
-        return GenLoadVar(gen_prm, node->id_str);
+    {
+        char* id_label = ast_map_get_label(parse_prm, node->id_str);
+        return GenLoadVar(gen_prm, id_label);
+    }
+
     case AstReturn:
         return GenReturn(gen_prm, left);
     case AstAssign:
@@ -528,4 +534,28 @@ void ast_tree_free(AstNode* node)
     ast_tree_free(node->mid);
     ast_tree_free(node->right);
     free(node);
+}
+
+void ast_map_set_label(ParseParameter* parse_prm, char* id_str,char* label)
+{
+    int pos = parse_prm->var_map_pos;
+    if (pos >= MAX_IDENT_CNT) {
+        MLOG(CLGT, "Too many variable \n");
+        exit(1);
+    }
+
+    memcpy(parse_prm->var_map[pos].id, id_str, strlen(id_str));
+    parse_prm->var_map[pos].label = label;
+    parse_prm->var_map_pos++;
+}
+
+char* ast_map_get_label(ParseParameter* parse_prm, char* id_str)
+{
+    for (int i = 0; i < parse_prm->var_map_pos; i++) {
+        if (strlen(parse_prm->var_map[i].id) == strlen(id_str) &&
+            !strncmp(parse_prm->var_map[i].id, id_str, strlen(id_str))) {
+            return parse_prm->var_map[i].label;
+        }
+    }
+    return NULL;
 }

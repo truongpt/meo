@@ -464,7 +464,7 @@ char* x86_64_arg(char* arg, int idx, FILE* out_file)
 
 char* x86_64_store(char* var, char* r, FILE* out_file)
 {
-    fprintf(out_file, "\tmovq\t %s, %s(\%%rip)\n", r, var);
+    fprintf(out_file, "\tmovq\t %s, %s\n", r, var);
     reg_free(r);
     return var;
 }
@@ -472,7 +472,7 @@ char* x86_64_store(char* var, char* r, FILE* out_file)
 char* x86_64_load_var(char* var, FILE* out_file)
 {
     char* r = reg_alloc();
-    fprintf(out_file, "\tmovq\t %s(\%%rip), %s\n", var, r);
+    fprintf(out_file, "\tmovq\t %s, %s\n", var, r);
     return r;
 }
 

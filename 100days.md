@@ -305,4 +305,4 @@ assertions: 107 | 106 passed | 1 failed
   - Support complete input parameter, now only input variable but not checking it is invalid or not?
   - What is good design?
   - Parkinson law? only 2x25 minutes/day for meo
-  
+  - Need improve processing declare varialbe. now it is stupid 
