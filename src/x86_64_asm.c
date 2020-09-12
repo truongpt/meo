@@ -14,6 +14,7 @@ static char* x86_64_load(int32_t value, FILE* out_file);
 static char* x86_64_free(char* r, FILE* out_file);
 static char* x86_64_out(char* value, FILE* out_file);
 static char* x86_64_var(char* var, FILE* out_file);
+static char* x86_64_local_var(char* var, int size, FILE* out_file);
 static char* x86_64_add(char* r1, char* r2, FILE* out_file);
 static char* x86_64_sub(char* r1, char* r2, FILE* out_file);
 static char* x86_64_mul(char* r1, char* r2, FILE* out_file);
@@ -42,6 +43,7 @@ static char* x86_64_zero_j(char* r, char* label, FILE* out_file);
 static char* x86_64_label(char* label, FILE* out_file);
 static char* x86_64_str_label(char* label, char* str, FILE* out_file);
 static char* x86_64_func(char* name, FILE* out_file);
+static char* x86_64_func_exit(FILE* out_file);
 
 static char* x86_64_func_call(char* name, FILE* out_file);
 static char* x86_64_arg(char* arg, int idx, FILE* out_file);
@@ -83,6 +85,7 @@ static char* arg_reg[] = {
 
 
 static int cur_reg = 0;
+static int var_on_stack = 0;
 
 int32_t GenLoadX86_64(GenFuncTable *func)
 {
@@ -90,6 +93,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_free   = &x86_64_free;
     func->f_out    = &x86_64_out;
     func->f_var    = &x86_64_var;
+    func->f_l_var  = &x86_64_local_var;
     func->f_add    = &x86_64_add;
     func->f_sub    = &x86_64_sub;
     func->f_mul    = &x86_64_mul;
@@ -119,6 +123,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_label      = &x86_64_label;
     func->f_str_label  = &x86_64_str_label;
     func->f_func       = &x86_64_func;
+    func->f_func_exit  = &x86_64_func_exit;
     func->f_func_call  = &x86_64_func_call;
     func->f_arg        = &x86_64_arg;
     func->f_store      = &x86_64_store;
@@ -126,6 +131,8 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_return     = &x86_64_return;
 
     cur_reg = 0;
+    var_on_stack = 0;
+
     return Success;
 }
 
@@ -195,6 +202,19 @@ char* x86_64_var(char* var, FILE* out_file)
     int s = sizeof(var) + sizeof("(%rip)");
     char* label = malloc(s*sizeof(char)+1);
     sprintf(label,"%s(%%rip)",var);
+
+    return label;
+}
+
+char* x86_64_local_var(char* var, int size, FILE* out_file)
+{
+    (void) out_file;
+    (void) var;
+    var_on_stack = var_on_stack - size;
+
+    int s = sizeof("-1000") + sizeof("(%rbp)");
+    char* label = malloc(s*sizeof(char)+1);
+    sprintf(label,"%d(%%rbp)",var_on_stack);
 
     return label;
 }
@@ -436,7 +456,17 @@ char* x86_64_func(char* name, FILE* out_file)
     fprintf(out_file, "%s:\n", name);
     fprintf(out_file, "\tpushq\t %%rbp\n");
     fprintf(out_file, "\tmovq\t %%rsp, %%rbp\n");
+    fprintf(out_file, "\tsubq\t $%d, %%rsp\n",16); // todo: correct necessary stack size
+    var_on_stack = 0;
     return name;
+}
+
+char* x86_64_func_exit(FILE* out_file)
+{
+    fprintf(out_file, "\taddq\t $%d, %%rsp\n",16); // todo: correct necessary stack size
+    fprintf(out_file, "\tpopq\t %%rbp\n");
+    fprintf(out_file, "\tret\n");
+    return NULL;
 }
 
 char* x86_64_func_call(char* name, FILE* out_file)
@@ -479,6 +509,8 @@ char* x86_64_load_var(char* var, FILE* out_file)
 static char* x86_64_return(char* r, FILE* out_file)
 {
     fprintf(out_file, "\tmovq\t %s, %%rax\n", r);
+
+    // TODO: goto exit label?
     fprintf(out_file, "\tpopq\t %%rbp\n");
     fprintf(out_file, "\tret\n");
     return r;

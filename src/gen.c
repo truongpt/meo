@@ -260,6 +260,12 @@ char* GenFunc(void* gen_prm, char* name)
     return prm->func.f_func(name, prm->out_asm_file);
 }
 
+char* GenFuncExit(void* gen_prm)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_func_exit(prm->out_asm_file);
+}
+
 char* GenFuncCall(void* gen_prm, char* name)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
@@ -284,11 +290,10 @@ char* GenGlobalVar(void* gen_prm, char* var)
     return prm->func.f_var(var, prm->out_asm_file);
 }
 
-char* GenLocalVar(void* gen_prm, char* var)
+char* GenLocalVar(void* gen_prm, char* var, int size)
 {
-   // TODO: correct
     GenParameter* prm = (GenParameter*)gen_prm;
-    return prm->func.f_var(var, prm->out_asm_file);
+    return prm->func.f_l_var(var, size, prm->out_asm_file);
 }
 
 char* GenStore(void* gen_prm, char* var, char* r)

@@ -308,7 +308,11 @@ void* ast_compile_func(ParseParameter* parse_prm, AstNode* node)
     GenFunc(gen_prm, node->left->id_str);
 
     // gen body
-    return ast_compile(parse_prm, node->right);
+    ast_compile(parse_prm, node->right);
+
+    // gen function end
+    GenFuncExit(gen_prm);
+    return NULL;
 }
 
 void ast_compile_arg(ParseParameter* parse_prm, AstNode* node, int idx)
@@ -461,10 +465,10 @@ void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, cha
         if (NULL != left && AstIntType == ((AstNode*)left)->type) {
             // declare variable
             char* label = NULL;
-            if (AstVarGlobal == ((AstNode*)left)->var_type) {
+            if (AstVarGlobal == node->var_type) {
                 label = GenGlobalVar(gen_prm, node->id_str);
-            } else if (AstVarLocal == ((AstNode*)left)->var_type) {
-                label =  GenLocalVar(gen_prm, node->id_str);
+            } else if (AstVarLocal == node->var_type) {
+                label =  GenLocalVar(gen_prm, node->id_str, 4); //todo: fix size 4byte
             } else {
                 MLOG(CLGT,"Unknow variable type %d\n",((AstNode*)left)->var_type);
             }
