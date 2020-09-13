@@ -20,6 +20,7 @@ typedef struct AstNode {
         int32_t value;
         char id_str[MAX_IDENT_LEN];
         char str[MAX_STR_LEN];
+        char exit_label[MAX_LABEL_LEN];
     };
     int32_t var_type;
     int32_t var_level;

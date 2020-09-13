@@ -43,14 +43,14 @@ static char* x86_64_zero_j(char* r, char* label, FILE* out_file);
 static char* x86_64_label(char* label, FILE* out_file);
 static char* x86_64_str_label(char* label, char* str, FILE* out_file);
 static char* x86_64_func(char* name, FILE* out_file);
-static char* x86_64_func_exit(FILE* out_file);
+static char* x86_64_func_exit(char* exit_label, FILE* out_file);
 
 static char* x86_64_func_call(char* name, FILE* out_file);
 static char* x86_64_arg(char* arg, int idx, FILE* out_file);
 
 static char* x86_64_store(char* r, char* var, FILE* out_file);
 static char* x86_64_load_var(char* var, FILE* out_file);
-static char* x86_64_return(char* r, FILE* out_file);
+static char* x86_64_return(char* r, char* exit_label, FILE* out_file);
 
 typedef struct RegMap {
     char* reg64;
@@ -461,8 +461,9 @@ char* x86_64_func(char* name, FILE* out_file)
     return name;
 }
 
-char* x86_64_func_exit(FILE* out_file)
+char* x86_64_func_exit(char* exit_label, FILE* out_file)
 {
+    fprintf(out_file, "\t%s:\n", exit_label);
     fprintf(out_file, "\taddq\t $%d, %%rsp\n",80); // todo: correct necessary stack size
     fprintf(out_file, "\tpopq\t %%rbp\n");
     fprintf(out_file, "\tret\n");
@@ -506,12 +507,9 @@ char* x86_64_load_var(char* var, FILE* out_file)
     return r;
 }
 
-static char* x86_64_return(char* r, FILE* out_file)
+static char* x86_64_return(char* r, char* exit_label, FILE* out_file)
 {
     fprintf(out_file, "\tmovq\t %s, %%rax\n", r);
-
-    // TODO: goto exit label?
-    fprintf(out_file, "\tpopq\t %%rbp\n");
-    fprintf(out_file, "\tret\n");
+    fprintf(out_file, "\tjmp\t %s\n", exit_label);
     return r;
 }

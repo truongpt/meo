@@ -57,7 +57,7 @@ char* GenZeroJump(void* gen_prm, char* r, char* label);
 char* GenLabel(void* gen_prm, char* label);
 char* GenStrLabel(void* gen_prm, char* label, char* str);
 char* GenFunc(void* gen_prm, char* name);
-char* GenFuncExit(void* gen_prm);
+char* GenFuncExit(void* gen_prm, char* exit_label);
 char* GenFuncCall(void* gen_prm, char* name);
 char* GenArg(void* gen_prm, char* arg, int idx);
 
@@ -66,7 +66,7 @@ char* GenGlobalVar(void* gen_prm, char* var);
 char* GenLocalVar(void* gen_prm, char* var, int size);
 char* GenStore(void* gen_prm, char* var, char* r);
 char* GenLoadVar(void* gen_prm, char* var);
-char* GenReturn(void* gen_prm, char* r);
+char* GenReturn(void* gen_prm, char* r, char* exit_label);
 
 #ifdef __cplusplus
 }

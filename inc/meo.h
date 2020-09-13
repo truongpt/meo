@@ -13,6 +13,7 @@
 #define MAX_IDENT_LEN 32
 #define MAX_STR_LEN   100 // todo: need dynamic
 #define MAX_IDENT_CNT 1000
+#define MAX_LABEL_LEN   10
 
 typedef struct Token {
     int32_t tok;

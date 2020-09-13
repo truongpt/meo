@@ -260,10 +260,10 @@ char* GenFunc(void* gen_prm, char* name)
     return prm->func.f_func(name, prm->out_asm_file);
 }
 
-char* GenFuncExit(void* gen_prm)
+char* GenFuncExit(void* gen_prm, char* exit_label)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
-    return prm->func.f_func_exit(prm->out_asm_file);
+    return prm->func.f_func_exit(exit_label, prm->out_asm_file);
 }
 
 char* GenFuncCall(void* gen_prm, char* name)
@@ -308,8 +308,8 @@ char* GenLoadVar(void* gen_prm, char* var)
     return prm->func.f_load_var(var, prm->out_asm_file);
 }
 
-char* GenReturn(void* gen_prm, char* r)
+char* GenReturn(void* gen_prm, char* r, char* exit_label)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
-    return prm->func.f_return(r, prm->out_asm_file);
+    return prm->func.f_return(r, exit_label, prm->out_asm_file);
 }

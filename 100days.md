@@ -313,3 +313,9 @@ assertions: 107 | 106 passed | 1 failed
 
 ### Day 55
 - Fix mistake local variable, current asm is using 64bit register -> stack area for each buffer must be 8.?
+
+### Day 56
+- **Done**
+  - Terminated processing of the function, ret -> todo end label.
+- **Todo**
+  - Fix problem not goto exit label in case IF statements.

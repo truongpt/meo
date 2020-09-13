@@ -48,13 +48,13 @@ typedef struct GenFuncTable {
     char* (*f_str_label)(char* label, char* str, FILE*);
 
     char* (*f_func)(char* name, FILE*);
-    char* (*f_func_exit)(FILE*);
+    char* (*f_func_exit)(char* exit_label, FILE*);
     char* (*f_func_call)(char* name, FILE*);
     char* (*f_arg)(char* arg, int idx, FILE*);
 
     char* (*f_store)(char* var, char* r, FILE*);
     char* (*f_load_var)(char* var, FILE*);
-    char* (*f_return)(char* r, FILE*);
+    char* (*f_return)(char* r, char* exit_label, FILE*);
 } GenFuncTable;
 
 int32_t GenLoadX86_64(GenFuncTable *func);

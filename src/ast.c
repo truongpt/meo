@@ -16,7 +16,7 @@ static int32_t invert_ast(int32_t ast_type);
 static void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, char* right);
 static void ast_map_set_label(ParseParameter* parse_prm, char* id_str,char* label);
 static char* ast_map_get_label(ParseParameter* parse_prm, char* id_str);
-static void ast_compile_string(void* gen_prm, AstNode* node);
+static void ast_compile_pre_func(void* gen_prm, AstNode* node, char* exit_label);
 
 int32_t tok_2_ast (Token token)
 {
@@ -277,7 +277,7 @@ void* ast_compile_while(ParseParameter* parse_prm, AstNode* node)
     return NULL;
 }
 
-void ast_compile_string(void* gen_prm, AstNode* node)
+void ast_compile_pre_func(void* gen_prm, AstNode* node, char* exit_label)
 {
     if (NULL == node) {
         return;
@@ -292,17 +292,24 @@ void ast_compile_string(void* gen_prm, AstNode* node)
         // change string -> label str
         memset(node->str, 0x00, sizeof(node->str));
         sprintf(node->str,"$%s",label_str);
+    } else if (AstReturn == node->type) {
+        // setting exit label
+        memset(node->exit_label, 0x00, sizeof(node->exit_label));
+        memcpy(node->exit_label, exit_label, strlen(exit_label));
     }
-
-    ast_compile_string(gen_prm, node->left);
-    ast_compile_string(gen_prm, node->right);
+    ast_compile_pre_func(gen_prm, node->left, exit_label);
+    ast_compile_pre_func(gen_prm, node->right, exit_label);
 }
 
 void* ast_compile_func(ParseParameter* parse_prm, AstNode* node)
 {
     void* gen_prm = parse_prm->gen_prm;
+    char exit_label[10];
+    memset(exit_label, 0x00, sizeof(exit_label));
+    sprintf(exit_label,"L%d",GenGetLabel(gen_prm));
+
     // gen string before
-    ast_compile_string(gen_prm, node);
+    ast_compile_pre_func(gen_prm, node, exit_label);
 
     // gen function lable
     GenFunc(gen_prm, node->left->id_str);
@@ -311,7 +318,7 @@ void* ast_compile_func(ParseParameter* parse_prm, AstNode* node)
     ast_compile(parse_prm, node->right);
 
     // gen function end
-    GenFuncExit(gen_prm);
+    GenFuncExit(gen_prm, exit_label);
     return NULL;
 }
 
@@ -489,7 +496,7 @@ void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, cha
     }
 
     case AstReturn:
-        return GenReturn(gen_prm, left);
+        return GenReturn(gen_prm, left, node->exit_label);
     case AstAssign:
         return GenStore(gen_prm, left, right);
     case AstPlus:
