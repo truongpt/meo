@@ -456,14 +456,14 @@ char* x86_64_func(char* name, FILE* out_file)
     fprintf(out_file, "%s:\n", name);
     fprintf(out_file, "\tpushq\t %%rbp\n");
     fprintf(out_file, "\tmovq\t %%rsp, %%rbp\n");
-    fprintf(out_file, "\tsubq\t $%d, %%rsp\n",16); // todo: correct necessary stack size
+    fprintf(out_file, "\tsubq\t $%d, %%rsp\n",80); // todo: correct necessary stack size
     var_on_stack = 0;
     return name;
 }
 
 char* x86_64_func_exit(FILE* out_file)
 {
-    fprintf(out_file, "\taddq\t $%d, %%rsp\n",16); // todo: correct necessary stack size
+    fprintf(out_file, "\taddq\t $%d, %%rsp\n",80); // todo: correct necessary stack size
     fprintf(out_file, "\tpopq\t %%rbp\n");
     fprintf(out_file, "\tret\n");
     return NULL;

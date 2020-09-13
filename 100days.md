@@ -310,3 +310,6 @@ assertions: 107 | 106 passed | 1 failed
   - What is good design?
   - Parkinson law? only 2x25 minutes/day for meo
   - Need improve processing declare varialbe. now it is stupid 
+
+### Day 55
+- Fix mistake local variable, current asm is using 64bit register -> stack area for each buffer must be 8.?

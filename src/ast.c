@@ -468,7 +468,7 @@ void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, cha
             if (AstVarGlobal == node->var_type) {
                 label = GenGlobalVar(gen_prm, node->id_str);
             } else if (AstVarLocal == node->var_type) {
-                label =  GenLocalVar(gen_prm, node->id_str, 4); //todo: fix size 4byte
+                label =  GenLocalVar(gen_prm, node->id_str, 8); //todo: fix size 8byte
             } else {
                 MLOG(CLGT,"Unknow variable type %d\n",((AstNode*)left)->var_type);
             }
