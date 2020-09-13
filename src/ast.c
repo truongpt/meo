@@ -297,7 +297,9 @@ void ast_compile_pre_func(void* gen_prm, AstNode* node, char* exit_label)
         memset(node->exit_label, 0x00, sizeof(node->exit_label));
         memcpy(node->exit_label, exit_label, strlen(exit_label));
     }
+
     ast_compile_pre_func(gen_prm, node->left, exit_label);
+    ast_compile_pre_func(gen_prm, node->mid, exit_label);
     ast_compile_pre_func(gen_prm, node->right, exit_label);
 }
 
