@@ -42,17 +42,21 @@ enum AstType {
     AstMinus,
     AstMul,
     AstDiv,
+
     AstLT,
     AstLE,
     AstGT,
     AstGE,
     AstEQ,
     AstNE,
+
+    AstDeclare,
     AstNumber,
     AstIntType,
     AstVoidType,
     AstString,
     AstIdentifier,
+
     AstLeftVar,
     AstRightVar,
     AstAssign,
@@ -79,6 +83,7 @@ AstNode* ast_create_link(AstNode* left, AstNode* right);
 AstNode* ast_create_ifnode(AstNode* left, AstNode* mid, AstNode* right);
 AstNode* ast_create_func(AstNode* left, AstNode* right);
 AstNode* ast_create_func_call(void);
+AstNode* ast_create_declare(AstNode* left, AstNode* right, int var_type);
 AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node);
 void* ast_compile(ParseParameter* parse_prm, AstNode* node);
 void ast_gen(ParseParameter* parse_prm, AstNode* node);

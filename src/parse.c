@@ -122,9 +122,7 @@ int32_t ParseProc(void* prm)
 AstNode* stmt_decl(ParseParameter* parse_prm)
 {
     // stmt int
-    AstNode *node, *node1;
-
-    node1 = ast_create_leaf(parse_prm->cur_token);
+    AstNode* type = ast_create_leaf(parse_prm->cur_token);
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     if (!match (parse_prm, TokenIdentifier)) {
         MLOG(CLGT,"Expect Identifier but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
@@ -137,9 +135,8 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
     }
     symtable_set_type(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level, SymbolInt);
 
-    node = ast_create_unary(parse_prm->cur_token, node1);
-    node->type = AstLeftVar; // TODO: need consider better design, I don't want directly set.
-    node->var_type = AstVarLocal;
+    AstNode* var_name = ast_create_leaf(parse_prm->cur_token);
+    AstNode* decl = ast_create_declare(type, var_name, AstVarLocal);
 
     Token var_tok = parse_prm->cur_token;
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -154,7 +151,7 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
 
         AstNode* init = expression(parse_prm);
         init = ast_create_node(op_tok, left, init);
-        node = ast_create_link(node, init);
+        decl = ast_create_link(decl, init);
     }
 
     if (match (parse_prm, TokenSemi)) {
@@ -163,7 +160,7 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
         MLOG(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm));
     }
 
-    return node;
+    return decl;
 }
 
 AstNode* stmt_if(ParseParameter* parse_prm)
@@ -357,9 +354,8 @@ AstNode* syntax_parse(ParseParameter* parse_prm)
         symtable_set_type(&(parse_prm->symbol_table), ident_tok.id_str, parse_prm->var_level, SymbolInt);
 
         // create global variable tree with type
-        AstNode* global_var = ast_create_unary(ident_tok, type);
-        global_var->type = AstLeftVar;
-        global_var->var_type = AstVarGlobal;
+        AstNode* var_name = ast_create_leaf(ident_tok);
+        AstNode* global_var = ast_create_declare(type, var_name, AstVarGlobal);
 
         if (match (parse_prm, TokenSemi)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));

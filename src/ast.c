@@ -17,6 +17,7 @@ static void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* le
 static void ast_map_set_label(ParseParameter* parse_prm, char* id_str,char* label);
 static char* ast_map_get_label(ParseParameter* parse_prm, char* id_str);
 static void ast_compile_pre_func(void* gen_prm, AstNode* node, char* exit_label);
+static void* ast_compile_declare(ParseParameter* parse_prm, AstNode* node);
 
 int32_t tok_2_ast (Token token)
 {
@@ -159,6 +160,22 @@ AstNode* ast_create_func(
     node->right = right;
     return node;
 }
+
+AstNode* ast_create_declare(
+    AstNode* left,
+    AstNode* right,
+    int var_type)
+{
+    AstNode* node = (AstNode*) malloc(sizeof(AstNode));
+    memset(node, 0x00, sizeof(AstNode));
+
+    node->type     = AstDeclare;
+    node->var_type = var_type;
+    node->left     = left;
+    node->right    = right;
+    return node;
+}
+
 
 AstNode* ast_create_func_call(void)
 {
@@ -449,6 +466,8 @@ void* ast_compile(ParseParameter* parse_prm, AstNode* node)
         return ast_compile_func(parse_prm, node);
     case AstFuncCall:
         return ast_compile_func_call(parse_prm, node);
+    case AstDeclare:
+        return ast_compile_declare(parse_prm, node);
     }
 
     char *left = NULL, *right = NULL;
@@ -462,7 +481,38 @@ void* ast_compile(ParseParameter* parse_prm, AstNode* node)
     return ast_compile_node(parse_prm, node, left, right);
 }
 
-void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, char* right )
+void* ast_compile_declare(ParseParameter* parse_prm, AstNode* node)
+{
+    if (NULL == node || NULL == node->left || NULL == node->right) {
+        MLOG(CLGT, "Declare tree is not correct\n");
+        exit(1);
+    }
+
+    void* gen_prm = parse_prm->gen_prm;
+
+    // left -> type
+    // right -> variable name
+    AstNode* var = node->right;
+
+    char* label = NULL;
+    if (AstVarGlobal == node->var_type) {
+        label = GenGlobalVar(gen_prm, var->id_str);
+    } else if (AstVarLocal == node->var_type) {
+        //todo: base on variable type (node->left) to decide size
+        label =  GenLocalVar(gen_prm, var->id_str, 8);
+    } else {
+        MLOG(CLGT,"Unknow variable type %d\n",node->left->var_type);
+    }
+
+    /* TODO: Consider how to support variable of each scope can be same name. */
+    /* I considered use node->var_level, that is passed from parse processing, but it need more consider. */
+    /* At the moment, meo only supports variable name distint */
+    // mapping ID -> label
+    ast_map_set_label(parse_prm, var->id_str, label);
+    return label;
+}
+
+void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, char* right)
 {
     void* gen_prm = parse_prm->gen_prm;
     switch (node->type) {
@@ -471,32 +521,12 @@ void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, cha
     case AstIntType:
         return node;
     case AstLeftVar:
-        if (NULL != left && AstIntType == ((AstNode*)left)->type) {
-            // declare variable
-            char* label = NULL;
-            if (AstVarGlobal == node->var_type) {
-                label = GenGlobalVar(gen_prm, node->id_str);
-            } else if (AstVarLocal == node->var_type) {
-                label =  GenLocalVar(gen_prm, node->id_str, 8); //todo: fix size 8byte
-            } else {
-                MLOG(CLGT,"Unknow variable type %d\n",((AstNode*)left)->var_type);
-            }
-
-            /* TODO: Consider how to support variable of each scope can be same name. */
-            /* I considered use node->var_level, that is passed from parse processing, but it need more consider. */
-            /* At the moment, meo only supports variable name distint */
-            // mapping ID -> label
-            ast_map_set_label(parse_prm, node->id_str, label);
-            return label;
-        }
         return ast_map_get_label(parse_prm, node->id_str);
-
     case AstIdentifier:
     {
         char* id_label = ast_map_get_label(parse_prm, node->id_str);
         return GenLoadVar(gen_prm, id_label);
     }
-
     case AstReturn:
         return GenReturn(gen_prm, left, node->exit_label);
     case AstAssign:
