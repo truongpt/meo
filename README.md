@@ -26,7 +26,7 @@
 ## Todo list
 - [ ] Support function
 - [ ] Function call. (finished simple version)
-- [ ] Global variable & local variable.
+- [x] Global variable & local variable.
 - [ ] Structure type.
 - [ ] Pointer.
 - [ ] Function pointer.
