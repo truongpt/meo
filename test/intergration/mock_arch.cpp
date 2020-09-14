@@ -38,9 +38,11 @@ static char* mock_jump(char* l, FILE* out_file);
 static char* mock_zero_j(char* r, char* l, FILE* out_file);
 static char* mock_label(char* l, FILE* out_file);
 static char* mock_func(char* name, FILE* out_file);
-static char* mock_return(char* r, FILE* out_file);
+static char* mock_func_exit(char* label, FILE* out_file);
+static char* mock_return(char* r, char* exit_label, FILE* out_file);
 
 static char* mock_var(char* var, FILE* out_file);
+static char* mock_local_var(char* var, int size, FILE* out_file);
 static char* mock_store(char* r, char* var, FILE* out_file);
 static char* mock_load_var(char* var, FILE* out_file);
 
@@ -58,6 +60,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_load  = &mock_load;
     func->f_out   = &mock_out;
     func->f_var   = &mock_var;
+    func->f_l_var = &mock_local_var;
     func->f_add   = &mock_add;
     func->f_sub   = &mock_sub;
     func->f_mul   = &mock_mul;
@@ -85,6 +88,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_zero_j = &mock_zero_j;
     func->f_label  = &mock_label;
     func->f_func   = &mock_func;
+    func->f_func_exit   = &mock_func_exit;
     func->f_return = &mock_return;
 
     func->f_store    = &mock_store;
@@ -351,11 +355,19 @@ static char* mock_func(char* name, FILE* out_file)
     return name;
 }
 
-static char* mock_return(char* r, FILE* out_file)
+static char* mock_func_exit(char* label, FILE* out_file)
+{
+    fprintf(out_file,"[EXIT]:\t %s:\n",label);
+    return label;
+}
+
+static char* mock_return(char* r, char* exit_label, FILE* out_file)
 {
     return_value.push_back(mem[r]);
     reg_free(r);
     fprintf(out_file,"[RET ]:\t %s\n",r);
+    fprintf(out_file,"[GOTO]:\t %s\n",exit_label);
+    return exit_label;
 }
 static char* mock_var(char* var, FILE* out_file)
 {
@@ -363,6 +375,14 @@ static char* mock_var(char* var, FILE* out_file)
     string s_var(var);
     g_variable[s_var] = 0;
 
+    fprintf(out_file,"[DECL]:\t %s\n",var);
+    return var;
+}
+
+static char* mock_local_var(char* var, int size, FILE* out_file)
+{
+    string s_var(var);
+    g_variable[s_var] = 0;
     fprintf(out_file,"[DECL]:\t %s\n",var);
     return var;
 }
