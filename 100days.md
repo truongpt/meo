@@ -318,4 +318,7 @@ assertions: 107 | 106 passed | 1 failed
 - **Done**
   - Terminated processing of the function, ret -> todo end label.
   - Fix problem not goto exit label in case IF statements.
+  - Refactoring variable declare
+
 - **Todo**
+  - Reduce redundance ASM code in case variable.
