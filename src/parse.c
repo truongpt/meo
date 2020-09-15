@@ -216,6 +216,9 @@ AstNode* stmt_while(ParseParameter* parse_prm)
 
 AstNode* stmt_for(ParseParameter* parse_prm)
 {
+    // handle FOR as scope to manage declare variable at pre condition.
+    parse_prm->var_level++;
+
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     if (!match(parse_prm, TokenLP)){
         MLOG(CLGT,"Missing open parentheses ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
@@ -248,6 +251,12 @@ AstNode* stmt_for(ParseParameter* parse_prm)
     Token w_token;
     w_token.tok = TokenWhile; // handle For as While
     AstNode* w_stmt = ast_create_node(w_token, cond_exp, stmt);
+
+    // clear all local variable at pre condition
+    symtable_clear_level(&(parse_prm->symbol_table), parse_prm->var_level);
+    // decrease variable level at exit FOR
+    parse_prm->var_level--;
+
     return ast_create_link(pre_exp, w_stmt);
 }
 
