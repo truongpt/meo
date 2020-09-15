@@ -13,11 +13,26 @@
 static int32_t tok_2_ast(Token token);
 static void ast_tree_free(AstNode* node);
 static int32_t invert_ast(int32_t ast_type);
-static void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, char* right);
-static void ast_map_set_label(ParseParameter* parse_prm, char* id_str,char* label);
-static char* ast_map_get_label(ParseParameter* parse_prm, char* id_str);
-static void ast_compile_pre_func(void* gen_prm, AstNode* node, char* exit_label);
-static void* ast_compile_declare(ParseParameter* parse_prm, AstNode* node);
+static void* ast_compile_node(
+    ParseParameter* parse_prm,
+    AstNode* node,
+    char* left,
+    char* right);
+static void ast_map_set_label(
+    ParseParameter* parse_prm,
+    char* id_str,
+    char* label);
+static char* ast_map_get_label(
+    ParseParameter* parse_prm,
+    char* id_str);
+static void ast_compile_pre_func(
+    void* gen_prm,
+    AstNode* node,
+    const char* exit_label,
+    int* local_var_size);
+static void* ast_compile_declare(
+    ParseParameter* parse_prm,
+    AstNode* node);
 
 int32_t tok_2_ast (Token token)
 {
@@ -294,7 +309,11 @@ void* ast_compile_while(ParseParameter* parse_prm, AstNode* node)
     return NULL;
 }
 
-void ast_compile_pre_func(void* gen_prm, AstNode* node, char* exit_label)
+void ast_compile_pre_func(
+    void* gen_prm,
+    AstNode* node,
+    const char* exit_label,
+    int* local_var_size)
 {
     if (NULL == node) {
         return;
@@ -313,11 +332,18 @@ void ast_compile_pre_func(void* gen_prm, AstNode* node, char* exit_label)
         // setting exit label
         memset(node->exit_label, 0x00, sizeof(node->exit_label));
         memcpy(node->exit_label, exit_label, strlen(exit_label));
+    } else if (AstDeclare == node->type) {
+        if (AstIntType == node->left->type) {
+            // TODO: using 4 size
+            *local_var_size += 8;
+        } else {
+            MLOG(CLGT, "Now, meo only support int type\n");
+        }
     }
 
-    ast_compile_pre_func(gen_prm, node->left, exit_label);
-    ast_compile_pre_func(gen_prm, node->mid, exit_label);
-    ast_compile_pre_func(gen_prm, node->right, exit_label);
+    ast_compile_pre_func(gen_prm, node->left, exit_label, local_var_size);
+    ast_compile_pre_func(gen_prm, node->mid, exit_label, local_var_size);
+    ast_compile_pre_func(gen_prm, node->right, exit_label, local_var_size);
 }
 
 void* ast_compile_func(ParseParameter* parse_prm, AstNode* node)
@@ -328,16 +354,22 @@ void* ast_compile_func(ParseParameter* parse_prm, AstNode* node)
     sprintf(exit_label,"L%d",GenGetLabel(gen_prm));
 
     // gen string before
-    ast_compile_pre_func(gen_prm, node, exit_label);
+    int local_var_size = 0;
+    ast_compile_pre_func(gen_prm, node, exit_label, &local_var_size);
+
+    //TODO: stack size = alignment of 16? need investigate
+
+    local_var_size = (local_var_size/16 + local_var_size%16)*16;
+    MLOG(TRACE, "local_var_size %d\n",local_var_size);
 
     // gen function lable
-    GenFunc(gen_prm, node->left->id_str);
+    GenFunc(gen_prm, node->left->id_str, local_var_size);
 
     // gen body
     ast_compile(parse_prm, node->right);
 
     // gen function end
-    GenFuncExit(gen_prm, exit_label);
+    GenFuncExit(gen_prm, exit_label, local_var_size);
     return NULL;
 }
 

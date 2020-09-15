@@ -321,4 +321,12 @@ assertions: 107 | 106 passed | 1 failed
   - Refactoring variable declare
 
 - **Todo**
-  - Reduce redundance ASM code in case variable.
+  - Reduce redundance ASM code in case variable. Notice for compare instruction.
+
+### Day 57
+- **Done**
+  - Fix problem variable at pre condition of FOR loop, handle it as local variable.
+  - Allocated stack size base on local variable.
+- **Todo**
+  - stack size = alignment of 16? need investigate
+

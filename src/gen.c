@@ -254,16 +254,16 @@ char* GenStrLabel(void* gen_prm, char* label, char* str)
     return prm->func.f_str_label(label, str, prm->out_asm_file);
 }
 
-char* GenFunc(void* gen_prm, char* name)
+char* GenFunc(void* gen_prm, char* name, int stack_size)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
-    return prm->func.f_func(name, prm->out_asm_file);
+    return prm->func.f_func(name, stack_size, prm->out_asm_file);
 }
 
-char* GenFuncExit(void* gen_prm, char* exit_label)
+char* GenFuncExit(void* gen_prm, char* exit_label, int stack_size)
 {
     GenParameter* prm = (GenParameter*)gen_prm;
-    return prm->func.f_func_exit(exit_label, prm->out_asm_file);
+    return prm->func.f_func_exit(exit_label, stack_size, prm->out_asm_file);
 }
 
 char* GenFuncCall(void* gen_prm, char* name)
