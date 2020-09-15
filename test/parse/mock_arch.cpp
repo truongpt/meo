@@ -37,8 +37,8 @@ static char* mock_ne_j(char* r1, char* r2, char* l, FILE* out_file);
 static char* mock_jump(char* l, FILE* out_file);
 static char* mock_zero_j(char* r, char* l, FILE* out_file);
 static char* mock_label(char* l, FILE* out_file);
-static char* mock_func(char* name, FILE* out_file);
-static char* mock_func_exit(char* label, FILE* out_file);
+static char* mock_func(char* name, int stack_size, FILE* out_file);
+static char* mock_func_exit(char* label, int stack_size, FILE* out_file);
 static char* mock_return(char* r, char* exit_label, FILE* out_file);
 
 static char* mock_var(char* var, FILE* out_file);
@@ -349,14 +349,16 @@ static char* mock_label(char* l, FILE* out_file)
     return l;
 }
 
-static char* mock_func(char* name, FILE* out_file)
+static char* mock_func(char* name, int stack_size, FILE* out_file)
 {
+    (void)stack_size;
     fprintf(out_file,"[FUNC]:\t %s:\n",name);
     return name;
 }
 
-static char* mock_func_exit(char* label, FILE* out_file)
+static char* mock_func_exit(char* label, int stack_size, FILE* out_file)
 {
+    (void)stack_size;
     fprintf(out_file,"[EXIT]:\t %s:\n",label);
     return label;
 }
