@@ -605,12 +605,12 @@ AstNode* function_call(ParseParameter* parse_prm, Token tok)
         if (match(parse_prm, TokenComma)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else if (match(parse_prm, TokenRP)) {
-            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
             break;
         } else {
             MLOG(CLGT,"Missing close parenthesis or comma at line: %d\n",LexGetLine(parse_prm->lex_prm));
         }
     }
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     return node;
 }
 
