@@ -26,7 +26,7 @@ typedef struct AstNode {
     int32_t var_level;
 
     // if statement: if (left) {mid} else {right};
-    // function: left -> function name, right -> function body
+    // function: left -> function name, mid -> argument, right -> function body
     struct AstNode* left;
     struct AstNode* mid;
     struct AstNode* right;
@@ -81,7 +81,7 @@ AstNode* ast_create_leaf(Token token);
 AstNode* ast_create_unary(Token token, AstNode* left);
 AstNode* ast_create_link(AstNode* left, AstNode* right);
 AstNode* ast_create_ifnode(AstNode* left, AstNode* mid, AstNode* right);
-AstNode* ast_create_func(AstNode* left, AstNode* right);
+AstNode* ast_create_func(AstNode* left, AstNode* mid, AstNode* right);
 AstNode* ast_create_func_call(void);
 AstNode* ast_create_declare(AstNode* left, AstNode* right, int var_type);
 AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node);

@@ -165,6 +165,7 @@ AstNode* ast_create_ifnode(
 
 AstNode* ast_create_func(
     AstNode* left,
+    AstNode* mid,
     AstNode* right)
 {
     AstNode* node = (AstNode*) malloc(sizeof(AstNode));
@@ -172,6 +173,7 @@ AstNode* ast_create_func(
 
     node->type = AstFunc;
     node->left = left;
+    node->mid = mid;
     node->right = right;
     return node;
 }

@@ -313,13 +313,6 @@ AstNode* stmt_expr(ParseParameter* parse_prm)
 
 AstNode* syntax_parse(ParseParameter* parse_prm)
 {
-    /* TODO: start with support void function without input param
-     * void main()
-     * {
-     *     // function body
-     * }
-     */
-
     // At first data type
     if (!match(parse_prm, TokenVoidType) && !match(parse_prm, TokenIntType)) {
         MLOG(ERROR, "The version only support void main function : %s\n",parse_prm->cur_token.id_str);
@@ -335,24 +328,31 @@ AstNode* syntax_parse(ParseParameter* parse_prm)
     // open parenthesis
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     if (match(parse_prm, TokenLP)) {
-        // TODO: parse input parameter of the function
-        // close parenthesis
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        if (!match(parse_prm, TokenRP)) {
-            MLOG(ERROR, "Expect ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
-            exit(1);
+        // parse input parameter
+        AstNode* arg = NULL;
+        while (!match(parse_prm, TokenRP)) {
+            // TODO for 2020/09/17 -> parse input parameter
+            /* arg = expression(parse_prm); */
+            /* if (match(parse_prm, TokenComma)) { */
+            /*     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token)); */
+            /* } else if (match(parse_prm, TokenLP)) { */
+            /*     break; */
+            /* } else { */
+            /*     MLOG(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm)); */
+            /* } */
         }
 
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         if (!match(parse_prm, TokenLBracket)) {
-            MLOG(ERROR, "Expect { at line: %d\n",LexGetLine(parse_prm->lex_prm));
+            MLOG(ERROR, "Expect { at line: %d but token %s\n",LexGetLine(parse_prm->lex_prm), tok2str(parse_prm->cur_token.tok));
         }
 
         AstNode* ident = ast_create_leaf(ident_tok);
         AstNode* body = stmt_scope(parse_prm);
 
         // create function tree.
-        return ast_create_func(ident, body);
+        return ast_create_func(ident, arg, body);
     } else {
         // add the global variable to symbol table
         if (Success != symtable_add(&(parse_prm->symbol_table), ident_tok.id_str, parse_prm->var_level)) {
@@ -579,7 +579,7 @@ AstNode* factor(ParseParameter* parse_prm)
         if (match(parse_prm, TokenRP)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else {
-            MLOG(CLGT,"Missing close parenthesis at line: %d\n",LexGetLine(parse_prm->lex_prm));
+            MLOG(CLGT,"Missing ( at line: %d\n",LexGetLine(parse_prm->lex_prm));
             exit(1);
         }
     } else {
@@ -607,7 +607,7 @@ AstNode* function_call(ParseParameter* parse_prm, Token tok)
         } else if (match(parse_prm, TokenRP)) {
             break;
         } else {
-            MLOG(CLGT,"Missing close parenthesis or comma at line: %d\n",LexGetLine(parse_prm->lex_prm));
+            MLOG(CLGT,"Missing ( or , at line: %d\n",LexGetLine(parse_prm->lex_prm));
         }
     }
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
