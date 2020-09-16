@@ -58,6 +58,14 @@ typedef struct RegMap {
 } RegMap;
 
 //TODO: move all global to gen structure.
+static char* const op_reg[] = {
+    "%r10",
+    "%r11",
+    "%r12",
+    "%r13",
+    "%r14",
+    "%r15"};
+
 static char* reg[] = {
     "%r10",
     "%r11",
@@ -139,8 +147,8 @@ int32_t GenLoadX86_64(GenFuncTable *func)
 
 static bool is_op_reg(char* arg)
 {
-    for (int i = 0; i < sizeof(reg)/sizeof(*reg); i++) {
-        if (!strncmp(arg, reg[i], sizeof(*reg))) {
+    for (int i = 0; i < sizeof(op_reg)/sizeof(*op_reg); i++) {
+        if (!strncmp(arg, op_reg[i], sizeof(*op_reg))) {
             return true;
         }
     }
@@ -478,7 +486,8 @@ char* x86_64_func_exit(char* exit_label, int stack_size, FILE* out_file)
 char* x86_64_func_call(char* name, FILE* out_file)
 {
     fprintf(out_file, "\tcall\t %s\n", name);
-    return name;
+    // return stored result register
+    return "%rax";
 }
 
 char* x86_64_arg(char* arg, int idx, FILE* out_file)
@@ -501,7 +510,12 @@ char* x86_64_arg(char* arg, int idx, FILE* out_file)
 char* x86_64_store(char* var, char* r, FILE* out_file)
 {
     fprintf(out_file, "\tmovq\t %s, %s\n", r, var);
-    reg_free(r);
+
+    // todo: in func return, r can be %rax register.
+    // need consider better solution
+    if (is_op_reg(r)) {
+        reg_free(r);
+    }
     return var;
 }
 
