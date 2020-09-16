@@ -330,3 +330,10 @@ assertions: 107 | 106 passed | 1 failed
 - **Todo**
   - stack size = alignment of 16? need investigate
 
+### Day 58
+- **Done**
+  - Support call function without input -> function(void).
+  - Support received return value of function.
+- **Doing**
+  - Implementing funciton with non-void argument.
+
