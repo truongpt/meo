@@ -630,14 +630,13 @@ AstNode* function_call(ParseParameter* parse_prm, Token tok)
     AstNode* arg = node;
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     while (!match(parse_prm, TokenRP)) {
-
-        if (match (parse_prm, TokenIdentifier) && -1 == symtable_find_valid(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level)) {
-            MLOG(CLGT, "Can not find symbol %s at line: %d\n",parse_prm->cur_token.id_str, LexGetLine(parse_prm->lex_prm));
-            exit(1);
+        if (match (parse_prm, TokenString)) {
+            arg->left = ast_create_leaf(parse_prm->cur_token);
+            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        } else {
+            arg->left = expression(parse_prm);
         }
 
-        arg->left = ast_create_leaf(parse_prm->cur_token);
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         arg = arg->left;
         if (match(parse_prm, TokenComma)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -645,6 +644,7 @@ AstNode* function_call(ParseParameter* parse_prm, Token tok)
             break;
         } else {
             MLOG(CLGT,"Missing ( or , at line: %d\n",LexGetLine(parse_prm->lex_prm));
+            exit(1);
         }
     }
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
