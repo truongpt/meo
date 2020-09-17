@@ -24,8 +24,8 @@
 - Can compile all files in [sample](sample), ex [fibonacci.c](sample/fibonacci.c)
 
 ## Todo list
-- [ ] Support function
-- [ ] Function call. (finished simple version)
+- [x] Support function.
+- [x] Function call.
 - [x] Global variable & local variable.
 - [ ] Structure type.
 - [ ] Pointer.

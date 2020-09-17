@@ -339,7 +339,7 @@ assertions: 107 | 106 passed | 1 failed
 
 ### Day 59
 - **Done**
-  -  Support function.
+  -  Support function (just < 6 input parameters).
 - **Doing**
 - **Node**
   - Careful of left var vs right var.
