@@ -178,6 +178,28 @@ AstNode* ast_create_func(
     return node;
 }
 
+AstNode* ast_create_arg_init(
+    Token token,
+    int arg_order)
+{
+    AstNode* var = ast_create_leaf(token);
+    var->type = AstLeftVar;
+
+    AstNode* arg = (AstNode*) malloc(sizeof(AstNode));
+    memset(arg, 0x00, sizeof(AstNode));
+    arg->type = AstFuncArg;
+    arg->arg_order = arg_order;
+    arg->left = NULL;
+    arg->right = NULL;
+
+    AstNode* node = (AstNode*) malloc(sizeof(AstNode));
+    memset(node, 0x00, sizeof(AstNode));
+    node->type = AstAssign;
+    node->left = var;
+    node->right = arg;
+
+    return node;
+}
 AstNode* ast_create_declare(
     AstNode* left,
     AstNode* right,
@@ -337,6 +359,7 @@ void ast_compile_pre_func(
     } else if (AstDeclare == node->type) {
         if (AstIntType == node->left->type) {
             // TODO: using 4 size
+            MLOG(TRACE, "var name: %s\n",node->right->id_str);
             *local_var_size += 8;
         } else {
             MLOG(CLGT, "Now, meo only support int type\n");
@@ -360,12 +383,14 @@ void* ast_compile_func(ParseParameter* parse_prm, AstNode* node)
     ast_compile_pre_func(gen_prm, node, exit_label, &local_var_size);
 
     //TODO: stack size = alignment of 16? need investigate
-
-    local_var_size = (local_var_size/16 + local_var_size%16)*16;
+    local_var_size = ((local_var_size+15)/16)*16;
     MLOG(TRACE, "local_var_size %d\n",local_var_size);
 
     // gen function lable
     GenFunc(gen_prm, node->left->id_str, local_var_size);
+
+    // gen input argument
+    ast_compile(parse_prm, node->mid);
 
     // gen body
     ast_compile(parse_prm, node->right);
@@ -563,6 +588,8 @@ void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, cha
     }
     case AstReturn:
         return GenReturn(gen_prm, left, node->exit_label);
+    case AstFuncArg:
+        return GenFuncArg(gen_prm, node->arg_order);
     case AstAssign:
         return GenStore(gen_prm, left, right);
     case AstPlus:

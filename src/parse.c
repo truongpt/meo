@@ -311,6 +311,32 @@ AstNode* stmt_expr(ParseParameter* parse_prm)
     return node;
 }
 
+AstNode* func_arg_parse(ParseParameter* parse_prm, int arg_order)
+{
+    // stmt int
+    AstNode* type = ast_create_leaf(parse_prm->cur_token);
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    if (!match (parse_prm, TokenIdentifier)) {
+        MLOG(CLGT,"Expect Identifier but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
+    }
+
+    // add the identifier to symbol table
+    if (Success != symtable_add(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level)) {
+        MLOG(CLGT, "Duplicated declare variable: %s\n",parse_prm->cur_token.id_str);
+        exit(1);
+    }
+    symtable_set_type(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level, SymbolInt);
+
+    AstNode* var_name = ast_create_leaf(parse_prm->cur_token);
+    AstNode* decl = ast_create_declare(type, var_name, AstVarLocal);
+
+    AstNode* init = ast_create_arg_init(parse_prm->cur_token, arg_order);
+    decl = ast_create_link(decl, init);
+
+    LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    return decl;
+}
+
 AstNode* syntax_parse(ParseParameter* parse_prm)
 {
     // At first data type
@@ -328,19 +354,21 @@ AstNode* syntax_parse(ParseParameter* parse_prm)
     // open parenthesis
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     if (match(parse_prm, TokenLP)) {
+        // parse as function
+        parse_prm->var_level++;
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         // parse input parameter
         AstNode* arg = NULL;
+        int arg_order = 0;
         while (!match(parse_prm, TokenRP)) {
-            // TODO for 2020/09/17 -> parse input parameter
-            /* arg = expression(parse_prm); */
-            /* if (match(parse_prm, TokenComma)) { */
-            /*     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token)); */
-            /* } else if (match(parse_prm, TokenLP)) { */
-            /*     break; */
-            /* } else { */
-            /*     MLOG(CLGT,"Missing semicolon at line: %d\n",LexGetLine(parse_prm->lex_prm)); */
-            /* } */
+            arg = ast_create_link(arg, func_arg_parse(parse_prm, arg_order++));
+            if (match(parse_prm, TokenComma)) {
+                LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+            } else if (match(parse_prm, TokenRP)) {
+                break;
+            } else {
+                MLOG(CLGT,"Missing ) or , at line: %d\n",LexGetLine(parse_prm->lex_prm));
+            }
         }
 
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
@@ -351,6 +379,9 @@ AstNode* syntax_parse(ParseParameter* parse_prm)
         AstNode* ident = ast_create_leaf(ident_tok);
         AstNode* body = stmt_scope(parse_prm);
 
+        // clear all local variable in function
+        symtable_clear_level(&(parse_prm->symbol_table), parse_prm->var_level);
+        parse_prm->var_level--;
         // create function tree.
         return ast_create_func(ident, arg, body);
     } else {
@@ -599,6 +630,12 @@ AstNode* function_call(ParseParameter* parse_prm, Token tok)
     AstNode* arg = node;
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     while (!match(parse_prm, TokenRP)) {
+
+        if (match (parse_prm, TokenIdentifier) && -1 == symtable_find_valid(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level)) {
+            MLOG(CLGT, "Can not find symbol %s at line: %d\n",parse_prm->cur_token.id_str, LexGetLine(parse_prm->lex_prm));
+            exit(1);
+        }
+
         arg->left = ast_create_leaf(parse_prm->cur_token);
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         arg = arg->left;

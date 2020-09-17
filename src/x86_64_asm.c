@@ -43,6 +43,7 @@ static char* x86_64_zero_j(char* r, char* label, FILE* out_file);
 static char* x86_64_label(char* label, FILE* out_file);
 static char* x86_64_str_label(char* label, char* str, FILE* out_file);
 static char* x86_64_func(char* name, int stack_size, FILE* out_file);
+static char* x86_64_func_arg(int arg_order, FILE* out_file);
 static char* x86_64_func_exit(char* exit_label, int stack_size, FILE* out_file);
 
 static char* x86_64_func_call(char* name, FILE* out_file);
@@ -132,6 +133,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_label      = &x86_64_label;
     func->f_str_label  = &x86_64_str_label;
     func->f_func       = &x86_64_func;
+    func->f_func_arg   = &x86_64_func_arg;
     func->f_func_exit  = &x86_64_func_exit;
     func->f_func_call  = &x86_64_func_call;
     func->f_arg        = &x86_64_arg;
@@ -472,6 +474,15 @@ char* x86_64_func(char* name, int stack_size, FILE* out_file)
     var_on_stack = 0;
     allocated_stack = stack_size;
     return name;
+}
+
+char* x86_64_func_arg(int arg_order, FILE* out_file)
+{
+    if (arg_order > 5) {
+        MLOG(ERROR, "Now, only support until 6 input parameter\n");
+        return NULL;
+    }
+    return arg_reg[arg_order];
 }
 
 char* x86_64_func_exit(char* exit_label, int stack_size, FILE* out_file)

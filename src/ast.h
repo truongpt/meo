@@ -23,7 +23,9 @@ typedef struct AstNode {
         char exit_label[MAX_LABEL_LEN];
     };
     int32_t var_type;
-    int32_t var_level;
+
+    int32_t var_level; // use to manage local var in scope
+    int32_t arg_order; // use to handle function argument.
 
     // if statement: if (left) {mid} else {right};
     // function: left -> function name, mid -> argument, right -> function body
@@ -70,6 +72,7 @@ enum AstType {
     AstIf,
     AstWhile,
     AstFunc,
+    AstFuncArg,
     AstFuncCall,
     AstReturn,
     // Link statements
@@ -82,7 +85,10 @@ AstNode* ast_create_unary(Token token, AstNode* left);
 AstNode* ast_create_link(AstNode* left, AstNode* right);
 AstNode* ast_create_ifnode(AstNode* left, AstNode* mid, AstNode* right);
 AstNode* ast_create_func(AstNode* left, AstNode* mid, AstNode* right);
+AstNode* ast_create_arg_init(Token token, int arg_order);
+AstNode* ast_create_leaf(Token token);
 AstNode* ast_create_func_call(void);
+
 AstNode* ast_create_declare(AstNode* left, AstNode* right, int var_type);
 AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node);
 void* ast_compile(ParseParameter* parse_prm, AstNode* node);

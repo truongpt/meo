@@ -260,6 +260,12 @@ char* GenFunc(void* gen_prm, char* name, int stack_size)
     return prm->func.f_func(name, stack_size, prm->out_asm_file);
 }
 
+char* GenFuncArg(void* gen_prm, int arg_order)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_func_arg(arg_order, prm->out_asm_file);
+}
+
 char* GenFuncExit(void* gen_prm, char* exit_label, int stack_size)
 {
     GenParameter* prm = (GenParameter*)gen_prm;

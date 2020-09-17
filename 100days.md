@@ -337,3 +337,10 @@ assertions: 107 | 106 passed | 1 failed
 - **Doing**
   - Implementing funciton with non-void argument.
 
+### Day 59
+- **Done**
+  -  Support function.
+- **Doing**
+- **Node**
+  - Careful of left var vs right var.
+
