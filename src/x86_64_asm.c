@@ -498,7 +498,9 @@ char* x86_64_func_call(char* name, FILE* out_file)
 {
     fprintf(out_file, "\tcall\t %s\n", name);
     // return stored result register
-    return "%rax";
+    char* r = reg_alloc();
+    fprintf(out_file, "\tmovq\t %%rax, %s\n", r);
+    return r;
 }
 
 char* x86_64_arg(char* arg, int idx, FILE* out_file)
