@@ -278,6 +278,18 @@ char* GenFuncCall(void* gen_prm, char* name)
     return prm->func.f_func_call(name, prm->out_asm_file);
 }
 
+char* GenRegBackup(void* gen_prm)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_reg_backup(prm->out_asm_file);
+}
+
+char* GenRegRestore(void* gen_prm)
+{
+    GenParameter* prm = (GenParameter*)gen_prm;
+    return prm->func.f_reg_restore(prm->out_asm_file);
+}
+
 char* GenArg(void* gen_prm, char* arg, int idx)
 {
     GenParameter* prm = (GenParameter*)gen_prm;

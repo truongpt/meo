@@ -52,6 +52,8 @@ static char* x86_64_arg(char* arg, int idx, FILE* out_file);
 static char* x86_64_store(char* r, char* var, FILE* out_file);
 static char* x86_64_load_var(char* var, FILE* out_file);
 static char* x86_64_return(char* r, char* exit_label, FILE* out_file);
+static char* x86_64_reg_backup(FILE* out_file);
+static char* x86_64_reg_restore(FILE* out_file);
 
 typedef struct RegMap {
     char* reg64;
@@ -140,6 +142,8 @@ int32_t GenLoadX86_64(GenFuncTable *func)
     func->f_store      = &x86_64_store;
     func->f_load_var   = &x86_64_load_var;
     func->f_return     = &x86_64_return;
+    func->f_reg_backup = &x86_64_reg_backup;
+    func->f_reg_restore= &x86_64_reg_restore;
 
     cur_reg = 0;
     var_on_stack = 0;
@@ -544,4 +548,28 @@ static char* x86_64_return(char* r, char* exit_label, FILE* out_file)
     fprintf(out_file, "\tmovq\t %s, %%rax\n", r);
     fprintf(out_file, "\tjmp\t %s\n", exit_label);
     return r;
+}
+
+static char* x86_64_reg_backup(FILE* out_file)
+{
+    // TODO
+    /* int size = sizeof(arg_reg)/sizeof(*arg_reg) * 16; */
+    /* fprintf(out_file, "\tsubq\t $%d, %%rsp\n",size); */
+    /* for (int i = 1; i <= sizeof(arg_reg)/sizeof(*arg_reg); i++) { */
+    /*     fprintf(out_file, "\tmovq\t %s, %d(%%rbp)\n", arg_reg[i-1], i*(-8)); */
+    /* } */
+
+    return NULL;
+}
+
+static char* x86_64_reg_restore(FILE* out_file)
+{
+    // TODO
+    /* int size = sizeof(arg_reg)/sizeof(*arg_reg) * 16; */
+    /* fprintf(out_file, "\tsubq\t $%d, %%rsp\n",size); */
+    /* for (int i = 1; i <= sizeof(arg_reg)/sizeof(*arg_reg); i++) { */
+    /*     fprintf(out_file, "\tmovq\t %d(%%rbp), %s\n", i*(-8), arg_reg[i-1]); */
+    /* } */
+    /* fprintf(out_file, "\taddq\t $%d, %%rsp\n",size); */
+    return NULL;
 }

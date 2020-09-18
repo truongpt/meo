@@ -69,6 +69,8 @@ char* GenStore(void* gen_prm, char* var, char* r);
 char* GenLoadVar(void* gen_prm, char* var);
 char* GenReturn(void* gen_prm, char* r, char* exit_label);
 
+char* GenRegBackup(void* gen_prm);
+char* GenRegRestore(void* gen_prm);
 #ifdef __cplusplus
 }
 #endif
