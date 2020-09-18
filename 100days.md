@@ -345,3 +345,9 @@ assertions: 107 | 106 passed | 1 failed
 - **Node**
   - Careful of left var vs right var.
 
+### Day 60
+- **Done**
+  - Support pass expression to function.
+- **Todo**
+  - How to backup register when calling function.
+
