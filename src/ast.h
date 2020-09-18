@@ -73,7 +73,9 @@ enum AstType {
     AstWhile,
     AstFunc,
     AstFuncArg,
+
     AstFuncCall,
+    AstArgPass,
     AstReturn,
     // Link statements
     AstLink
@@ -88,6 +90,7 @@ AstNode* ast_create_func(AstNode* left, AstNode* mid, AstNode* right);
 AstNode* ast_create_arg_init(Token token, int arg_order);
 AstNode* ast_create_leaf(Token token);
 AstNode* ast_create_func_call(void);
+AstNode* ast_create_arg_pass(AstNode* arg, int arg_order);
 
 AstNode* ast_create_declare(AstNode* left, AstNode* right, int var_type);
 AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node);

@@ -226,6 +226,18 @@ AstNode* ast_create_func_call(void)
     return node;
 }
 
+AstNode* ast_create_arg_pass(AstNode* arg, int arg_order)
+{
+    AstNode* node = (AstNode*) malloc(sizeof(AstNode));
+    memset(node, 0x00, sizeof(AstNode));
+    node->type = AstArgPass;
+    node->arg_order = arg_order;
+    node->left = arg;
+    node->right = NULL;
+    return node;
+
+}
+
 AstNode* ast_create_node(
     Token token,
     AstNode* left,
@@ -400,24 +412,10 @@ void* ast_compile_func(ParseParameter* parse_prm, AstNode* node)
     return NULL;
 }
 
-void ast_compile_arg(ParseParameter* parse_prm, AstNode* node, int idx)
-{
-    if (NULL == node) {
-        return;
-    }
-
-    // gen arg
-    char* arg = ast_compile_node(parse_prm, node, NULL, NULL);
-    GenArg(parse_prm->gen_prm, arg, idx);
-
-    // gen next arg
-    ast_compile_arg(parse_prm, node->left, ++idx);
-}
-
 void* ast_compile_func_call(ParseParameter* parse_prm, AstNode* node)
 {
     //gen and pass input parameter.
-    ast_compile_arg(parse_prm, node->left, 0);
+    ast_compile(parse_prm, node->left);
 
     // call function
     return GenFuncCall(parse_prm->gen_prm, node->right->id_str);
@@ -590,6 +588,8 @@ void* ast_compile_node(ParseParameter* parse_prm, AstNode* node, char* left, cha
         return GenReturn(gen_prm, left, node->exit_label);
     case AstFuncArg:
         return GenFuncArg(gen_prm, node->arg_order);
+    case AstArgPass:
+        return GenArg(parse_prm->gen_prm, left, node->arg_order);
     case AstAssign:
         return GenStore(gen_prm, left, right);
     case AstPlus:

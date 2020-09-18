@@ -627,17 +627,20 @@ AstNode* function_call(ParseParameter* parse_prm, Token tok)
     AstNode* node = ast_create_func_call();
     node->right = ast_create_leaf(tok); // function name
 
-    AstNode* arg = node;
+    AstNode *arg = NULL, *arg_seq = NULL;
+    int arg_order = 0;
+
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     while (!match(parse_prm, TokenRP)) {
         if (match (parse_prm, TokenString)) {
-            arg->left = ast_create_leaf(parse_prm->cur_token);
+            arg = ast_create_leaf(parse_prm->cur_token);
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else {
-            arg->left = expression(parse_prm);
+            arg = expression(parse_prm);
         }
 
-        arg = arg->left;
+        arg_seq = ast_create_link(arg_seq, ast_create_arg_pass(arg, arg_order++));
+
         if (match(parse_prm, TokenComma)) {
             LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         } else if (match(parse_prm, TokenRP)) {
@@ -647,6 +650,7 @@ AstNode* function_call(ParseParameter* parse_prm, Token tok)
             exit(1);
         }
     }
+    node->left = arg_seq;
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     return node;
 }
