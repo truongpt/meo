@@ -547,6 +547,10 @@ static char* x86_64_return(char* r, char* exit_label, FILE* out_file)
 {
     fprintf(out_file, "\tmovq\t %s, %%rax\n", r);
     fprintf(out_file, "\tjmp\t %s\n", exit_label);
+
+    if (is_op_reg(r)) {
+        reg_free(r);
+    }
     return r;
 }
 
