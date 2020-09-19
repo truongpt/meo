@@ -351,3 +351,11 @@ assertions: 107 | 106 passed | 1 failed
 - **Todo**
   - How to backup register when calling function.
 
+### Day 61
+- **Done**
+  - Fix problem because lack free register when return operator.
+- **Todo**
+  - Study call convention of x86-64.
+  - Free register in case unary tree, example int main() {5;6;}
+- **Node**
+  - https://stackoverflow.com/questions/18024672/what-registers-are-preserved-through-a-linux-x86-64-function-call
