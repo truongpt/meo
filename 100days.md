@@ -359,3 +359,8 @@ assertions: 107 | 106 passed | 1 failed
   - Free register in case unary tree, example int main() {5;6;}
 - **Node**
   - https://stackoverflow.com/questions/18024672/what-registers-are-preserved-through-a-linux-x86-64-function-call
+
+### Day 62
+- Study x86: https://stackoverflow.com/tags/x86/info
+- Consider improve ASM code, current it seems stupid.
+- Consider how to release register in case unary tree.
