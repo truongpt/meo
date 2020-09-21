@@ -364,3 +364,6 @@ assertions: 107 | 106 passed | 1 failed
 - Study x86: https://stackoverflow.com/tags/x86/info
 - Consider improve ASM code, current it seems stupid.
 - Consider how to release register in case unary tree.
+
+### Day 63
+- Fix bug leak register when compile unary tree.
