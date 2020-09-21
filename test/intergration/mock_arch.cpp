@@ -9,6 +9,7 @@
 using namespace std;
 static char* mock_load(int32_t value, FILE* out_file);
 static char* mock_out(char* r, FILE* out_file);
+static char* mock_free(char* r, FILE* out_file);
 
 static char* mock_add(char* r1, char* r2, FILE* out_file);
 static char* mock_sub(char* r1, char* r2, FILE* out_file);
@@ -59,6 +60,7 @@ int32_t GenLoadX86_64(GenFuncTable *func)
 {
     func->f_load  = &mock_load;
     func->f_out   = &mock_out;
+    func->f_free  = &mock_free;
     func->f_var   = &mock_var;
     func->f_l_var = &mock_local_var;
     func->f_add   = &mock_add;
@@ -124,8 +126,8 @@ char* reg_alloc() {
 
 void reg_free(char* r) {
     if (mem.find(r) == mem.end()) {
-        cout << "Free reg is not correct" << endl;
-        exit(1);
+        // cout << "Free reg is not correct: " << r << endl;
+        return;
     }
     reg[--cur] = r;
 }
@@ -145,6 +147,12 @@ static char* mock_out(char* r, FILE* out_file)
 {
     reg_free(r);
     return r;
+}
+
+static char* mock_free(char* r, FILE* out_file)
+{
+    reg_free(r);
+    return NULL;
 }
 
 static char* mock_add(char* r1, char* r2, FILE* out_file)

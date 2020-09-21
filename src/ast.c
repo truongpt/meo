@@ -645,7 +645,7 @@ void ast_gen(ParseParameter* parse_prm, AstNode* node)
     } else {
         char* r = ast_compile(parse_prm, node);
         if (NULL != r) {
-            MLOG(CLGT, "final reg = %s",r);
+            MLOG(TRACE, "final reg = %s",r);
             GenFree(parse_prm->gen_prm, r);
         }
         ast_tree_free(node);
