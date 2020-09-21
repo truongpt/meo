@@ -167,16 +167,40 @@ char* reg_alloc()
         MLOG(CLGT,"Not availabel register\n");
         return NULL;
     }
+
+    MLOG(TRACE,"Alloc ============================\n");
+    for (int i = 0; i < sizeof(reg)/sizeof(*reg); i++) {
+        MLOG(TRACE,"Alloc: %d = %s\n",i,reg[i]);
+    }
+    MLOG(TRACE,"Alloc ============================\n");
     return reg[cur_reg++];
 }
 
 void reg_free(char* r)
 {
-    if (0 == cur_reg) {
-        MLOG(CLGT,"Free register invalid\n");
-        exit(1);
+    if (!is_op_reg(r)) {
+        MLOG(TRACE,"Oops the register is not op register: %s\n",r);
+        return;
     }
+
+    if (0 == cur_reg) {
+        MLOG(CLGT,"Free register invalid: r = %s\n",r);
+        return;
+    }
+
+    for (int i = cur_reg; i < sizeof(reg)/sizeof(*reg); i++) {
+        if (!strncmp(r, reg[i], sizeof(*reg))) {
+            MLOG(CLGT,"Oops the register is freed\n");
+            return;
+        }
+    }
+
     reg[--cur_reg] = r;
+    MLOG(TRACE,"Free ============================\n");
+    for (int i = 0; i < sizeof(reg)/sizeof(*reg); i++) {
+        MLOG(TRACE,"Free: %d = %s\n",i,reg[i]);
+    }
+    MLOG(TRACE,"Free ============================\n");
 }
 
 char* reg64_to_8(char* r)
@@ -199,7 +223,7 @@ char* x86_64_load(int32_t value, FILE* out_file)
 char* x86_64_free(char* r, FILE* out_file)
 {
     reg_free(r);
-    return r;
+    return NULL;
 }
 
 char* x86_64_out(char* r, FILE* out_file)
@@ -207,7 +231,7 @@ char* x86_64_out(char* r, FILE* out_file)
     fprintf(out_file,"\tmovq\t %s, %s\n",r,"%rax");
     fprintf(out_file,"\tret\n");
     reg_free(r);
-    return r;
+    return NULL;
 }
 
 char* x86_64_var(char* var, FILE* out_file)
@@ -520,7 +544,7 @@ char* x86_64_arg(char* arg, int idx, FILE* out_file)
     }
 
     fprintf(out_file, "\tmovq\t %s, %s\n", arg, arg_reg[idx]);
-    return arg;
+    return NULL;
 }
 
 
@@ -551,7 +575,7 @@ static char* x86_64_return(char* r, char* exit_label, FILE* out_file)
     if (is_op_reg(r)) {
         reg_free(r);
     }
-    return r;
+    return NULL;
 }
 
 static char* x86_64_reg_backup(FILE* out_file)

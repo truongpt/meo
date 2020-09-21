@@ -521,9 +521,19 @@ void* ast_compile(ParseParameter* parse_prm, AstNode* node)
     switch (node->type)
     {
     case AstLink:
-        ast_compile(parse_prm, node->left);
-        ast_compile(parse_prm, node->right);
+    {
+        char* l = (char*)ast_compile(parse_prm, node->left);
+        if (NULL != l) {
+            MLOG(TRACE, "l = %s\n",l);
+            GenFree(parse_prm->gen_prm, l);
+        }
+        char* r = ast_compile(parse_prm, node->right);
+        if (NULL != r) {
+            MLOG(TRACE, "r = %s\n",r);
+            GenFree(parse_prm->gen_prm, r);
+        }
         return NULL;
+    }
     case AstIf:
         return ast_compile_if(parse_prm, node);
     case AstWhile:
@@ -633,7 +643,11 @@ void ast_gen(ParseParameter* parse_prm, AstNode* node)
         // todo:
         // ast_interpret(parse_prm, node);
     } else {
-        ast_compile(parse_prm, node);
+        char* r = ast_compile(parse_prm, node);
+        if (NULL != r) {
+            MLOG(CLGT, "final reg = %s",r);
+            GenFree(parse_prm->gen_prm, r);
+        }
         ast_tree_free(node);
     }
 }
