@@ -367,3 +367,9 @@ assertions: 107 | 106 passed | 1 failed
 
 ### Day 63
 - Fix bug leak register when compile unary tree.
+
+### Day 64
+- How to backup register?
+- What is call convention of x86-64.
+  - https://stackoverflow.com/questions/63865026/what-does-it-mean-that-registers-are-preserved-across-function-calls
+  - https://stackoverflow.com/questions/2535989/what-are-the-calling-conventions-for-unix-linux-system-calls-and-user-space-f
