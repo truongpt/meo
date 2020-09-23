@@ -373,3 +373,6 @@ assertions: 107 | 106 passed | 1 failed
 - What is call convention of x86-64.
   - https://stackoverflow.com/questions/63865026/what-does-it-mean-that-registers-are-preserved-across-function-calls
   - https://stackoverflow.com/questions/2535989/what-are-the-calling-conventions-for-unix-linux-system-calls-and-user-space-f
+
+### Day 65.
+- Continue study call convention.
