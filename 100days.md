@@ -376,3 +376,6 @@ assertions: 107 | 106 passed | 1 failed
 
 ### Day 65.
 - Continue study call convention.
+
+### Day 66
+- https://aaronbloomfield.github.io/pdr/book/x86-64bit-ccc-chapter.pdf
