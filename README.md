@@ -22,6 +22,7 @@
 
 ## Current status.
 - Can compile all files in [sample](sample), ex [fibonacci.c](sample/fibonacci.c)
+- Can compiler recursion, as the fibonacci recursion version [recursion.c](sample/recursion.c)
 
 ## Todo list
 - [x] Support function.

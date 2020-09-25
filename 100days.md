@@ -378,4 +378,8 @@ assertions: 107 | 106 passed | 1 failed
 - Continue study call convention.
 
 ### Day 66
+- Do nothing
+
+### Day 67
+- Add backup/restore register, need more study but tentative backup all register :-)
 - https://aaronbloomfield.github.io/pdr/book/x86-64bit-ccc-chapter.pdf
