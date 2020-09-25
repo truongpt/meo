@@ -3,6 +3,11 @@
  * This file is released under the GPLv3
  */
 
+/*
+ * The document should be read
+ * - https://aaronbloomfield.github.io/pdr/book/x86-64bit-ccc-chapter.pdf
+ */
+
 #include <string.h>
 #include "log.h"
 #include "gen.h"
@@ -496,6 +501,8 @@ char* x86_64_func(char* name, int stack_size, FILE* out_file)
     fprintf(out_file, "\t.globl\t %s\n", name);
     fprintf(out_file, "\t.type\t %s, @function\n", name);
     fprintf(out_file, "%s:\n", name);
+    // backup register
+    x86_64_reg_backup(out_file);
     fprintf(out_file, "\tpushq\t %%rbp\n");
     fprintf(out_file, "\tmovq\t %%rsp, %%rbp\n");
     fprintf(out_file, "\tsubq\t $%d, %%rsp\n",stack_size);
@@ -518,6 +525,8 @@ char* x86_64_func_exit(char* exit_label, int stack_size, FILE* out_file)
     fprintf(out_file, "\t%s:\n", exit_label);
     fprintf(out_file, "\taddq\t $%d, %%rsp\n",stack_size);
     fprintf(out_file, "\tpopq\t %%rbp\n");
+    // restore register
+    x86_64_reg_restore(out_file);
     fprintf(out_file, "\tret\n");
     return NULL;
 }
@@ -580,24 +589,18 @@ static char* x86_64_return(char* r, char* exit_label, FILE* out_file)
 
 static char* x86_64_reg_backup(FILE* out_file)
 {
-    // TODO
-    /* int size = sizeof(arg_reg)/sizeof(*arg_reg) * 16; */
-    /* fprintf(out_file, "\tsubq\t $%d, %%rsp\n",size); */
-    /* for (int i = 1; i <= sizeof(arg_reg)/sizeof(*arg_reg); i++) { */
-    /*     fprintf(out_file, "\tmovq\t %s, %d(%%rbp)\n", arg_reg[i-1], i*(-8)); */
-    /* } */
+    // TODO: just tentatve backup all parameter
+    for (int i = 0; i < sizeof(op_reg)/sizeof(*op_reg); i++) {
+        fprintf(out_file, "\tpushq\t %s\n", op_reg[i]);
+    }
 
     return NULL;
 }
 
 static char* x86_64_reg_restore(FILE* out_file)
 {
-    // TODO
-    /* int size = sizeof(arg_reg)/sizeof(*arg_reg) * 16; */
-    /* fprintf(out_file, "\tsubq\t $%d, %%rsp\n",size); */
-    /* for (int i = 1; i <= sizeof(arg_reg)/sizeof(*arg_reg); i++) { */
-    /*     fprintf(out_file, "\tmovq\t %d(%%rbp), %s\n", i*(-8), arg_reg[i-1]); */
-    /* } */
-    /* fprintf(out_file, "\taddq\t $%d, %%rsp\n",size); */
+    for (int i = sizeof(op_reg)/sizeof(*op_reg) - 1; i >= 0; i--) {
+        fprintf(out_file, "\tpopq\t %s\n", op_reg[i]);
+    }
     return NULL;
 }

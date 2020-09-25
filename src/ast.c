@@ -414,20 +414,11 @@ void* ast_compile_func(ParseParameter* parse_prm, AstNode* node)
 
 void* ast_compile_func_call(ParseParameter* parse_prm, AstNode* node)
 {
-    // back up register
-    void* gen_prm = parse_prm->gen_prm;
-    GenRegBackup(gen_prm);
-
     //gen and pass input parameter.
     ast_compile(parse_prm, node->left);
 
     // call function
-    char* r =  GenFuncCall(gen_prm, node->right->id_str);
-
-    // restore register.
-    GenRegRestore(gen_prm);
-
-    return r;
+    return  GenFuncCall(parse_prm->gen_prm, node->right->id_str);
 }
 
 char* gen_bin_op(void* gen_prm, char* left, char* right, int type)
