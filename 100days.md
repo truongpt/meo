@@ -385,6 +385,7 @@ assertions: 107 | 106 passed | 1 failed
 - https://aaronbloomfield.github.io/pdr/book/x86-64bit-ccc-chapter.pdf
 
 ### Day 68
+- Consider how to process for local variable same name with diff scope.
 - **Todo**
  - [ ] Support local variable can be same name.
  - [ ] Support input arg by directly function return -> f(g(a));
