@@ -16,6 +16,7 @@ int32_t symtable_init(SymbolTable* st)
 {
     memset((void*)st, 0x00, sizeof(SymbolTable));
     st->cur_pos = -1;
+    st->cur_id = 0;
     return Success;
 }
 
@@ -35,7 +36,7 @@ int32_t symtable_add(SymbolTable* st, char* symbol, int level)
     memcpy(st->data[st->cur_pos].name , symbol, size_sym);
     st->data[st->cur_pos].level = level;
     st->data[st->cur_pos].name[size_sym] = '\0';
-
+    st->data[st->cur_pos].id = st->cur_id++;
     return Success;
 }
 
@@ -87,6 +88,16 @@ int32_t symtable_get_value(SymbolTable* st, char* symbol, int level)
         MLOG(CLGT,"Currently, only support Int type\n");
     }
     return -1;
+}
+
+int32_t symtable_get_id(SymbolTable* st, char* symbol, int level)
+{
+    int32_t idx = symtable_find(st, symbol, level);
+    if (-1 == idx) {
+        MLOG(CLGT,"Not found the symbol %s\n", symbol);
+        return -1;
+    }
+    return st->data[idx].id;
 }
 
 int32_t symtable_set_type(SymbolTable* st, char* symbol, int level, int32_t type)

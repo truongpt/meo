@@ -17,6 +17,7 @@ typedef struct SymbolData {
     char name[MAX_IDENT_LEN];
     int32_t type;
     int32_t level;
+    int32_t id;
     char* label;
     union {
         int32_t int_value;
@@ -32,6 +33,7 @@ enum SymbolType {
 typedef struct SymbolTable {
     SymbolData data[NSYMBOLS];
     int32_t cur_pos;
+    int32_t cur_id;
 } SymbolTable;
 
 #ifdef __cplusplus
@@ -44,6 +46,7 @@ int32_t symtable_remove(SymbolTable* st, char* symbol);
 int32_t symtable_find(SymbolTable* st, char* symbol, int level);
 int32_t symtable_find_valid(SymbolTable* st, char* symbol, int level);
 int32_t symtable_get_value(SymbolTable* st, char* symbol, int level);
+int32_t symtable_get_id(SymbolTable* st, char* symbol, int level);
 int32_t symtable_set_type(SymbolTable* st, char* symbol, int level, int32_t type);
 int32_t symtable_set_label(SymbolTable* st, char* symbol, int level, char* lable);
 char* symtable_get_label(SymbolTable* st, char* symbol, int level);
