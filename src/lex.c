@@ -91,6 +91,7 @@ int32_t LexProc(void* prm, Token *t)
         return InParameterInvalid;
     }
 
+    t->var_id = -1;
     LexParameter* lex_prm = (LexParameter*)prm;
     char c = get_next(lex_prm);
     switch (c) {

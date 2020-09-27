@@ -25,6 +25,7 @@ typedef struct Token {
         };
         char str[MAX_STR_LEN];
     };
+    int32_t var_id;
 } Token;
 
 enum TokenType{

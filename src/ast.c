@@ -254,8 +254,13 @@ AstNode* ast_create_node(
         break;
     case AstLeftVar:
     case AstIdentifier:
+        //TODO: dangerous code :-o
+        memset(node->id_str, 0x00, strlen(node->id_str));
         memcpy(node->id_str, token.id_str, strlen(token.id_str));
-        node->id_str[strlen(token.id_str)] = '\0';
+        if (-1 != token.var_id) {
+            sprintf(&(node->id_str[strlen(token.id_str)]),"%d",token.var_id);
+            MLOG(TRACE, "var: %s \n",node->id_str);
+        }
         break;
     case AstString:
         memcpy(node->str, token.str, strlen(token.str));

@@ -92,11 +92,19 @@ int32_t symtable_get_value(SymbolTable* st, char* symbol, int level)
 
 int32_t symtable_get_id(SymbolTable* st, char* symbol, int level)
 {
-    int32_t idx = symtable_find(st, symbol, level);
+
+    int idx = -1;
+    for (int i = level; i >= 0; i--) {
+        idx = symtable_find(st, symbol, i);
+        if (-1 != idx) {
+            break;
+        }
+    }
     if (-1 == idx) {
         MLOG(CLGT,"Not found the symbol %s\n", symbol);
         return -1;
     }
+
     return st->data[idx].id;
 }
 

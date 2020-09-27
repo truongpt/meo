@@ -6,8 +6,8 @@ int fibonacci(int n)
 
 int main()
 {
-    int k = 15;
-    int i = fibonacci(k);
-    printf("fibonacci order %d = %d\n",k,i);
+    int n = 15;
+    int i = fibonacci(n);
+    printf("fibonacci order %d = %d\n",n,i);
     return 1;
 }
