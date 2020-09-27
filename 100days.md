@@ -389,3 +389,7 @@ assertions: 107 | 106 passed | 1 failed
 - **Todo**
  - [ ] Support local variable can be same name.
  - [ ] Support input arg by directly function return -> f(g(a));
+
+### Day 69
+- Support local variable can be same name, they are separeted by scope.
+
