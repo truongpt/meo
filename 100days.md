@@ -387,9 +387,20 @@ assertions: 107 | 106 passed | 1 failed
 ### Day 68
 - Consider how to process for local variable same name with diff scope.
 - **Todo**
- - [ ] Support local variable can be same name.
- - [ ] Support input arg by directly function return -> f(g(a));
+  - [ ] Support local variable can be same name.
 
 ### Day 69
 - Support local variable can be same name, they are separeted by scope.
+- **Todo**
+  - [ ] Support input arg by directly function return -> f(g(a));
+  - [ ] Support: int a, b, c = 1, d = 2;
+
+### Day 70 - How to support pointer?
+- Check ASM by compiler explore: https://godbolt.org
+- https://github.com/DoctorWkt/acwj/tree/master/15_Pointers_pt1
+- int *p, k; p = &  k; k = k + * p;
+  - Lexical can not separated dereference vs mul
+  - Space is always ignored.
+- int* p, q; int a = 10; a = a ** p;
+  - p is int pointer, but q is still int;
 
