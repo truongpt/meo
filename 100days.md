@@ -404,3 +404,6 @@ assertions: 107 | 106 passed | 1 failed
 - int* p, q; int a = 10; a = a ** p;
   - p is int pointer, but q is still int;
 
+### Day 71
+- Maintain unit test.
+- Consider new test case for pointer
