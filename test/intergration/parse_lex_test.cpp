@@ -370,3 +370,38 @@ TEST_CASE("basic & && | || ^ pattern")
 
 }
 
+TEST_CASE("simple test case to confirm bug?")
+{
+    std::ofstream outfile ("data/test10");
+    outfile << "int main() {     " << std::endl;
+    outfile << "    int a;       " << std::endl;
+    outfile << "    a = 10;      " << std::endl;
+    outfile << "    return a;    " << std::endl;
+    outfile << "}                " << std::endl;
+    outfile.close();
+
+    void* lex_prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/test10"));
+
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/out10"));
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+    REQUIRE(MockGetReturnValue() == 10);
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    REQUIRE(Success == GenClose(gen_prm));
+    REQUIRE(Success == GenDestroy());
+
+    REQUIRE(Success == LexClose(lex_prm));
+    REQUIRE(Success == LexDestroy());
+}
+

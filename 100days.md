@@ -407,3 +407,7 @@ assertions: 107 | 106 passed | 1 failed
 ### Day 71
 - Maintain unit test.
 - Consider new test case for pointer
+
+### Day 72
+- Fix bug pass mistake symbol to get ID
+- Add new test case to confirm bug (may be clear variable is not enought)
