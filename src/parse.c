@@ -396,7 +396,7 @@ AstNode* syntax_parse(ParseParameter* parse_prm)
         symtable_set_type(&(parse_prm->symbol_table), ident_tok.id_str, parse_prm->var_level, SymbolInt);
 
         // create global variable tree with type
-        ident_tok.var_id = symtable_get_id(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level);
+        ident_tok.var_id = symtable_get_id(&(parse_prm->symbol_table), ident_tok.id_str, parse_prm->var_level);
         AstNode* var_name = ast_create_leaf(ident_tok);
         AstNode* global_var = ast_create_declare(type, var_name, AstVarGlobal);
 
@@ -604,7 +604,7 @@ AstNode* factor(ParseParameter* parse_prm)
                 MLOG(CLGT, "Can not find symbol %s at line: %d\n",op_tok.id_str, LexGetLine(parse_prm->lex_prm));
                 exit(1);
             }
-            op_tok.var_id = symtable_get_id(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level);
+            op_tok.var_id = symtable_get_id(&(parse_prm->symbol_table), op_tok.id_str, parse_prm->var_level);
             node = ast_create_leaf(op_tok);
         }
 
