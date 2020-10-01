@@ -411,3 +411,6 @@ assertions: 107 | 106 passed | 1 failed
 ### Day 72
 - Fix bug pass mistake symbol to get ID
 - Add new test case to confirm bug (may be clear variable is not enought)
+
+### Day 73
+- Debugging
