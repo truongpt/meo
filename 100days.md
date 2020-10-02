@@ -414,3 +414,8 @@ assertions: 107 | 106 passed | 1 failed
 
 ### Day 73
 - Debugging
+
+### Day 74
+- Debugging
+  - Why only integration test error, meo is still with the user case.
+  - if using variable name "a" -> error, "a1" -> OK
