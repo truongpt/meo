@@ -97,6 +97,8 @@ AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node);
 void* ast_compile(ParseParameter* parse_prm, AstNode* node);
 void ast_gen(ParseParameter* parse_prm, AstNode* node);
 
+void ast_map_init(ParseParameter* parse_prm);
+
 #ifdef __cplusplus
 }
 #endif

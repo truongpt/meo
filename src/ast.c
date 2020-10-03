@@ -659,6 +659,12 @@ void ast_tree_free(AstNode* node)
     free(node);
 }
 
+void ast_map_init(ParseParameter* parse_prm)
+{
+    parse_prm->var_map_pos = 0;
+    memset(parse_prm->var_map, 0x00, sizeof(parse_prm->var_map));
+}
+
 void ast_map_set_label(ParseParameter* parse_prm, char* id_str,char* label)
 {
     int pos = parse_prm->var_map_pos;
