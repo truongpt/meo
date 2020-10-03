@@ -419,3 +419,7 @@ assertions: 107 | 106 passed | 1 failed
 - Debugging
   - Why only integration test error, meo is still with the user case.
   - if using variable name "a" -> error, "a1" -> OK
+
+### Day 75
+- Bug is fixed: lacking initilize variable :/
+- Add new test case to prepare support pointer
