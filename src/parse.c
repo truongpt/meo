@@ -5,6 +5,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include "log.h"
 #include "parse.h"
 #include "lex.h"
@@ -77,6 +78,7 @@ int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm, bool is_interp
         return ParseLimitResource;
     }
 
+    memset(&(g_parse_prm[i]), 0x00, sizeof(g_parse_prm[i]));
     g_parse_prm[i].lex_prm = lex_prm;
     g_parse_prm[i].gen_prm = gen_prm;
     g_parse_prm[i].is_interpret = is_interpret;

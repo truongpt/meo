@@ -5,6 +5,7 @@
 
 #include <stdbool.h>
 #include <stdarg.h>
+#include <string.h>
 #include <limits.h>
 #include "gen.h"
 #include "meo.h"
@@ -54,6 +55,7 @@ int32_t GenOpen(void** gen_prm, int32_t arch, char* out_file_name)
         return GenLimitResource;
     }
 
+    memset(&(g_gen_prm[i]), 0x00, sizeof(g_gen_prm[i]));
     g_gen_prm[i].out_asm_file = fopen(out_file_name, "w");
     g_gen_prm[i].label_id = 0;
     if (NULL == g_gen_prm[i].out_asm_file) {

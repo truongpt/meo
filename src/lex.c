@@ -63,6 +63,7 @@ int32_t LexOpen(void** lex_prm, const char* file_name)
         return LexLimitResource;
     }
 
+    memset(&(g_lex_prm[i]), 0x00, sizeof(g_lex_prm[i]));
     g_lex_prm[i].in_file = fopen(file_name, "r");
     g_lex_prm[i].push_back = -1; // -1 is OK? LOL
     g_lex_prm[i].line = 1;
