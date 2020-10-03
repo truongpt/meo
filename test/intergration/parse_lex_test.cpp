@@ -375,7 +375,7 @@ TEST_CASE("simple test case to confirm bug?")
     std::ofstream outfile ("data/test10");
     outfile << "int main() {     " << std::endl;
     outfile << "    int a;       " << std::endl;
-    outfile << "    a = 10;      " << std::endl;
+    outfile << "    a = 9;       " << std::endl;
     outfile << "    return a;    " << std::endl;
     outfile << "}                " << std::endl;
     outfile.close();
@@ -393,7 +393,7 @@ TEST_CASE("simple test case to confirm bug?")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
-    REQUIRE(MockGetReturnValue() == 10);
+    REQUIRE(MockGetReturnValue() == 9);
 
     ParseClose(parse_prm);
     ParseDestroy();
@@ -405,3 +405,76 @@ TEST_CASE("simple test case to confirm bug?")
     REQUIRE(Success == LexDestroy());
 }
 
+TEST_CASE("pointer 1")
+{
+    std::ofstream outfile ("data/point1");
+    outfile << "int main() {       " << std::endl;
+    outfile << "    int *a;        " << std::endl;
+    outfile << "    int b = 10;    " << std::endl;
+    outfile << "    a = &b;        " << std::endl;    
+    outfile << "    int b = 11;    " << std::endl;
+    outfile << "    return *a;     " << std::endl;
+    outfile << "}                  " << std::endl;
+    outfile.close();
+
+    void* lex_prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/point1"));
+
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/point1"));
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+    REQUIRE(MockGetReturnValue() == 11);
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    REQUIRE(Success == GenClose(gen_prm));
+    REQUIRE(Success == GenDestroy());
+
+    REQUIRE(Success == LexClose(lex_prm));
+    REQUIRE(Success == LexDestroy());
+}
+
+TEST_CASE("pointer 2")
+{
+    std::ofstream outfile ("data/point2");
+    outfile << "int main() {       " << std::endl;
+    outfile << "    int *a;        " << std::endl;
+    outfile << "    int b = 10;    " << std::endl;
+    outfile << "    a = &b;        " << std::endl;    
+    outfile << "    *a = 11;       " << std::endl;    
+    outfile << "    return b;      " << std::endl;
+    outfile << "}                  " << std::endl;
+    outfile.close();
+
+    void* lex_prm = NULL;
+    REQUIRE(Success == LexCreate());
+    REQUIRE(Success == LexOpen(&lex_prm, (char*)"data/point2"));
+
+    void* gen_prm = NULL;
+    REQUIRE(Success == GenCreate());
+    REQUIRE(Success == GenOpen(&gen_prm, GenX86_64, (char*)"data/point2"));
+
+    void* parse_prm = NULL;
+    REQUIRE(Success == ParseCreate());
+    REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
+
+    REQUIRE(Success == ParseProc(parse_prm));
+    REQUIRE(MockGetReturnValue() == 11);
+
+    ParseClose(parse_prm);
+    ParseDestroy();
+
+    REQUIRE(Success == GenClose(gen_prm));
+    REQUIRE(Success == GenDestroy());
+
+    REQUIRE(Success == LexClose(lex_prm));
+    REQUIRE(Success == LexDestroy());
+}
