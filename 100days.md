@@ -423,3 +423,8 @@ assertions: 107 | 106 passed | 1 failed
 ### Day 75
 - Bug is fixed: lacking initilize variable :/
 - Add new test case to prepare support pointer
+
+### Day 76
+- Continue study to support pointer
+  - https://stackoverflow.com/questions/1372811/how-are-array-and-pointer-types-handled-internally-in-c-compilers-int-a-vs
+  - Reading dragon book
