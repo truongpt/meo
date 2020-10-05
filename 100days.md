@@ -428,3 +428,6 @@ assertions: 107 | 106 passed | 1 failed
 - Continue study to support pointer
   - https://stackoverflow.com/questions/1372811/how-are-array-and-pointer-types-handled-internally-in-c-compilers-int-a-vs
   - Reading dragon book
+
+### Day 77
+- Consider how implement to support pointer

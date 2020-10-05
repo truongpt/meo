@@ -1,8 +1,9 @@
-int main()
-{
-    int a;
-    int b;
-    a = 10;
-    b = 2;
-    return a+b+(2+1)/2-(7-5)+9/3;
+int main() {
+
+    int *a;
+    int b = 10;
+    a = &b;
+    b = 11;
+    return *a;
+
 }
