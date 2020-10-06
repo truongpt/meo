@@ -126,7 +126,15 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
 {
     // stmt int
     AstNode* type = ast_create_leaf(parse_prm->cur_token);
+
+    int pointer_level = 0;
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    while (match (parse_prm, TokenStar)) {
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        pointer_level++;
+        MLOG(CLGT,"Set pointer level\n");
+    }
+
     if (!match (parse_prm, TokenIdentifier)) {
         MLOG(CLGT,"Expect Identifier but token: %s at line: %d\n",tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
     }
@@ -137,6 +145,7 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
         exit(1);
     }
     symtable_set_type(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level, SymbolInt);
+    symtable_set_pointer_level(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level, pointer_level);
 
     parse_prm->cur_token.var_id = symtable_get_id(&(parse_prm->symbol_table), parse_prm->cur_token.id_str, parse_prm->var_level);
     AstNode* var_name = ast_create_leaf(parse_prm->cur_token);

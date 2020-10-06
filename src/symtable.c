@@ -175,3 +175,13 @@ int32_t symtable_set_value(SymbolTable* st, char* symbol, int level, int32_t val
     return 0;
 }
 
+int32_t symtable_set_pointer_level(SymbolTable* st, char* symbol, int level, int32_t pointer_level)
+{
+    int32_t idx = symtable_find(st, symbol, level);
+    if (-1 == idx) {
+        MLOG(CLGT,"Not found the symbol %s\n", symbol);
+        return -1;
+    }
+    st->data[idx].pointer_level = pointer_level;
+    return 0;
+}

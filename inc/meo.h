@@ -35,6 +35,7 @@ enum TokenType{
     TokenPlus,
     TokenMinus,
     TokenMul,
+    TokenStar = TokenMul, // for pointer
     TokenDiv,
     TokenEQ,
     TokenNE,
@@ -45,6 +46,7 @@ enum TokenType{
 
     // Bitwise
     TokenBitAnd,
+    TokenDerefer = TokenBitAnd, // for dereference of pointer
     TokenBitOr,
     TokenBitXor,
 

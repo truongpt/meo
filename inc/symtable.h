@@ -16,6 +16,7 @@
 typedef struct SymbolData {
     char name[MAX_IDENT_LEN];
     int32_t type;
+    int32_t pointer_level;
     int32_t level;
     int32_t id;
     char* label;
@@ -52,6 +53,7 @@ int32_t symtable_set_label(SymbolTable* st, char* symbol, int level, char* lable
 char* symtable_get_label(SymbolTable* st, char* symbol, int level);
 int32_t symtable_set_value(SymbolTable* st, char* symbol, int level, int32_t value);
 int32_t symtable_clear_level(SymbolTable* st, int32_t level);
+int32_t symtable_set_pointer_level(SymbolTable* st, char* symbol, int level, int32_t pointer_level);
 
 #ifdef __cplusplus
 }
