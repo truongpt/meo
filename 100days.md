@@ -435,3 +435,7 @@ assertions: 107 | 106 passed | 1 failed
 ### Day 78
 - Add parameter to manage pointer level for each symbol item of symbol table to support pointer.
 - Considering how to support pointer.
+
+### Day 79
+- Still pointer
+
