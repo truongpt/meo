@@ -46,7 +46,7 @@ enum TokenType{
 
     // Bitwise
     TokenBitAnd,
-    TokenDerefer = TokenBitAnd, // for dereference of pointer
+    TokenDereference = TokenBitAnd, // for dereference of pointer
     TokenBitOr,
     TokenBitXor,
 

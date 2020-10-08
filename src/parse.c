@@ -130,9 +130,10 @@ AstNode* stmt_decl(ParseParameter* parse_prm)
     int pointer_level = 0;
     LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     while (match (parse_prm, TokenStar)) {
+        // TODO(pointer): Need process specific for pointer
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
         pointer_level++;
-        MLOG(CLGT,"Set pointer level\n");
+        MLOG(TRACE,"Set pointer level %d\n",pointer_level);
     }
 
     if (!match (parse_prm, TokenIdentifier)) {
@@ -604,6 +605,28 @@ AstNode* factor(ParseParameter* parse_prm)
     AstNode* node = NULL;
     if (match(parse_prm, TokenNumber)) {
         node = ast_create_leaf(parse_prm->cur_token);
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+    } else if (match(parse_prm, TokenDereference) || match(parse_prm, TokenStar)) {
+        // TODO(pointer): Need consider how to manage address variable
+        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        while (match(parse_prm, TokenDereference)) {
+            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        }
+        // TODO(pointer): Need consider how to manage dereference pointer
+        while (match(parse_prm, TokenStar)) {
+            LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
+        }
+
+        if (!match(parse_prm, TokenIdentifier)) {
+            MLOG(ERROR, "Number or identifier expected but token: %s at line %d\n", tok2str(parse_prm->cur_token.tok), LexGetLine(parse_prm->lex_prm));
+        }
+        Token op_tok = parse_prm->cur_token;
+        if (-1 == symtable_find_valid(&(parse_prm->symbol_table), op_tok.id_str, parse_prm->var_level)) {
+            MLOG(CLGT, "Can not find symbol %s at line: %d\n",op_tok.id_str, LexGetLine(parse_prm->lex_prm));
+            exit(1);
+        }
+        op_tok.var_id = symtable_get_id(&(parse_prm->symbol_table), op_tok.id_str, parse_prm->var_level);
+        node = ast_create_leaf(op_tok);
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
     } else if (match(parse_prm, TokenIdentifier)) {
         Token op_tok = parse_prm->cur_token;

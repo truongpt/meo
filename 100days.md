@@ -439,3 +439,5 @@ assertions: 107 | 106 passed | 1 failed
 ### Day 79
 - Still pointer
 
+### Day 80
+- Update parser to support parsing pointer + dereference
