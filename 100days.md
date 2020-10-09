@@ -441,3 +441,6 @@ assertions: 107 | 106 passed | 1 failed
 
 ### Day 80
 - Update parser to support parsing pointer + dereference
+
+### Day 81
+- Study how to generate ASM for pointer
