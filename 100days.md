@@ -444,3 +444,6 @@ assertions: 107 | 106 passed | 1 failed
 
 ### Day 81
 - Study how to generate ASM for pointer
+
+### 2020/10/10: Temporary suspend
+- I tentative suspend project to focus more priority task, but I will back and continue until meo becomes self-hosting compiler
