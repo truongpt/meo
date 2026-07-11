@@ -1,36 +1,50 @@
-# Meo subset c compiler
+# Meo - A Subset C Compiler
 
-## Let's start
-- **meo** is :cat: in Vietnamese, but now  it is subset c compliler
-- The project is mainly used to study compiler.
-- I use [100DaysOfCode](https://github.com/kallaway/100-days-of-code) strategy, that will make [small step](100days.md) everyday by [rule](https://github.com/kallaway/100-days-of-code/blob/master/rules.md)
-- I study base on following.
-  - Reading [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf)
-  - Reading [Dragon book](https://www.amazon.com/Compilers-Principles-Techniques-Tools-2nd/dp/0321486811)
-  - Reference [A Compiler Writing Journey](https://github.com/DoctorWkt/acwj)
+**meo** is "meo" (cat) in Vietnamese, but now it is a subset C compiler built to study compiler construction.
+
+## Branches
+
+- `master` — main development branch (vibe coding with [Opencode](https://opencode.ai))
+- `manual` — manual study notes and experiments
+
+## References
+
+- [Compiler Design in C - Allen I. Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf)
+- [Dragon Book](https://www.amazon.com/Compilers-Principles-Techniques-Tools-2nd/dp/0321486811)
+- [A Compiler Writing Journey](https://github.com/DoctorWkt/acwj)
 
 ## Design
-- Using design as [four-pass compiler](system_struct.png), which is refered from [Compiler design in C - Allen I.Holub](https://holub.com/goodies/compiler/compilerDesignInC.pdf)
-- Each module lexical analyzer, parser, code generation are designed as independent module, it can be easy to replace without any effect other part.
-- Each module is designed as multi instance, I plan supporting paralell compiler to increase performance.
 
-## Implementation
-- First step: only supporting X86-64 + pass 2 (lexical analyzer, parser, code generation).
-- Using back end of GCC to generate executed code.
-- Using TDD with [catch2](https://github.com/catchorg/Catch2).
-- Using [Google coding convention](https://google.github.io/styleguide/cppguide.html).
+- Four-pass compiler architecture (refered from [Compiler design in C](https://holub.com/goodies/compiler/compilerDesignInC.pdf)).
+- Modular design: lexical analyzer, parser, code generation are independent modules.
+- Backend abstraction via function pointer table (`GenFuncTable`), currently supporting x86-64.
 
-## Current status.
-- Can compile all files in [sample](sample), ex [fibonacci.c](sample/fibonacci.c)
-- Can compiler recursion, as the fibonacci recursion version [recursion.c](sample/recursion.c)
+## Build
 
-## Todo list
-- [x] Support function.
-- [x] Function call.
-- [x] Global variable & local variable.
-- [ ] Structure type.
-- [ ] Pointer.
-- [ ] Function pointer.
-- [ ] All [operator](https://en.cppreference.com/w/c/language/operator_precedence).
-- [ ] v..v...
-- [ ] Self compile.
+```bash
+cmake -S . -B build
+cmake --build build -j$(nproc)
+ctest --test-dir build
+```
+
+## Current Status
+
+- Supports: `int`, `void`, functions (up to 6 params), recursion, global/local variables with scoping, if/else, while, for, basic arithmetic/relational/logical/bitwise operators.
+- Compiles all [sample](sample) programs.
+- 4/5 test suites pass (1 pre-existing integration failure).
+
+## Self-Hosting Roadmap
+
+The next goal is to make meo compile itself. See [self_hosting.md](self_hosting.md) for the full roadmap.
+
+### What's Missing (Priority Order)
+
+1. **Foundation** — `char`/`char*`, comments, unary operators, `break`/`continue`, arrays, `%`, `++`/`--`, compound assignment, pointer code gen
+2. **Type System** — `struct`, `enum`, `typedef`, `static`, `extern`, function prototypes
+3. **Preprocessor** — `#include`, `#define`, `#ifdef`
+4. **Standard Library** — `malloc`, `printf`, `fopen`, `strlen`, etc.
+5. **Bootstrap** — simplify source, first self-compilation, iterate
+
+## Progress
+
+See [100days.md](100days.md) for daily progress log.
