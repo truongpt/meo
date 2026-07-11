@@ -447,3 +447,9 @@ assertions: 107 | 106 passed | 1 failed
 
 ### 2020/10/10: Temporary suspend
 - I tentative suspend project to focus more priority task, but I will back and continue until meo becomes self-hosting compiler
+
+### 2026/07/11: Resume with Vibe Coding
+- Resume project after long break.
+- Replace Makefile with CMake build system.
+- Fix Catch2 v2.12.4 compatibility with newer glibc (MINSIGSTKSZ no longer constexpr).
+- Vibe coding by Opencode uses Big Pickle model.
