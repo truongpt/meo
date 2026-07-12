@@ -5,6 +5,7 @@ add_executable(intergration_test
     ${CMAKE_SOURCE_DIR}/src/parse.c
     ${CMAKE_SOURCE_DIR}/src/gen.c
     ${CMAKE_SOURCE_DIR}/src/ast.c
+    ${CMAKE_SOURCE_DIR}/src/codegen.c
     ${CMAKE_SOURCE_DIR}/src/symtable.c
     ${CMAKE_SOURCE_DIR}/src/log.c
     ${CMAKE_SOURCE_DIR}/src/lex.c

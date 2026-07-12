@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "meo.h"
-#include "parse_internal.h"
 
 #ifndef _AST_H_
 #define _AST_H_
@@ -88,16 +87,11 @@ AstNode* ast_create_link(AstNode* left, AstNode* right);
 AstNode* ast_create_ifnode(AstNode* left, AstNode* mid, AstNode* right);
 AstNode* ast_create_func(AstNode* left, AstNode* mid, AstNode* right);
 AstNode* ast_create_arg_init(Token token, int arg_order);
-AstNode* ast_create_leaf(Token token);
 AstNode* ast_create_func_call(void);
 AstNode* ast_create_arg_pass(AstNode* arg, int arg_order);
-
 AstNode* ast_create_declare(AstNode* left, AstNode* right, int var_type);
-AstNode* ast_interpret(ParseParameter* parse_prm, AstNode* node);
-void* ast_compile(ParseParameter* parse_prm, AstNode* node);
-void ast_gen(ParseParameter* parse_prm, AstNode* node);
 
-void ast_map_init(ParseParameter* parse_prm);
+void ast_tree_free(AstNode* node);
 
 #ifdef __cplusplus
 }

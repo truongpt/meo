@@ -11,6 +11,7 @@ add_executable(meo
     src/parse.c
     src/symtable.c
     src/ast.c
+    src/codegen.c
     src/gen.c
     src/x86_64_asm.c
     src/log.c

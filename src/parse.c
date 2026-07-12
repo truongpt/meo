@@ -10,6 +10,7 @@
 #include "parse.h"
 #include "lex.h"
 #include "ast.h"
+#include "codegen.h"
 #include "gen.h"
 #include "symtable.h"
 #include "error_code.h"
@@ -86,7 +87,7 @@ int32_t ParseOpen(void** parse_prm, void* lex_prm, void* gen_prm, bool is_interp
     g_parse_prm[i].var_level = 0;
     g_parse_prm[i].var_map_pos = 0;
 
-    ast_map_init(&(g_parse_prm[i]));
+    codegen_map_init(&(g_parse_prm[i]));
     symtable_init(&(g_parse_prm[i].symbol_table));
 
     *parse_prm = &g_parse_prm[i];
@@ -116,7 +117,7 @@ int32_t ParseProc(void* prm)
     while (!match(parse_prm, TokenEoi)) {
         AstNode* node = syntax_parse(parse_prm);
         // gen code
-        ast_gen(parse_prm, node);
+        codegen_gen(parse_prm, node);
     }
 
     return Success;

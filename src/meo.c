@@ -58,7 +58,7 @@ int main(int argc, char*argv[])
     ParseDestroy();
 
     // using backend of gcc
-    system("cc -o a.out out.s");
+    system("cc -no-pie -o a.out out.s");
 
     return 0;
 }

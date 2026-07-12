@@ -3,6 +3,7 @@ add_executable(ast_test
     main.cpp
     mock_lex.cpp
     ${CMAKE_SOURCE_DIR}/src/ast.c
+    ${CMAKE_SOURCE_DIR}/src/codegen.c
     ${CMAKE_SOURCE_DIR}/src/symtable.c
     ${CMAKE_SOURCE_DIR}/src/gen.c
     ${CMAKE_SOURCE_DIR}/src/parse.c

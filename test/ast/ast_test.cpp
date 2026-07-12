@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include "ast.h"
+#include "codegen.h"
 #include "gen.h"
 #include "parse.h"
 #include "error_code.h"
@@ -76,7 +77,7 @@ TEST_CASE("ast test operator -")
     AstNode* node2 = ast_create_node(T2, node, node1);
     REQUIRE(NULL != node2);
     REQUIRE(AstMinus == node2->type);
-    ast_gen((ParseParameter*)parse_prm, node2);
+    codegen_gen((ParseParameter*)parse_prm, node2);
 
     ParseClose(parse_prm);
     ParseDestroy();
