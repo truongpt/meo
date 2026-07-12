@@ -367,6 +367,15 @@ void codegen_gen(ParseParameter* parse_prm, AstNode* node)
     }
 }
 
+void codegen_gen_all(ParseParameter* parse_prm)
+{
+    for (int i = 0; i < parse_prm->ast_count; i++) {
+        codegen_gen(parse_prm, parse_prm->ast_list[i]);
+        parse_prm->ast_list[i] = NULL;
+    }
+    parse_prm->ast_count = 0;
+}
+
 void codegen_map_init(ParseParameter* parse_prm)
 {
     parse_prm->var_map_pos = 0;

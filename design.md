@@ -2,7 +2,7 @@
 
 Architectural and design-level issues that block extensibility and self-hosting.
 
-## D1: No IR Between Parse and Codegen [Critical]
+## D1: No IR Between Parse and Codegen [Critical] ✅ RESOLVED
 
 **Problem:** AST is built then immediately consumed and freed per top-level statement (`src/parse.c:116-121`). No multi-pass analysis possible.
 
@@ -10,13 +10,17 @@ Architectural and design-level issues that block extensibility and self-hosting.
 
 **Fix:** Introduce a retained IR phase. Parse builds AST, AST persists across the full translation unit, then a separate codegen pass walks it.
 
-## D2: AST Module IS the Codegen Engine [Critical]
+**Status:** Done. `ParseProc` now collects ASTs into `ParseParameter.ast_list[]`. `codegen_gen_all()` processes all collected ASTs after parsing completes.
+
+## D2: AST Module IS the Codegen Engine [Critical] ✅ RESOLVED
 
 **Problem:** `ast_gen()` at `src/ast.c:636-649` takes `ParseParameter*` and calls `Gen*` functions directly. The AST module does code generation traversal.
 
 **Impact:** AST cannot be used independently. No clean separation between "what the program says" and "how to execute it."
 
 **Fix:** Move `ast_compile()` out of `ast.c` into a dedicated `codegen.c` that walks the AST and calls `Gen*`.
+
+**Status:** Done. `src/codegen.c` contains all codegen traversal. `src/ast.c` now contains only pure AST data structures (create, free).
 
 ## D3: 10 Files per New Operator [High]
 

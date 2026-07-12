@@ -14,6 +14,7 @@ extern "C" {
 #include "parse_internal.h"
 
 void codegen_gen(ParseParameter* parse_prm, AstNode* node);
+void codegen_gen_all(ParseParameter* parse_prm);
 void codegen_map_init(ParseParameter* parse_prm);
 
 #ifdef __cplusplus

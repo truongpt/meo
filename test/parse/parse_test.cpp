@@ -11,6 +11,7 @@
 #include "lex.h"
 #include "gen.h"
 #include "parse.h"
+#include "codegen.h"
 #include "error_code.h"
 
 #include "common.h"
@@ -129,6 +130,7 @@ TEST_CASE("parse test plus token: (1+2);")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
     
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == (1+2));
 
     ParseClose(parse_prm);
@@ -171,6 +173,7 @@ TEST_CASE("parse test plus token: (2*3);")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
 
     REQUIRE(MockGetReturnValue() == (2*3));
 
@@ -217,6 +220,7 @@ TEST_CASE("parse test plus token: (1+2*3+4);")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
 
     REQUIRE(MockGetReturnValue() == (1+2*3+4));
 
@@ -266,6 +270,7 @@ TEST_CASE("parse test plus token: (1+2)*(3+4);")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == ((1+2)*(3+4)));
 
     ParseClose(parse_prm);
@@ -305,6 +310,7 @@ TEST_CASE("parse test pattern: int xyz;")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     // TODO check result
 
     ParseClose(parse_prm);
@@ -347,6 +353,7 @@ TEST_CASE("parse test return token: return (1+2);")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
     
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     // todo: consider method to confirm
 
     ParseClose(parse_prm);
@@ -394,6 +401,7 @@ TEST_CASE("parse test pattern: int a; a = 10; return a;")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == 10);
 
     ParseClose(parse_prm);
@@ -453,6 +461,7 @@ TEST_CASE("parse test pattern: a+b;")
     REQUIRE(Success == ParseOpen(&parse_prm, (void*)&mock_lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == (1+2));
 
     ParseClose(parse_prm);

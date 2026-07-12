@@ -10,6 +10,10 @@
 #ifndef _PARSE_INTERNAL_H_
 #define _PARSE_INTERNAL_H_
 
+#define MAX_TOP_LEVEL 1024
+
+typedef struct AstNode AstNode;
+
 typedef struct StringMap {
     char id[MAX_IDENT_LEN];
     char* label;
@@ -26,6 +30,9 @@ typedef struct ParseParameter{
 
     StringMap var_map[MAX_IDENT_CNT];
     int var_map_pos;
+
+    AstNode* ast_list[MAX_TOP_LEVEL];
+    int ast_count;
 } ParseParameter;
 
 #endif

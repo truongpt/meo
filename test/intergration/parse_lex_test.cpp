@@ -11,6 +11,7 @@
 #include "lex.h"
 #include "gen.h"
 #include "parse.h"
+#include "codegen.h"
 #include "error_code.h"
 
 #include "common.h"
@@ -41,6 +42,7 @@ TEST_CASE("basic arithmetic op parttern : return 1+2;")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
     
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == (1+2));
 
     ParseClose(parse_prm);
@@ -80,6 +82,7 @@ TEST_CASE("basic variable parttern: int a; int b;")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
     
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == (2*5*5));
 
     ParseClose(parse_prm);
@@ -127,6 +130,7 @@ TEST_CASE("basic variable parttern: hw reg resource manager test")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
     
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == (1+2+3+4+5+6));
 
     ParseClose(parse_prm);
@@ -162,6 +166,7 @@ TEST_CASE("relational basic pattern")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == 1);
 
     ParseClose(parse_prm);
@@ -199,6 +204,7 @@ TEST_CASE("relational basic pattern with variable")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == 0);
 
     ParseClose(parse_prm);
@@ -237,6 +243,7 @@ TEST_CASE("equal basic pattern with variable")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == 1);
 
     ParseClose(parse_prm);
@@ -275,6 +282,7 @@ TEST_CASE("basic parttern with {}")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == 2);
 
     ParseClose(parse_prm);
@@ -316,6 +324,7 @@ TEST_CASE("basic if-else pattern")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     // todo: consider how to verify result
     // REQUIRE(MockGetReturnValue() == 2);
 
@@ -355,6 +364,7 @@ TEST_CASE("basic & && | || ^ pattern")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
 
     int a1 = 1, a2 = 2;
     REQUIRE(MockGetReturnValue() == (a1 && a2) + (a1 & a2) + (a1 || a2) + (a1 | a2) + (a1 ^ a2));
@@ -393,6 +403,7 @@ TEST_CASE("simple test case to confirm bug?")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == 9);
 
     ParseClose(parse_prm);
@@ -430,6 +441,7 @@ TEST_CASE("pointer 1")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == 11);
 
     ParseClose(parse_prm);
@@ -467,6 +479,7 @@ TEST_CASE("pointer 2")
     REQUIRE(Success == ParseOpen(&parse_prm, lex_prm, gen_prm, false));
 
     REQUIRE(Success == ParseProc(parse_prm));
+    codegen_gen_all((ParseParameter*)parse_prm);
     REQUIRE(MockGetReturnValue() == 11);
 
     ParseClose(parse_prm);

@@ -116,8 +116,9 @@ int32_t ParseProc(void* prm)
 
     while (!match(parse_prm, TokenEoi)) {
         AstNode* node = syntax_parse(parse_prm);
-        // gen code
-        codegen_gen(parse_prm, node);
+        if (parse_prm->ast_count < MAX_TOP_LEVEL) {
+            parse_prm->ast_list[parse_prm->ast_count++] = node;
+        }
     }
 
     return Success;

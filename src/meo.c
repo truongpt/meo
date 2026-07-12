@@ -8,6 +8,7 @@
 #include<string.h>
 #include "lex.h"
 #include "parse.h"
+#include "codegen.h"
 #include "gen.h"
 #include "meo.h"
 #include "log.h"
@@ -48,6 +49,7 @@ int main(int argc, char*argv[])
     ParseOpen(&(meo_handle.parse_prm), meo_handle.lex_prm, meo_handle.gen_prm, is_interpreter);
 
     ParseProc(meo_handle.parse_prm);
+    codegen_gen_all((ParseParameter*)meo_handle.parse_prm);
 
     ParseClose(meo_handle.parse_prm);
     LexClose(meo_handle.lex_prm);
