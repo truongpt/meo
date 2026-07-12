@@ -4,33 +4,21 @@ Architectural and design-level issues that block extensibility and self-hosting.
 
 ## D1: No IR Between Parse and Codegen [Critical] ✅ RESOLVED
 
-**Problem:** AST is built then immediately consumed and freed per top-level statement (`src/parse.c:116-121`). No multi-pass analysis possible.
+**Problem:** AST is built then immediately consumed and freed per top-level statement. No multi-pass analysis possible.
 
-**Impact:** Cannot do type checking, optimization, or cross-function analysis. Interpreter path is dead code (`src/ast.c:638-641`).
-
-**Fix:** Introduce a retained IR phase. Parse builds AST, AST persists across the full translation unit, then a separate codegen pass walks it.
-
-**Status:** Done. `ParseProc` now collects ASTs into `ParseParameter.ast_list[]`. `codegen_gen_all()` processes all collected ASTs after parsing completes.
+**Fix:** `ParseProc` now collects ASTs into `ParseParameter.ast_list[]`. `codegen_gen_all()` processes all collected ASTs after parsing completes.
 
 ## D2: AST Module IS the Codegen Engine [Critical] ✅ RESOLVED
 
-**Problem:** `ast_gen()` at `src/ast.c:636-649` takes `ParseParameter*` and calls `Gen*` functions directly. The AST module does code generation traversal.
+**Problem:** `ast_gen()` in `ast.c` called `Gen*` functions directly. AST module did code generation traversal.
 
-**Impact:** AST cannot be used independently. No clean separation between "what the program says" and "how to execute it."
+**Fix:** `src/codegen.c` contains all codegen traversal. `src/ast.c` is pure AST data structures (create, free).
 
-**Fix:** Move `ast_compile()` out of `ast.c` into a dedicated `codegen.c` that walks the AST and calls `Gen*`.
+## D3: 10 Files per New Operator [High] ✅ RESOLVED
 
-**Status:** Done. `src/codegen.c` contains all codegen traversal. `src/ast.c` now contains only pure AST data structures (create, free).
+**Problem:** Adding an operator required touching 10 files across 4 modules.
 
-## D3: 10 Files per New Operator [High]
-
-**Problem:** Adding `%` requires touching: `meo.h` (enum), `lex.c` (tokenize), `ast.h` (AST type), `ast.c` (map + gen), `gen.h` (API), `gen.c` (trampoline), `gen_internal.h` (vtable), `x86_64_asm.c` (implement), `log.c` (string table).
-
-**Impact:** Slow iteration. Easy to miss a file. `g_token_str` table silently desyncs from enum.
-
-**Fix:** Operator descriptor table (`src/op_table.c`, `inc/op_table.h`). Single table drives parsing, AST mapping, debug output. Pratt parser replaces 8 hardcoded precedence functions in `parse.c`. Codegen dispatch table in `codegen.c` maps AstType → Gen function via designated initializer array. `log.c` `tok2str()` delegates to `op_tok2str()`.
-
-**Status:** Done. Adding `%` now requires: 1 line in `op_table[]`, 1 entry in `meo.h` enum, 1 case in `lex.c`, 1 line in `codegen_op_funcs[]`, 1 vtable entry in `gen_internal.h`, 1 implementation in `x86_64_asm.c`.
+**Fix:** Operator descriptor table (`src/op_table.c`). Pratt parser replaces 8 hardcoded precedence functions. Codegen dispatch table maps AstType → Gen function. Adding `%` now requires 6 edits instead of 10.
 
 ## D4: 6 Global Registers, No Spill [Critical]
 
@@ -68,17 +56,15 @@ typedef struct GenContext GenContext;
 
 **Fix:** Hash table for lookup. Stack-based scope: `cur_pos` decrements on scope exit.
 
-## D8: Parser Directly Drives Codegen [High]
+## D8: Parser Directly Drives Codegen [High] ✅ RESOLVED
 
-**Problem:** `src/parse.c:119`: `ast_gen(parse_prm, node)` is called inside the parser's main loop. Parser is responsible for both building AST and triggering codegen.
+**Problem:** Parser called `ast_gen()` inside its main loop. Parser responsible for both building AST and triggering codegen.
 
-**Impact:** Cannot parse without codegen. Cannot separate compilation passes.
-
-**Fix:** Parser returns a completed AST. A separate driver calls codegen.
+**Fix:** D1 resolved this. Parser collects ASTs into `ast_list[]`. Separate `codegen_gen_all()` pass processes them.
 
 ## D9: `var_id` in Token Leaks Codegen into Lexer [Medium]
 
-**Problem:** `Token.var_id` at `inc/meo.h:28` is set during parsing (`src/parse.c:151`) and used in codegen. The Token struct carries information from downstream modules backward.
+**Problem:** `Token.var_id` at `inc/meo.h:28` is set during parsing and used in codegen. The Token struct carries information from downstream modules backward.
 
 **Impact:** Lexer/parsing/codegen boundaries are blurred.
 
@@ -94,7 +80,7 @@ typedef struct GenContext GenContext;
 
 ## D11: Scope Management is Manual and Fragile [Medium]
 
-**Problem:** `var_level++` / `var_level--` scattered across `src/parse.c:234,272,288,309`. No guard pattern. One missed decrement corrupts all scope tracking.
+**Problem:** `var_level++` / `var_level--` scattered across `src/parse.c`. No guard pattern. One missed decrement corrupts all scope tracking.
 
 **Impact:** Subtle scope bugs. Hard to maintain.
 
@@ -102,7 +88,7 @@ typedef struct GenContext GenContext;
 
 ## D12: Mock Duplication Across Test Suites [Low]
 
-**Problem:** `test/parse/mock_lex.cpp` and `test/ast/mock_lex.cpp` are byte-for-byte identical. `test/parse/mock_arch.cpp` fills 5 of 35 vtable slots; `test/gen/mock_arch.cpp` fills different slots.
+**Problem:** `test/parse/mock_lex.cpp` and `test/ast/mock_lex.cpp` are byte-for-byte identical. Mock vtable fills differ across test targets.
 
 **Impact:** Tests drift out of sync. Maintenance burden.
 
@@ -118,38 +104,39 @@ typedef struct GenContext GenContext;
 
 ## D14: No Type System [Critical for Self-Hosting]
 
-**Problem:** Types tracked as `int32_t type` fields but no type checking, no implicit conversions, no type inference. `src/ast.c:378-383` hardcodes `int` as only type.
+**Problem:** Types tracked as `int32_t type` fields but no type checking, no implicit conversions, no type inference. `int` is the only real type.
 
 **Impact:** Cannot compile code that uses `char`, `struct`, arrays, pointers correctly.
 
 **Fix:** This is Phase 2 (Type System) of the self-hosting roadmap.
 
-## D15: Interpreter Path is Dead Code [Low]
+## D15: Interpreter Path is Dead Code [Low] ✅ RESOLVED
 
-**Problem:** `is_interpret` branch at `src/ast.c:638-641` is commented out. Architecturally abandoned because fused parse-codegen pipeline makes it impractical.
+**Problem:** `is_interpret` branch was commented out. Architecturally abandoned.
 
-**Impact:** Dead code. Confusing.
-
-**Fix:** Remove or implement after D2 is resolved.
+**Fix:** D2 resolved this. `is_interpret` removed from codegen path.
 
 ---
 
 ## Summary
 
-| Severity | Count |
-|----------|-------|
-| Critical | 4 |
-| High | 3 |
-| Medium | 5 |
-| Low | 3 |
-| **Total** | **15** |
+| Severity | Count | Resolved |
+|----------|-------|----------|
+| Critical | 4 | 2 (D1, D2) |
+| High | 3 | 2 (D3, D8) |
+| Medium | 5 | 0 |
+| Low | 3 | 1 (D15) |
+| **Total** | **15** | **5** |
 
-### Recommended Refactor Order
+### Remaining Issues by Priority
 
-1. **D2** — Extract codegen from AST module (unblocks everything else)
-2. **D1** — Retain AST across full translation unit
-3. **D3** — Operator descriptor table (makes new features 1 file, not 10)
-4. **D6** — Error recovery (makes compiler usable)
-5. **D4** — Register allocator with spill
-6. **D7** — Hash-based symbol table
-7. Then tackle D8-D15 as needed for self-hosting
+1. **D4** — Register allocator with spill [Critical] — blocks complex expressions
+2. **D6** — Error recovery [High] — blocks usability
+3. **D14** — Type system [Critical] — blocks self-hosting Phase 2
+4. **D10** — Multi-file compilation [Critical] — blocks self-hosting Phase 3
+5. **D7** — Hash-based symbol table [Medium] — performance
+6. **D9** — Remove var_id from Token [Medium] — cleanliness
+7. **D11** — Scope guard [Medium] — correctness
+8. **D5** — Type-safe module interfaces [Medium] — cleanliness
+9. **D13** — Eliminate global state [Medium] — parallelism
+10. **D12** — Shared test mocks [Low] — maintenance
