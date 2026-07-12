@@ -9,6 +9,7 @@
 #include "lex.h"
 #include "gen.h"
 #include "parse_internal.h"
+#include "op_table.h"
 
 static void* codegen_compile(ParseParameter* parse_prm, AstNode* node);
 static void codegen_compile_pre_func(
@@ -171,61 +172,36 @@ static void* codegen_compile_func_call(ParseParameter* parse_prm, AstNode* node)
     return  GenFuncCall(parse_prm->gen_prm, node->right->id_str);
 }
 
-static char* gen_bin_op(void* gen_prm, char* left, char* right, int type)
-{
-    switch (type) {
-    case AstPlus:
-        return GenPlus(gen_prm, left, right);
-    case AstMinus:
-        return GenMinus(gen_prm, left, right);
-    case AstMul:
-        return GenMul(gen_prm, left, right);
-    case AstDiv:
-        return GenDiv(gen_prm, left, right);
-    case AstBitOr:
-        return GenBitOr(gen_prm, left, right);
-    case AstBitXor:
-        return GenBitXor(gen_prm, left, right);
-    case AstBitAnd:
-        return GenBitAnd(gen_prm, left, right);
-    default:
-        MLOG(CLGT,"Invalid type binary operator\n");
-        return NULL;
-    }
-}
+typedef char* (*GenOpFunc)(void* gen_prm, char* r1, char* r2);
 
-static char* gen_logical_op(void* gen_prm, char* left, char* right, int type)
-{
-    switch (type) {
-    case AstOr:
-        return GenOr(gen_prm, left, right);
-    case AstAnd:
-        return GenAnd(gen_prm, left, right);
-    default:
-        MLOG(CLGT,"Invalid type logical operator\n");
-        return NULL;
-    }
-}
+static GenOpFunc codegen_op_funcs[] = {
+    [AstPlus]    = GenPlus,
+    [AstMinus]   = GenMinus,
+    [AstMul]     = GenMul,
+    [AstDiv]     = GenDiv,
+    [AstBitOr]   = GenBitOr,
+    [AstBitXor]  = GenBitXor,
+    [AstBitAnd]  = GenBitAnd,
+    [AstOr]      = GenOr,
+    [AstAnd]     = GenAnd,
+    [AstLT]      = GenLT,
+    [AstLE]      = GenLE,
+    [AstGT]      = GenGT,
+    [AstGE]      = GenGE,
+    [AstEQ]      = GenEQ,
+    [AstNE]      = GenNE,
+};
 
-static char* gen_relational_op(void* gen_prm, char* left, char* right, int type)
+static char* gen_op_dispatch(void* gen_prm, char* left, char* right, int type)
 {
-    switch (type) {
-    case AstLT:
-        return GenLT(gen_prm, left, right);
-    case AstLE:
-        return GenLE(gen_prm, left, right);
-    case AstGT:
-        return GenGT(gen_prm, left, right);
-    case AstGE:
-        return GenGE(gen_prm, left, right);
-    case AstEQ:
-        return GenEQ(gen_prm, left, right);
-    case AstNE:
-        return GenNE(gen_prm, left, right);
-    default:
-        MLOG(CLGT,"Invalid type relational operator\n");
-        return NULL;
+    if (type >= 0 && type < (int)(sizeof(codegen_op_funcs) / sizeof(codegen_op_funcs[0]))) {
+        GenOpFunc fn = codegen_op_funcs[type];
+        if (fn) {
+            return fn(gen_prm, left, right);
+        }
     }
+    MLOG(CLGT, "No gen_func for ast type %d\n", type);
+    return NULL;
 }
 
 static void* codegen_compile_declare(ParseParameter* parse_prm, AstNode* node)
@@ -286,17 +262,15 @@ static void* codegen_compile_node(ParseParameter* parse_prm, AstNode* node, char
     case AstBitOr:
     case AstBitXor:
     case AstBitAnd:
-        return gen_bin_op(gen_prm, left, right, node->type);
     case AstOr:
     case AstAnd:
-        return gen_logical_op(gen_prm, left, right, node->type);
     case AstLT:
     case AstLE:
     case AstGT:
     case AstGE:
     case AstEQ:
     case AstNE:
-        return gen_relational_op(gen_prm, left, right, node->type);
+        return gen_op_dispatch(gen_prm, left, right, node->type);
     case AstString:
         return node->str;
     default:

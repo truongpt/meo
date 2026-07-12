@@ -4,6 +4,7 @@ add_executable(gen_test
     main.cpp
     ${CMAKE_SOURCE_DIR}/src/gen.c
     ${CMAKE_SOURCE_DIR}/src/log.c
+    ${CMAKE_SOURCE_DIR}/src/op_table.c
 )
 
 target_include_directories(gen_test PRIVATE

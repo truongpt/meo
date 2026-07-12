@@ -7,58 +7,19 @@
 #include "log.h"
 #include "ast.h"
 #include "lex.h"
+#include "op_table.h"
 
 static int32_t tok_2_ast(Token token);
 
 int32_t tok_2_ast (Token token)
 {
+    OpDesc* op = op_find(token.tok);
+    if (op) {
+        return op->ast;
+    }
+
     int32_t ast = -1;
     switch (token.tok) {
-    case TokenPlus:
-        ast = AstPlus;
-        break;
-    case TokenMinus:
-        ast = AstMinus;
-        break;
-    case TokenMul:
-        ast = AstMul;
-        break;
-    case TokenDiv:
-        ast = AstDiv;
-        break;
-    case TokenLT:
-        ast = AstLT;
-        break;
-    case TokenLE:
-        ast = AstLE;
-        break;
-    case TokenGT:
-        ast = AstGT;
-        break;
-    case TokenGE:
-        ast = AstGE;
-        break;
-    case TokenEQ:
-        ast = AstEQ;
-        break;
-    case TokenNE:
-        ast = AstNE;
-        break;
-    case TokenOr:
-        ast = AstOr;
-        break;
-    case TokenAnd:
-        ast = AstAnd;
-        break;
-    case TokenBitOr:
-        ast = AstBitOr;
-        break;
-    case TokenBitXor:
-        ast = AstBitXor;
-        break;
-    case TokenBitAnd:
-        ast = AstBitAnd;
-        break;
     case TokenNumber:
         ast = AstNumber;
         break;

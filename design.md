@@ -28,18 +28,9 @@ Architectural and design-level issues that block extensibility and self-hosting.
 
 **Impact:** Slow iteration. Easy to miss a file. `g_token_str` table silently desyncs from enum.
 
-**Fix:** Use an operator descriptor table:
-```c
-typedef struct {
-    TokenType tok;
-    AstType   ast;
-    int       prec;
-    bool      right_assoc;
-    GenFunc   gen_func;
-    char*     name;
-} OpDesc;
-```
-Single table drives lexing, parsing, codegen, and debug output.
+**Fix:** Operator descriptor table (`src/op_table.c`, `inc/op_table.h`). Single table drives parsing, AST mapping, debug output. Pratt parser replaces 8 hardcoded precedence functions in `parse.c`. Codegen dispatch table in `codegen.c` maps AstType → Gen function via designated initializer array. `log.c` `tok2str()` delegates to `op_tok2str()`.
+
+**Status:** Done. Adding `%` now requires: 1 line in `op_table[]`, 1 entry in `meo.h` enum, 1 case in `lex.c`, 1 line in `codegen_op_funcs[]`, 1 vtable entry in `gen_internal.h`, 1 implementation in `x86_64_asm.c`.
 
 ## D4: 6 Global Registers, No Spill [Critical]
 

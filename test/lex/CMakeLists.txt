@@ -3,6 +3,7 @@ add_executable(lex_test
     main.cpp
     ${CMAKE_SOURCE_DIR}/src/lex.c
     ${CMAKE_SOURCE_DIR}/src/log.c
+    ${CMAKE_SOURCE_DIR}/src/op_table.c
 )
 
 target_include_directories(lex_test PRIVATE

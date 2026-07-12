@@ -9,6 +9,7 @@ add_executable(intergration_test
     ${CMAKE_SOURCE_DIR}/src/symtable.c
     ${CMAKE_SOURCE_DIR}/src/log.c
     ${CMAKE_SOURCE_DIR}/src/lex.c
+    ${CMAKE_SOURCE_DIR}/src/op_table.c
 )
 
 target_include_directories(intergration_test PRIVATE

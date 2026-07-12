@@ -14,6 +14,7 @@
 #include "gen.h"
 #include "symtable.h"
 #include "error_code.h"
+#include "op_table.h"
 
 #include "parse_internal.h"
 
@@ -23,15 +24,8 @@ ParseParameter g_parse_prm[MAX_PARSE_RSC];
 
 static AstNode* function_call(ParseParameter* parse_prm, Token tok);
 static AstNode* factor(ParseParameter* parse_prm);
-static AstNode* mul(ParseParameter* parse_prm);
-static AstNode* add(ParseParameter* parse_prm);
-static AstNode* relational(ParseParameter* parse_prm);
-static AstNode* logic_or(ParseParameter* parse_prm);
-static AstNode* logic_and(ParseParameter* parse_prm);
-static AstNode* bit_or(ParseParameter* parse_prm);
-static AstNode* bit_xor(ParseParameter* parse_prm);
-static AstNode* bit_and(ParseParameter* parse_prm);
-static AstNode* equal(ParseParameter* parse_prm);
+static AstNode* factor(ParseParameter* parse_prm);
+static AstNode* parse_expr_at_prec(ParseParameter* parse_prm, int min_prec);
 static AstNode* assign(ParseParameter* parse_prm);
 static AstNode* expression(ParseParameter* parse_prm);
 
@@ -479,14 +473,14 @@ AstNode* expression(ParseParameter* parse_prm)
 }
 
 AstNode* assign(ParseParameter* parse_prm) {
-    AstNode* node = logic_or(parse_prm);
+    AstNode* node = parse_expr_at_prec(parse_prm, 1);
     while (match(parse_prm, TokenAssign)) {
         Token op_tok = parse_prm->cur_token;
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        AstNode* node1 = logic_or(parse_prm);
+        AstNode* node1 = parse_expr_at_prec(parse_prm, 1);
 
         if (AstIdentifier == node->type) {
-            node->type = AstLeftVar; // todo: consider better design for Lval & Rval
+            node->type = AstLeftVar;
         } else {
             MLOG(CLGT,"left operand is not Lvalue at line %d\n", LexGetLine(parse_prm->lex_prm));
             exit(1);
@@ -496,110 +490,19 @@ AstNode* assign(ParseParameter* parse_prm) {
     return node;
 }
 
-AstNode* logic_or(ParseParameter* parse_prm) {
-    AstNode* node = logic_and(parse_prm);
-    while (match(parse_prm, TokenOr)) {
-        Token op_tok = parse_prm->cur_token;
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        AstNode* node1 = logic_and(parse_prm);
-        node = ast_create_node(op_tok, node, node1);
-    }
-    return node;
-}
-
-AstNode* logic_and(ParseParameter* parse_prm) {
-    AstNode* node = bit_or(parse_prm);
-    while (match(parse_prm, TokenAnd)) {
-        Token op_tok = parse_prm->cur_token;
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        AstNode* node1 = bit_or(parse_prm);
-        node = ast_create_node(op_tok, node, node1);
-    }
-    return node;
-}
-
-AstNode* bit_or(ParseParameter* parse_prm) {
-    AstNode* node = bit_xor(parse_prm);
-    while (match(parse_prm, TokenBitOr)) {
-        Token op_tok = parse_prm->cur_token;
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        AstNode* node1 = bit_xor(parse_prm);
-        node = ast_create_node(op_tok, node, node1);
-    }
-    return node;
-}
-
-AstNode* bit_xor(ParseParameter* parse_prm) {
-    AstNode* node = bit_and(parse_prm);
-    while (match(parse_prm, TokenBitXor)) {
-        Token op_tok = parse_prm->cur_token;
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        AstNode* node1 = bit_and(parse_prm);
-        node = ast_create_node(op_tok, node, node1);
-    }
-    return node;
-}
-
-AstNode* bit_and(ParseParameter* parse_prm) {
-    AstNode* node = equal(parse_prm);
-    while (match(parse_prm, TokenBitAnd)) {
-        Token op_tok = parse_prm->cur_token;
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        AstNode* node1 = equal(parse_prm);
-        node = ast_create_node(op_tok, node, node1);
-    }
-    return node;
-}
-
-AstNode* equal(ParseParameter* parse_prm) {
-    AstNode* node = relational(parse_prm);
-    while (match(parse_prm, TokenEQ) ||
-           match(parse_prm, TokenNE)) {
-        Token op_tok = parse_prm->cur_token;
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        AstNode* node1 = relational(parse_prm);
-        node = ast_create_node(op_tok, node, node1);
-    }
-    return node;
-}
-
-AstNode* relational(ParseParameter* parse_prm) {
-    AstNode* node = add(parse_prm);
-    while (match(parse_prm, TokenLT) ||
-           match(parse_prm, TokenLE) ||
-           match(parse_prm, TokenGT) ||
-           match(parse_prm, TokenGE)) {
-        Token op_tok = parse_prm->cur_token;
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        AstNode* node1 = add(parse_prm);
-        node = ast_create_node(op_tok, node, node1);
-    }
-    return node;
-}
-
-AstNode* add(ParseParameter* parse_prm)
+AstNode* parse_expr_at_prec(ParseParameter* parse_prm, int min_prec)
 {
-    AstNode* node = mul(parse_prm);
-    while (match(parse_prm, TokenPlus) || match(parse_prm, TokenMinus)) {
+    AstNode* left = factor(parse_prm);
+    for (;;) {
+        OpDesc* desc = op_find(parse_prm->cur_token.tok);
+        if (NULL == desc || desc->prec < min_prec) break;
+        int next_prec = desc->right_assoc ? desc->prec : desc->prec + 1;
         Token op_tok = parse_prm->cur_token;
         LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        AstNode* node1 = mul(parse_prm);
-        node = ast_create_node(op_tok, node, node1);
+        AstNode* right = parse_expr_at_prec(parse_prm, next_prec);
+        left = ast_create_node(op_tok, left, right);
     }
-    return node;
-}
-
-AstNode* mul(ParseParameter* parse_prm)
-{
-    AstNode *node, *node1;
-    node = factor(parse_prm);
-    while (match(parse_prm, TokenMul) || match(parse_prm, TokenDiv)) {
-        Token op_tok = parse_prm->cur_token;
-        LexProc(parse_prm->lex_prm, &(parse_prm->cur_token));
-        node1 = factor(parse_prm);
-        node = ast_create_node(op_tok, node, node1);
-    }
-    return node;
+    return left;
 }
 
 AstNode* factor(ParseParameter* parse_prm)

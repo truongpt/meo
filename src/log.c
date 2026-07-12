@@ -4,6 +4,7 @@
  */
 
 #include "log.h"
+#include "op_table.h"
 
 #define RESET   "\033[0m"
 #define BLACK   "\033[30m"      /* Black */
@@ -35,56 +36,9 @@ static char* g_log_level_msg[] = {
     "CLGT" // fata error
 };
 
-static char* g_token_str[] = {
-    "TokenEof",
-    "TokenPlus",
-    "TokenMinus",
-    "TokenMul",
-    "TokenDiv",
-    "TokenEqual",
-    "TokenNE",
-    "TokenLT",
-    "TokenLE",
-    "TokenGT",
-    "TokenGE",
-    "TokenBitAnd",
-    "TokenBitOr",
-    "TokenBitXor",
-    "TokenAnd",
-    "TokenOr",
-    "TokenIf",
-    "TokenElse",
-    "TokenWhile",
-    "TokenDo",
-    "TokenFor",
-    "TokenIntType",
-    "TokenVoidType",
-    "TokenLongType",
-    "TokenString",
-    "TokenNumber",
-    "TokenLP",
-    "TokenRP",
-    "TokenLBracket",
-    "TokenRBracket",
-    "TokenComma",
-    "TokenAssign",
-    "TokenReturn",
-    "TokenEoi",
-    "TokenSemi",
-    "TokenIdentifier"
-};
-
-void set_mlog_level(int level)
-{
-    g_log_level = level;
-}
-
 char* tok2str(int tok)
 {
-    if (tok >= sizeof(g_token_str)/sizeof(g_token_str[0])) {
-        return "NULL";
-    }
-    return g_token_str[tok];
+    return (char*)op_tok2str(tok);
 }
 
 void mlog(int level, char* format, ...)

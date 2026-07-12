@@ -10,6 +10,7 @@ add_executable(parse_test
     ${CMAKE_SOURCE_DIR}/src/codegen.c
     ${CMAKE_SOURCE_DIR}/src/symtable.c
     ${CMAKE_SOURCE_DIR}/src/log.c
+    ${CMAKE_SOURCE_DIR}/src/op_table.c
 )
 
 target_include_directories(parse_test PRIVATE

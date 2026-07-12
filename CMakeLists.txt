@@ -15,6 +15,7 @@ add_executable(meo
     src/gen.c
     src/x86_64_asm.c
     src/log.c
+    src/op_table.c
 )
 
 target_include_directories(meo PRIVATE inc src)

@@ -9,6 +9,7 @@ add_executable(ast_test
     ${CMAKE_SOURCE_DIR}/src/parse.c
     ${CMAKE_SOURCE_DIR}/src/x86_64_asm.c
     ${CMAKE_SOURCE_DIR}/src/log.c
+    ${CMAKE_SOURCE_DIR}/src/op_table.c
 )
 
 target_include_directories(ast_test PRIVATE
